@@ -10,7 +10,7 @@ namespace :gem do
   desc "Build and install gem locally"
   task :install_local do
     Rake::Task["build"].invoke
-    gem_file = Dir["*.gem"].sort_by { |f| File.mtime(f) }.last
+    gem_file = Dir["pkg/*.gem"].sort_by { |f| File.mtime(f) }.last
     sh "gem install #{gem_file}"
   end
 
@@ -31,7 +31,7 @@ namespace :gem do
     
     # Push gem to RubyGems
     puts "\n3. Pushing to RubyGems..."
-    gem_file = "observ-#{version}.gem"
+    gem_file = "pkg/observ-#{version}.gem"
     sh "gem push #{gem_file}"
     
     # Push tags to remote
