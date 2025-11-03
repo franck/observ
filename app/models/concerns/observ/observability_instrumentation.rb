@@ -71,8 +71,12 @@ module Observ
       }
     )
     @instrumenter.instrument!
+
+    # Mark that instrumentation has been successfully set up
+    @_instrumentation_attempted = true
   rescue StandardError => e
     Rails.logger.error "[Observability] Failed to instrument chat: #{e.message}"
+    # Don't set @_instrumentation_attempted on error, allowing retry if needed
   end
 
   def ensure_instrumented!
@@ -91,9 +95,14 @@ module Observ
     return if @instrumenter
     return unless observability_session_id
 
+    # Prevent redundant instrumentation checks on the same instance
+    # This is set after first successful instrumentation attempt
+    return if @_instrumentation_attempted
+
+    @_instrumentation_attempted = true
     ensure_instrumented!
   rescue StandardError => e
     Rails.logger.error "[Observability] Failed to auto-instrument on find: #{e.message}"
   end
-end
+  end
 end
