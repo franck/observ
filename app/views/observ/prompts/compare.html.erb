@@ -1,0 +1,155 @@
+<% content_for :title, "Compare Versions" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Prompt", prompt_path(@prompt_name), style: "display: inline-block; margin-bottom: 0.5rem; color: #2563eb;" %>
+      <h1 class="observ-page-header__title">Compare Versions</h1>
+      <p style="color: #6b7280; margin-top: 0.25rem;"><%= @prompt_name %></p>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <!-- Version Selector -->
+  <div class="observ-card" style="margin-bottom: 1.5rem;">
+    <div class="observ-card__body">
+      <%= form_with url: compare_prompt_path(@prompt_name), method: :get, style: "display: flex; gap: 1rem; align-items: flex-end;" do |f| %>
+
+        <div style="flex: 1;">
+          <%= f.label :from, "From Version", style: "display: block; margin-bottom: 0.5rem; font-weight: 500;" %>
+          <%= f.select :from,
+            options_for_select(
+              Observ::Prompt.where(name: @prompt_name).order(version: :desc).map { |v|
+                ["v#{v.version} (#{v.state})", v.version]
+              },
+              params[:from]
+            ),
+            {},
+            style: "width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" %>
+        </div>
+
+        <div style="flex: 1;">
+          <%= f.label :to, "To Version", style: "display: block; margin-bottom: 0.5rem; font-weight: 500;" %>
+          <%= f.select :to,
+            options_for_select(
+              Observ::Prompt.where(name: @prompt_name).order(version: :desc).map { |v|
+                ["v#{v.version} (#{v.state})", v.version]
+              },
+              params[:to]
+            ),
+            {},
+            style: "width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" %>
+        </div>
+
+        <%= f.submit "Compare", class: "observ-button observ-button--primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Metadata Comparison -->
+  <div class="observ-card" style="margin-bottom: 1.5rem;">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid #e5e7eb;">
+      <div style="padding: 1.5rem; border-right: 1px solid #e5e7eb;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Version <%= @from_version.version %></h2>
+          <span class="observ-badge <%= case @from_version.state
+              when 'draft' then 'observ-badge--warning'
+              when 'production' then 'observ-badge--success'
+              when 'archived' then 'observ-badge--default'
+              end %>" style="font-size: 0.75rem;">
+            <%= @from_version.state %>
+          </span>
+        </div>
+
+        <dl style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem;">
+          <div>
+            <dt style="color: #6b7280;">Created</dt>
+            <dd style="font-weight: 500; margin-top: 0.125rem;"><%= @from_version.created_at.strftime("%b %d, %Y %I:%M %p") %></dd>
+          </div>
+          <div>
+            <dt style="color: #6b7280;">Created By</dt>
+            <dd style="font-weight: 500; margin-top: 0.125rem;"><%= @from_version.created_by || "system" %></dd>
+          </div>
+          <% if @from_version.commit_message.present? %>
+            <div>
+              <dt style="color: #6b7280;">Commit Message</dt>
+              <dd style="font-weight: 500; margin-top: 0.125rem; font-style: italic;">"<%= @from_version.commit_message %>"</dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+
+      <div style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Version <%= @to_version.version %></h2>
+          <span class="observ-badge <%= case @to_version.state
+              when 'draft' then 'observ-badge--warning'
+              when 'production' then 'observ-badge--success'
+              when 'archived' then 'observ-badge--default'
+              end %>" style="font-size: 0.75rem;">
+            <%= @to_version.state %>
+          </span>
+        </div>
+
+        <dl style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem;">
+          <div>
+            <dt style="color: #6b7280;">Created</dt>
+            <dd style="font-weight: 500; margin-top: 0.125rem;"><%= @to_version.created_at.strftime("%b %d, %Y %I:%M %p") %></dd>
+          </div>
+          <div>
+            <dt style="color: #6b7280;">Created By</dt>
+            <dd style="font-weight: 500; margin-top: 0.125rem;"><%= @to_version.created_by || "system" %></dd>
+          </div>
+          <% if @to_version.commit_message.present? %>
+            <div>
+              <dt style="color: #6b7280;">Commit Message</dt>
+              <dd style="font-weight: 500; margin-top: 0.125rem; font-style: italic;">"<%= @to_version.commit_message %>"</dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- Side-by-Side Diff -->
+  <div class="observ-card">
+    <div class="observ-card__header">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Prompt Content Comparison</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid #e5e7eb;">
+      <!-- Left: From Version -->
+      <div style="padding: 1.5rem; border-right: 1px solid #e5e7eb;">
+        <div style="background-color: #f9fafb; padding: 1rem; border-radius: 0.375rem; overflow-x: auto;">
+          <pre style="margin: 0; font-family: monospace; font-size: 0.875rem; white-space: pre-wrap;"><%= render "diff_content", content: @from_version.prompt, diff: @diff, side: :from %></pre>
+        </div>
+      </div>
+
+      <!-- Right: To Version -->
+      <div style="padding: 1.5rem;">
+        <div style="background-color: #f9fafb; padding: 1rem; border-radius: 0.375rem; overflow-x: auto;">
+          <pre style="margin: 0; font-family: monospace; font-size: 0.875rem; white-space: pre-wrap;"><%= render "diff_content", content: @to_version.prompt, diff: @diff, side: :to %></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config Comparison -->
+  <% if @from_version.config.present? || @to_version.config.present? %>
+    <div class="observ-card" style="margin-top: 1.5rem;">
+      <div class="observ-card__header">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Configuration Comparison</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid #e5e7eb;">
+        <div style="padding: 1.5rem; border-right: 1px solid #e5e7eb;">
+          <pre style="background-color: #f9fafb; padding: 1rem; border-radius: 0.375rem; overflow-x: auto; font-size: 0.875rem; margin: 0;"><%= JSON.pretty_generate(@from_version.config) %></pre>
+        </div>
+        <div style="padding: 1.5rem;">
+          <pre style="background-color: #f9fafb; padding: 1rem; border-radius: 0.375rem; overflow-x: auto; font-size: 0.875rem; margin: 0;"><%= JSON.pretty_generate(@to_version.config) %></pre>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

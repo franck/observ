@@ -1,0 +1,256 @@
+@import 'variables';
+
+.observ-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: $observ-gray-50;
+  font-family: $observ-font-family;
+  color: $observ-gray-900;
+  font-size: $observ-font-size-base;
+  line-height: 1.5;
+}
+
+.observ-nav {
+  background-color: $observ-white;
+  border-bottom: 1px solid $observ-gray-200;
+  box-shadow: $observ-shadow-sm;
+
+  &__container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 $observ-spacing-lg;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  &__brand {
+    font-size: $observ-font-size-xl;
+    font-weight: 600;
+  }
+
+  &__brand-link {
+    color: $observ-gray-900;
+    text-decoration: none;
+    transition: $observ-transition;
+
+    &:hover {
+      color: $observ-primary;
+    }
+  }
+
+  &__menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: $observ-spacing-md;
+  }
+
+  &__item {
+    margin: 0;
+
+    &--dropdown {
+      position: relative;
+    }
+  }
+
+  &__dropdown-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  &__dropdown-arrow {
+    margin-left: 4px;
+    font-size: 0.75em;
+    transition: transform 0.2s;
+  }
+
+  &__dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background-color: $observ-white;
+    border: 1px solid $observ-gray-200;
+    border-radius: $observ-border-radius;
+    box-shadow: $observ-shadow-md;
+    list-style: none;
+    padding: $observ-spacing-xs 0;
+    min-width: 160px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+    z-index: 1000;
+
+    &--open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    li {
+      margin: 0;
+    }
+  }
+
+  &__dropdown-link {
+    display: block;
+    padding: $observ-spacing-sm $observ-spacing-md;
+    color: $observ-gray-700;
+    text-decoration: none;
+    transition: $observ-transition;
+    font-weight: 500;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: $observ-gray-100;
+      color: $observ-gray-900;
+    }
+  }
+
+  &__link {
+    display: block;
+    padding: $observ-spacing-sm $observ-spacing-md;
+    color: $observ-gray-600;
+    text-decoration: none;
+    border-radius: $observ-border-radius-sm;
+    transition: $observ-transition;
+    font-weight: 500;
+
+    &:hover {
+      background-color: $observ-gray-100;
+      color: $observ-gray-900;
+    }
+
+    &--active {
+      background-color: $observ-primary;
+      color: $observ-white;
+
+      &:hover {
+        background-color: darken($observ-primary, 5%);
+        color: $observ-white;
+      }
+    }
+
+    &--secondary {
+      color: $observ-gray-500;
+      font-size: $observ-font-size-sm;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $observ-spacing-sm;
+  }
+}
+
+.observ-main {
+  flex: 1;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: $observ-spacing-xl $observ-spacing-lg;
+}
+
+.observ-container {
+  display: flex;
+  flex-direction: column;
+  gap: $observ-spacing-xl;
+}
+
+.observ-footer {
+  background-color: $observ-white;
+  border-top: 1px solid $observ-gray-200;
+  margin-top: auto;
+
+  &__container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: $observ-spacing-lg;
+    text-align: center;
+  }
+
+  &__text {
+    color: $observ-gray-500;
+    font-size: $observ-font-size-sm;
+    margin: 0;
+  }
+}
+
+.observ-page-header {
+  margin-bottom: $observ-spacing-xl;
+  display: flex;
+  align-items: center;
+  gap: $observ-spacing-md;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $observ-spacing-md;
+    flex: 1;
+  }
+
+  &__breadcrumb {
+    color: $observ-gray-500;
+    font-size: $observ-font-size-sm;
+    margin-bottom: $observ-spacing-xs;
+  }
+
+  &__title {
+    font-size: $observ-font-size-3xl;
+    font-weight: 700;
+    margin: 0;
+    color: $observ-gray-900;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $observ-spacing-sm;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $observ-spacing-sm;
+    align-items: center;
+  }
+}
+
+.observ-alert {
+  padding: $observ-spacing-md;
+  border-radius: $observ-border-radius;
+  margin-bottom: $observ-spacing-lg;
+  font-size: $observ-font-size-sm;
+
+  &--success {
+    background-color: lighten($observ-success, 45%);
+    color: darken($observ-success, 20%);
+    border: 1px solid lighten($observ-success, 30%);
+  }
+
+  &--danger {
+    background-color: lighten($observ-danger, 45%);
+    color: darken($observ-danger, 20%);
+    border: 1px solid lighten($observ-danger, 30%);
+  }
+
+  &--warning {
+    background-color: lighten($observ-warning, 45%);
+    color: darken($observ-warning, 30%);
+    border: 1px solid lighten($observ-warning, 30%);
+  }
+
+  &--info {
+    background-color: lighten($observ-info, 45%);
+    color: darken($observ-info, 20%);
+    border: 1px solid lighten($observ-info, 30%);
+  }
+}

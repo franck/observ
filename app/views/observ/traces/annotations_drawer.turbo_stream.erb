@@ -1,0 +1,25 @@
+<%= turbo_stream.update "drawer-header-title" do %>
+  Trace Annotations
+<% end %>
+
+<%= turbo_stream.update "drawer-content" do %>
+  <div class="observ-drawer__section">
+    <%= render "annotations/form", annotatable: @trace, annotation: @annotation %>
+  </div>
+
+  <div class="observ-drawer__section">
+    <h3 class="observ-drawer__section-title">
+      Annotations (<span id="annotations-count"><%= @annotations.count %></span>)
+    </h3>
+    
+    <div id="annotations-list" class="observ-annotations-list">
+      <% if @annotations.any? %>
+        <%= render partial: "annotations/annotation", collection: @annotations, locals: { annotatable: @trace } %>
+      <% else %>
+        <div id="annotations-empty-state" class="observ-empty-state">
+          <p class="observ-empty-state__text">No annotations yet</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

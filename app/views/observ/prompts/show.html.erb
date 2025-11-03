@@ -1,0 +1,138 @@
+<% content_for :title, @prompt.name %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Prompts", prompts_path, class: "prompt-page-header__back-link" %>
+      <h1 class="observ-page-header__title"><%= @prompt.name %></h1>
+      <p class="prompt-page-header__subtitle">
+        Currently viewing version <%= @prompt.version %>
+      </p>
+    </div>
+    <%= render "prompt_actions", prompt: @prompt %>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <div class="prompt-details">
+    <!-- Left Sidebar: Version List -->
+    <aside>
+      <div class="observ-card prompt-versions__sidebar">
+        <div class="prompt-versions__header">
+          <h2 class="prompt-versions__title">Versions</h2>
+        </div>
+        <div class="prompt-versions__list">
+            <% @all_versions.each do |version| %>
+              <%= link_to prompt_path(@prompt_name, version: version.version),
+                class: "prompt-versions__item #{version.id == @prompt.id ? 'prompt-versions__item--active' : ''}" do %>
+
+                <div class="prompt-versions__item-header">
+                  <span class="prompt-versions__version-number">v<%= version.version %></span>
+
+                  <span class="observ-badge <%= case version.state
+                      when 'draft' then 'observ-badge--warning'
+                      when 'production' then 'observ-badge--success'
+                      when 'archived' then 'observ-badge--default'
+                      end %>">
+                    <%= version.state %>
+                  </span>
+                </div>
+
+                <% if version.commit_message.present? %>
+                  <p class="prompt-versions__commit-message">
+                    <%= version.commit_message %>
+                  </p>
+                <% end %>
+
+                <p class="prompt-versions__timestamp">
+                  <%= time_ago_in_words(version.created_at) %> ago
+                </p>
+              <% end %>
+            <% end %>
+        </div>
+        <div class="prompt-versions__footer">
+          <%= link_to "Compare Versions",
+            compare_prompt_path(@prompt_name, from: @production_version&.version, to: @prompt.version),
+            class: "observ-button observ-button--sm" %>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Panel: Version Details -->
+    <div class="observ-card">
+        <div class="observ-card__header prompt-detail__header">
+          <!-- Badges and Actions Section -->
+          <div class="prompt-detail__header-section">
+            <div class="prompt-detail__badges-row">
+              <div class="prompt-detail__badges">
+                <span class="observ-badge <%= case @prompt.state
+                    when 'draft' then 'observ-badge--warning'
+                    when 'production' then 'observ-badge--success'
+                    when 'archived' then 'observ-badge--default'
+                    end %>">
+                  <%= @prompt.state.titleize %>
+                </span>
+                <% if @prompt.production? %>
+                  <span class="observ-badge observ-badge--info">
+                    Currently in Use
+                  </span>
+                <% end %>
+              </div>
+              <%= render "version_actions", prompt: @prompt %>
+            </div>
+          </div>
+
+          <!-- Metadata Section -->
+          <div class="prompt-detail__header-section">
+            <dl class="prompt-detail__metadata">
+              <div class="prompt-detail__metadata-item">
+                <dt class="prompt-detail__metadata-label">Version</dt>
+                <dd class="prompt-detail__metadata-value"><%= @prompt.version %></dd>
+              </div>
+              <div class="prompt-detail__metadata-item">
+                <dt class="prompt-detail__metadata-label">Created</dt>
+                <dd class="prompt-detail__metadata-value"><%= @prompt.created_at.strftime("%b %d, %Y at %I:%M %p") %></dd>
+              </div>
+              <div class="prompt-detail__metadata-item">
+                <dt class="prompt-detail__metadata-label">Created By</dt>
+                <dd class="prompt-detail__metadata-value"><%= @prompt.created_by || "system" %></dd>
+              </div>
+              <div class="prompt-detail__metadata-item">
+                <dt class="prompt-detail__metadata-label">Last Updated</dt>
+                <dd class="prompt-detail__metadata-value"><%= time_ago_in_words(@prompt.updated_at) %> ago</dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- Commit Message Section -->
+          <% if @prompt.commit_message.present? %>
+            <div class="prompt-detail__header-section">
+              <div class="prompt-detail__commit">
+                <p class="prompt-detail__commit-title">Commit Message:</p>
+                <p class="prompt-detail__commit-message"><%= @prompt.commit_message %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Prompt Content -->
+        <div class="observ-card__body prompt-detail__body-section">
+          <h3 class="prompt-detail__section-title">Prompt Content</h3>
+          <div class="prompt-detail__content-block">
+            <pre><%= render "prompt_content_highlighted", content: @prompt.prompt %></pre>
+          </div>
+        </div>
+
+        <!-- Configuration -->
+        <div class="observ-card__body">
+          <h3 class="prompt-detail__section-title">Configuration</h3>
+          <% if @prompt.config.present? %>
+            <pre class="prompt-detail__config-block"><%= JSON.pretty_generate(@prompt.config) %></pre>
+          <% else %>
+            <p class="prompt-detail__no-config">No configuration specified</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

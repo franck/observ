@@ -1,0 +1,4 @@
+<div class="prompt-actions">
+  <%= link_to "New Version", new_prompt_path(name: prompt.name, from_version: prompt.version), class: "observ-button observ-button--secondary" %>
+  <%= link_to "View History", versions_prompt_path(prompt.name), class: "observ-button" %>
+</div>

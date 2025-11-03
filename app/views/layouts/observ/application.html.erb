@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Observability Dashboard" %> - Rails Observ</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%# Load Vite assets (includes Observ styles in application bundle) %>
+    <%= vite_client_tag %>
+    <%= vite_javascript_tag 'application' %>
+  </head>
+
+  <body class="observ-layout" data-controller="observ--drawer">
+    <nav class="observ-nav">
+      <div class="observ-nav__container">
+        <div class="observ-nav__brand">
+          <%= link_to "Observability", root_path, class: "observ-nav__brand-link" %>
+        </div>
+        
+        <ul class="observ-nav__menu">
+          <li class="observ-nav__item">
+            <%= link_to "Dashboard", dashboard_path, class: "observ-nav__link #{current_page?(dashboard_path) ? 'observ-nav__link--active' : ''}" %>
+          </li>
+          <li class="observ-nav__item">
+            <%= link_to "Chats", chats_path, class: "observ-nav__link #{current_page?(chats_path) ? 'observ-nav__link--active' : ''}" %>
+          </li>
+          <li class="observ-nav__item">
+            <%= link_to "Sessions", sessions_path, class: "observ-nav__link #{current_page?(sessions_path) ? 'observ-nav__link--active' : ''}" %>
+          </li>
+          <li class="observ-nav__item">
+            <%= link_to "Traces", traces_path, class: "observ-nav__link #{current_page?(traces_path) ? 'observ-nav__link--active' : ''}" %>
+          </li>
+          <li class="observ-nav__item">
+            <%= link_to "Observations", observations_path, class: "observ-nav__link #{current_page?(observations_path) ? 'observ-nav__link--active' : ''}" %>
+          </li>
+          <li class="observ-nav__item">
+            <%= link_to "Annotations", sessions_annotations_path, class: "observ-nav__link #{current_page?(sessions_annotations_path) || current_page?(traces_annotations_path) ? 'observ-nav__link--active' : ''}" %>
+          </li>
+          <li class="observ-nav__item">
+            <%= link_to "Prompts", prompts_path, class: "observ-nav__link #{controller_name == 'prompts' || controller_name == 'prompt_versions' ? 'observ-nav__link--active' : ''}" %>
+          </li>
+        </ul>
+
+        <div class="observ-nav__actions">
+          <%= link_to Observ.config.back_to_app_label, main_app.instance_exec(&Observ.config.back_to_app_path), class: "observ-nav__link observ-nav__link--secondary" %>
+        </div>
+      </div>
+    </nav>
+
+    <main class="observ-main">
+      <% if content_for?(:page_header) %>
+        <div class="observ-page-header">
+          <%= yield :page_header %>
+        </div>
+      <% end %>
+
+      <% if notice.present? %>
+        <div class="observ-alert observ-alert--success">
+          <%= notice %>
+        </div>
+      <% end %>
+
+      <% if alert.present? %>
+        <div class="observ-alert observ-alert--danger">
+          <%= alert %>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+
+    <footer class="observ-footer">
+      <div class="observ-footer__container">
+        <p class="observ-footer__text">Observability Dashboard · Rails Observ POC</p>
+      </div>
+    </footer>
+
+    <%= render "shared/drawer" %>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+@import 'variables';
+
+.observ-card {
+  background-color: $observ-white;
+  border-radius: $observ-border-radius;
+  box-shadow: $observ-shadow;
+  overflow: hidden;
+
+  &__header {
+    padding: $observ-spacing-lg;
+    border-bottom: 1px solid $observ-gray-200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: $observ-font-size-xl;
+    font-weight: 600;
+    margin: 0;
+    color: $observ-gray-900;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $observ-spacing-sm;
+  }
+
+  &__body {
+    padding: $observ-spacing-lg;
+  }
+
+  &__footer {
+    padding: $observ-spacing-lg;
+    border-top: 1px solid $observ-gray-200;
+    background-color: $observ-gray-50;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: $observ-spacing-2xl;
+    color: $observ-gray-500;
+  }
+
+  &--span-2 {
+    grid-column: span 2;
+  }
+
+  &--highlighted {
+    border: 2px solid $observ-primary;
+  }
+}

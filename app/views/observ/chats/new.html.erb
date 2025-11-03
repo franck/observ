@@ -1,0 +1,17 @@
+<% content_for :title, "New Agent Test Chat" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <h1 class="observ-page-header__title">New Agent Test Chat</h1>
+  </div>
+<% end %>
+
+<div class="observ-card">
+  <div class="observ-card__body">
+    <%= render "form", chat: @chat %>
+  </div>
+
+  <div class="observ-card__footer">
+    <%= link_to "← Back to chats", chats_path, class: "observ-link" %>
+  </div>
+</div>

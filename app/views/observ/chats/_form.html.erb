@@ -1,0 +1,35 @@
+<%= form_with(model: chat, url: chats_path) do |form| %>
+  <% if chat.errors.any? %>
+    <div class="observ-alert observ-alert--danger">
+      <h3 class="observ-alert__title"><%= pluralize(chat.errors.count, "error") %> prohibited this chat from being saved:</h3>
+      <ul class="observ-alert__list">
+        <% chat.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="observ-form-group">
+    <%= form.label :model, "Select AI model:", class: "observ-label" %>
+    <%= form.select :model, 
+      options_for_select(
+        Model.pluck(:name, :model_id).unshift(["Default (#{RubyLLM.config.default_model})", RubyLLM.config.default_model]), 
+        @selected_model
+      ), 
+      {}, 
+      class: "observ-select" %>
+  </div>
+
+  <div class="observ-form-group">
+    <%= form.label :agent_class_name, "Select Agent Type:", class: "observ-label" %>
+    <%= form.select :agent_class_name, 
+      agent_select_options, 
+      {}, 
+      class: "observ-select" %>
+  </div>
+
+  <div>
+    <%= form.submit "Start new chat", class: "observ-button observ-button--primary" %>
+  </div>
+<% end %>

@@ -1,0 +1,17 @@
+<% content_for :title, "Create New Prompt" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Prompts", prompts_path, style: "display: inline-block; margin-bottom: 0.5rem; color: #2563eb;" %>
+      <h1 class="observ-page-header__title">Create New Prompt</h1>
+      <p style="color: #6b7280; margin-top: 0.25rem;">
+        Create a new prompt version. All new prompts start as drafts.
+      </p>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container" style="max-width: 56rem; margin-left: auto; margin-right: auto;">
+  <%= render "new_form", form: @form %>
+</div>

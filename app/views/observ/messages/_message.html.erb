@@ -1,0 +1,14 @@
+<div id="message_<%= message.id %>" class="observ-chat-message observ-chat-message--<%= message.role %>">
+  <div class="observ-chat-message__header">
+    <span class="observ-chat-message__role"><%= message.role&.capitalize %></span>
+    <span class="observ-chat-message__time"><%= message.created_at&.strftime("%I:%M %p") %></span>
+  </div>
+  
+  <div id="message_<%= message.id %>_content" class="observ-chat-message__content">
+    <%= simple_format(message.content) %>
+  </div>
+  
+  <% if message.tool_call? %>
+    <%= render "observ/messages/tool_calls", message: message %>
+  <% end %>
+</div>

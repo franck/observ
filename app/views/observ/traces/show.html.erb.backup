@@ -1,0 +1,168 @@
+<% content_for :title, "Trace #{truncate_id(@trace.trace_id, 12)}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div class="observ-page-header__breadcrumb">
+      <%= link_to "Traces", observ_traces_path, class: "observ-link" %> /
+    </div>
+    <h1 class="observ-page-header__title">
+      Trace <code class="observ-code observ-code--inline"><%= truncate_id(@trace.trace_id, 12) %></code>
+    </h1>
+    <div class="observ-page-header__meta">
+      <%= observ_status_badge(observ_trace_status(@trace)) %>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-card">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Details</h2>
+    </header>
+    <div class="observ-card__body">
+      <dl class="observ-definition-list">
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Session</dt>
+          <dd class="observ-definition-list__definition">
+            <%= link_to truncate_id(@trace.observ_session.session_id, 12), observ_session_path(@trace.observ_session), class: "observ-link" %>
+          </dd>
+        </div>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Name</dt>
+          <dd class="observ-definition-list__definition"><%= @trace.name || "—" %></dd>
+        </div>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Start Time</dt>
+          <dd class="observ-definition-list__definition"><%= observ_timestamp(@trace.start_time) %></dd>
+        </div>
+        <% if @trace.end_time %>
+          <div class="observ-definition-list__item">
+            <dt class="observ-definition-list__term">End Time</dt>
+            <dd class="observ-definition-list__definition"><%= observ_timestamp(@trace.end_time) %></dd>
+          </div>
+        <% end %>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Duration</dt>
+          <dd class="observ-definition-list__definition">
+            <% if @trace.duration_ms %>
+              <%= format_duration_ms(@trace.duration_ms) %>
+            <% else %>
+              <span class="observ-text--muted">In Progress</span>
+            <% end %>
+          </dd>
+        </div>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Total Tokens</dt>
+          <dd class="observ-definition-list__definition"><%= format_tokens(@trace.total_tokens) %></dd>
+        </div>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Total Cost</dt>
+          <dd class="observ-definition-list__definition"><%= format_currency(@trace.total_cost) %></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <% if @trace.input.present? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Input</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= @trace.input %></pre>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @trace.output.present? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Output</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= @trace.output %></pre>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @trace.metadata.present? && @trace.metadata.any? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Metadata</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= JSON.pretty_generate(@trace.metadata) %></pre>
+      </div>
+    </section>
+  <% end %>
+
+  <section class="observ-card">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Observations (<%= @observations.count %>)</h2>
+    </header>
+    <div class="observ-card__body">
+      <% if @observations.any? %>
+        <div class="observ-observations-list">
+          <% @observations.each do |observation| %>
+            <div class="observ-observation-card observ-observation-card--<%= observation.type.demodulize.downcase %>">
+              <div class="observ-observation-card__header">
+                <span class="observ-observation-card__type-badge">
+                  <%= observation.type.demodulize %>
+                </span>
+                <h3 class="observ-observation-card__name"><%= observation.name %></h3>
+                <div class="observ-observation-card__meta">
+                  <span class="observ-observation-card__id">
+                    <code class="observ-code observ-code--inline"><%= truncate_id(observation.observation_id, 8) %></code>
+                  </span>
+                </div>
+              </div>
+              
+              <div class="observ-observation-card__body">
+                <dl class="observ-definition-list observ-definition-list--horizontal">
+                  <% if observation.is_a?(Observ::Generation) %>
+                    <div class="observ-definition-list__item">
+                      <dt class="observ-definition-list__term">Model</dt>
+                      <dd class="observ-definition-list__definition">
+                        <%= observ_model_badge(observation.model) %>
+                      </dd>
+                    </div>
+                    <div class="observ-definition-list__item">
+                      <dt class="observ-definition-list__term">Tokens</dt>
+                      <dd class="observ-definition-list__definition">
+                        <%= format_tokens(observation.total_tokens) %>
+                      </dd>
+                    </div>
+                    <div class="observ-definition-list__item">
+                      <dt class="observ-definition-list__term">Cost</dt>
+                      <dd class="observ-definition-list__definition">
+                        <%= format_currency(observation.cost_usd) %>
+                      </dd>
+                    </div>
+                  <% end %>
+                  <div class="observ-definition-list__item">
+                    <dt class="observ-definition-list__term">Duration</dt>
+                    <dd class="observ-definition-list__definition">
+                      <% if observation.duration_ms %>
+                        <%= format_duration_ms(observation.duration_ms) %>
+                      <% else %>
+                        <span class="observ-text--muted">—</span>
+                      <% end %>
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="observ-observation-card__footer">
+                <%= link_to "View Details →", observ_observation_path(observation), class: "observ-link" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="observ-card__empty">
+          <p>No observations found for this trace.</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

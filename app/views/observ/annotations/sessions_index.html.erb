@@ -1,0 +1,48 @@
+<div class="observ-container">
+  <div class="observ-header">
+    <h1 class="observ-title">Annotations</h1>
+  </div>
+
+  <div class="observ-tabs">
+    <div class="observ-tabs__list">
+      <%= link_to "Sessions", sessions_annotations_path, class: "observ-tabs__tab observ-tabs__tab--active" %>
+      <%= link_to "Traces", traces_annotations_path, class: "observ-tabs__tab" %>
+    </div>
+  </div>
+
+  <div class="observ-card">
+    <div class="observ-card__header">
+      <h2 class="observ-card__title">All Annotations (<%= @annotations.count %>)</h2>
+      <%= link_to "Export CSV", export_annotations_path(type: "sessions", format: :csv), class: "observ-button observ-button--secondary", style: "margin-left: auto;" %>
+    </div>
+
+    <div class="observ-card__content">
+      <% if @annotations.any? %>
+        <div class="observ-annotations-list">
+          <% @annotations.each do |annotation| %>
+            <div id="annotation_<%= annotation.id %>" class="observ-annotation">
+              <div class="observ-annotation__header">
+                <span class="observ-annotation__meta">
+                  Session: <%= link_to annotation.annotatable.id, session_path(annotation.annotatable), class: "observ-link" %>
+                  · <%= observ_relative_time(annotation.created_at) %>
+                </span>
+                <%= button_to "Delete", 
+                    session_annotation_path(annotation.annotatable.id, annotation),
+                    method: :delete,
+                    class: "observ-annotation__delete",
+                    data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
+              </div>
+              <div class="observ-annotation__content">
+                <%= simple_format(annotation.content) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="observ-empty-state">
+          <p>No annotations for sessions yet.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

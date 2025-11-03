@@ -1,0 +1,10 @@
+<div class="observ-chat-message__tool-calls">
+  <div class="observ-chat-message__tool-calls-label">
+    Tool Calls:
+  </div>
+  <% message.tool_calls.each do |tool_call| %>
+    <div class="observ-chat-message__tool-call">
+      <span class="observ-chat-message__tool-call-name"><%= tool_call.name %></span>(<%= tool_call.arguments.map { |k, v| "#{k}: #{v.inspect}" }.join(", ") %>)
+    </div>
+  <% end %>
+</div>

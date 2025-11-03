@@ -1,0 +1,88 @@
+<% content_for :title, "Sessions" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <h1 class="observ-page-header__title">Sessions</h1>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <% if @sessions.any? %>
+        <table class="observ-table">
+          <thead class="observ-table__header">
+            <tr class="observ-table__row">
+              <th class="observ-table__cell">Session ID</th>
+              <th class="observ-table__cell">Agent</th>
+              <th class="observ-table__cell">User ID</th>
+              <th class="observ-table__cell">Start Time</th>
+              <th class="observ-table__cell">Duration</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Traces</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Annotations</th>
+              <th class="observ-table__cell">Status</th>
+              <th class="observ-table__cell"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @sessions.each do |session| %>
+              <tr class="observ-table__row">
+                <td class="observ-table__cell">
+                  <code class="observ-code observ-code--inline"><%= truncate_id(session.session_id, 12) %></code>
+                </td>
+                <td class="observ-table__cell">
+                  <%= session.metadata&.dig("agent_type") || "—" %>
+                </td>
+                <td class="observ-table__cell">
+                  <% if session.user_id.present? %>
+                    <code class="observ-code observ-code--inline"><%= truncate_id(session.user_id, 8) %></code>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= observ_timestamp(session.start_time) %>
+                </td>
+                <td class="observ-table__cell">
+                  <% if session.duration_s %>
+                    <%= format_duration_s(session.duration_s) %>
+                  <% else %>
+                    <span class="observ-text--muted">In Progress</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= session.end_time ? session.total_traces_count : session.traces.count %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= format_tokens(session.end_time ? session.total_tokens : session.traces.sum(:total_tokens)) %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= format_currency(session.end_time ? session.total_cost : session.traces.sum(:total_cost)) %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <% if session.annotations.any? %>
+                    <span class="observ-badge observ-badge--info"><%= session.annotations.count %></span>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= observ_status_badge(observ_session_status(session)) %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--actions">
+                  <%= link_to "View", session_path(session), class: "observ-button observ-button--sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="observ-card__empty">
+          <p>No sessions found.</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,160 @@
+@import 'variables';
+
+.observ-observations-list {
+  display: flex;
+  flex-direction: column;
+  gap: $observ-spacing-lg;
+
+  &--compact {
+    gap: $observ-spacing-sm;
+  }
+}
+
+.observ-observation-card {
+  border: 1px solid $observ-gray-200;
+  border-radius: $observ-border-radius;
+  background-color: $observ-white;
+  overflow: hidden;
+
+  &--generation {
+    border-left: 4px solid $observ-primary;
+  }
+
+  &--span {
+    border-left: 4px solid $observ-info;
+  }
+
+  &--compact {
+    font-size: 0.875rem;
+  }
+
+  &__header {
+    padding: $observ-spacing-md;
+    background-color: $observ-gray-50;
+    display: flex;
+    align-items: center;
+    gap: $observ-spacing-md;
+
+    .observ-observation-card--compact & {
+      padding: 0.375rem 0.75rem;
+      gap: 0.5rem;
+    }
+  }
+
+  &__type-badge {
+    display: inline-flex;
+    padding: 0.25rem 0.5rem;
+    background-color: $observ-gray-200;
+    color: $observ-gray-700;
+    border-radius: $observ-border-radius-sm;
+    font-size: $observ-font-size-xs;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    .observ-observation-card--compact & {
+      padding: 0.125rem 0.375rem;
+      font-size: 0.625rem;
+    }
+  }
+
+  &__name {
+    font-size: $observ-font-size-lg;
+    font-weight: 600;
+    margin: 0;
+    color: $observ-gray-900;
+    flex: 1;
+
+    .observ-observation-card--compact & {
+      font-size: 0.875rem;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $observ-spacing-sm;
+  }
+
+  &__id {
+    font-size: $observ-font-size-sm;
+    color: $observ-gray-500;
+
+    .observ-observation-card--compact & {
+      font-size: 0.75rem;
+    }
+  }
+
+  &__body {
+    padding: $observ-spacing-md;
+
+    .observ-observation-card--compact & {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+
+  &__section {
+    padding: $observ-spacing-md;
+    border-top: 1px solid $observ-gray-100;
+
+    &--compact {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+
+  &__section-title {
+    font-size: $observ-font-size-sm;
+    font-weight: 600;
+    color: $observ-gray-700;
+    margin: 0 0 $observ-spacing-sm 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    .observ-observation-card--compact & {
+      font-size: 0.688rem;
+      margin: 0 0 0.25rem 0;
+    }
+  }
+
+  &__footer {
+    padding: $observ-spacing-md;
+    border-top: 1px solid $observ-gray-200;
+    background-color: $observ-gray-50;
+
+    .observ-observation-card--compact & {
+      padding: 0.375rem 0.75rem;
+    }
+  }
+}
+
+.observ-code-block--compact {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  padding: 1rem;
+}
+
+.observ-card--compact {
+  .observ-card__header {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .observ-card__body {
+    padding: 0.75rem;
+  }
+
+  .observ-card__title {
+    font-size: 0.875rem;
+  }
+}
+
+.observ-definition-list--compact {
+  gap: 0.5rem;
+
+  .observ-definition-list__term {
+    font-size: 0.75rem;
+  }
+
+  .observ-definition-list__definition {
+    font-size: 0.813rem;
+  }
+}

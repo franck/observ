@@ -1,0 +1,94 @@
+<% content_for :title, "Observations" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <h1 class="observ-page-header__title">Observations</h1>
+    <div class="observ-page-header__actions">
+      <%= link_to "Generations", generations_observations_path, class: "observ-button observ-button--sm" %>
+      <%= link_to "Spans", spans_observations_path, class: "observ-button observ-button--sm" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <% if @observations.any? %>
+        <table class="observ-table">
+          <thead class="observ-table__header">
+            <tr class="observ-table__row">
+              <th class="observ-table__cell">Observation ID</th>
+              <th class="observ-table__cell">Type</th>
+              <th class="observ-table__cell">Name</th>
+              <th class="observ-table__cell">Model</th>
+              <th class="observ-table__cell">Trace ID</th>
+              <th class="observ-table__cell">Start Time</th>
+              <th class="observ-table__cell">Duration</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+              <th class="observ-table__cell"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @observations.each do |observation| %>
+              <tr class="observ-table__row">
+                <td class="observ-table__cell">
+                  <code class="observ-code observ-code--inline"><%= truncate_id(observation.observation_id, 12) %></code>
+                </td>
+                <td class="observ-table__cell">
+                  <span class="observ-badge observ-badge--<%= observation.type.demodulize.downcase %>">
+                    <%= observation.type.demodulize %>
+                  </span>
+                </td>
+                <td class="observ-table__cell">
+                  <%= observation.name %>
+                </td>
+                <td class="observ-table__cell">
+                  <% if observation.is_a?(Observ::Generation) %>
+                    <%= observation.model || "—" %>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= link_to truncate_id(observation.trace.trace_id, 8), trace_path(observation.trace), class: "observ-link" %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= observ_timestamp(observation.start_time) %>
+                </td>
+                <td class="observ-table__cell">
+                  <% if observation.duration_ms %>
+                    <%= format_duration_ms(observation.duration_ms) %>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <% if observation.is_a?(Observ::Generation) %>
+                    <%= format_tokens(observation.total_tokens) %>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <% if observation.is_a?(Observ::Generation) %>
+                    <%= format_currency(observation.cost_usd) %>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--actions">
+                  <%= link_to "View", observation_path(observation), class: "observ-button observ-button--sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="observ-card__empty">
+          <p>No observations found.</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,127 @@
+.observ-drawer__section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--observ-border-color, #e5e7eb);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.observ-drawer__section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--observ-text-primary, #111827);
+  margin: 0 0 1rem 0;
+}
+
+.observ-annotation-form {
+  .observ-form-field {
+    margin-bottom: 1rem;
+  }
+
+  .observ-form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--observ-text-primary, #111827);
+    margin-bottom: 0.5rem;
+  }
+
+  .observ-form-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--observ-border-color, #d1d5db);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:focus {
+      outline: none;
+      border-color: var(--observ-primary-color, #3b82f6);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  .observ-form-error {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--observ-error-color, #ef4444);
+    margin-top: 0.25rem;
+  }
+
+  .observ-form-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.observ-annotations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.observ-annotation {
+  padding: 1rem;
+  background: var(--observ-surface-color, #f9fafb);
+  border: 1px solid var(--observ-border-color, #e5e7eb);
+  border-radius: 0.5rem;
+}
+
+.observ-annotation__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--observ-border-color, #e5e7eb);
+}
+
+.observ-annotation__time {
+  font-size: 0.75rem;
+  color: var(--observ-text-secondary, #6b7280);
+}
+
+.observ-annotation__delete {
+  background: none;
+  border: none;
+  color: var(--observ-error-color, #ef4444);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.15s ease-in-out;
+
+  &:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+}
+
+.observ-annotation__content {
+  font-size: 0.875rem;
+  color: var(--observ-text-primary, #111827);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  p {
+    margin: 0 0 0.5rem 0;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.observ-empty-state {
+  padding: 2rem;
+  text-align: center;
+}
+
+.observ-empty-state__text {
+  font-size: 0.875rem;
+  color: var(--observ-text-secondary, #6b7280);
+  margin: 0;
+}

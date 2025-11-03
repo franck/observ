@@ -1,0 +1,190 @@
+require 'rails_helper'
+
+RSpec.describe Observ::Trace, type: :model do
+  describe 'associations' do
+    it { should belong_to(:observ_session).class_name('Observ::Session') }
+    it { should have_many(:observations).class_name('Observ::Observation').dependent(:destroy) }
+  end
+
+  describe 'validations' do
+    it { should validate_presence_of(:trace_id) }
+    it { should validate_presence_of(:start_time) }
+
+    it 'validates uniqueness of trace_id' do
+      create(:observ_trace, trace_id: 'unique-trace-123')
+      should validate_uniqueness_of(:trace_id)
+    end
+  end
+
+  describe '#create_generation' do
+    let(:trace) { create(:observ_trace) }
+
+    it 'creates a generation observation' do
+      expect {
+        trace.create_generation(name: 'llm_call', model: 'gpt-4o-mini')
+      }.to change(trace.observations, :count).by(1)
+    end
+
+    it 'sets the correct type' do
+      generation = trace.create_generation(name: 'llm_call', model: 'gpt-4o-mini')
+      expect(generation).to be_a(Observ::Generation)
+      expect(generation.type).to eq('Observ::Generation')
+    end
+
+    it 'sets generation attributes' do
+      generation = trace.create_generation(
+        name: 'test_generation',
+        model: 'claude-3-5-sonnet',
+        metadata: { phase: 'test' },
+        model_parameters: { temperature: 0.5 }
+      )
+
+      expect(generation.name).to eq('test_generation')
+      expect(generation.model).to eq('claude-3-5-sonnet')
+      expect(generation.metadata).to eq({ 'phase' => 'test' })
+      expect(generation.model_parameters).to eq({ 'temperature' => 0.5 })
+    end
+  end
+
+  describe '#create_span' do
+    let(:trace) { create(:observ_trace) }
+
+    it 'creates a span observation' do
+      expect {
+        trace.create_span(name: 'tool:test', input: 'test')
+      }.to change(trace.observations, :count).by(1)
+    end
+
+    it 'sets the correct type' do
+      span = trace.create_span(name: 'tool:test')
+      expect(span).to be_a(Observ::Span)
+      expect(span.type).to eq('Observ::Span')
+    end
+
+    it 'converts hash input to JSON' do
+      span = trace.create_span(name: 'tool:test', input: { query: 'search' })
+      expect(span.input).to be_a(String)
+      expect(JSON.parse(span.input)).to eq({ 'query' => 'search' })
+    end
+  end
+
+  describe '#finalize' do
+    let(:trace) { create(:observ_trace) }
+
+    it 'sets end_time' do
+      trace.finalize(output: 'response')
+      expect(trace.end_time).to be_present
+    end
+
+    it 'sets output' do
+      trace.finalize(output: 'test response')
+      expect(trace.output).to eq('test response')
+    end
+
+    it 'merges metadata' do
+      trace.metadata = { existing: 'data' }
+      trace.finalize(metadata: { new: 'data' })
+      expect(trace.metadata).to eq({ 'existing' => 'data', 'new' => 'data' })
+    end
+
+    it 'calls update_aggregated_metrics' do
+      expect(trace).to receive(:update_aggregated_metrics)
+      trace.finalize(output: 'done')
+    end
+
+    it 'converts hash output to JSON' do
+      trace.finalize(output: { status: 'success' })
+      expect(trace.output).to be_a(String)
+      expect(JSON.parse(trace.output)).to eq({ 'status' => 'success' })
+    end
+  end
+
+  describe '#finalize_with_response' do
+    let(:trace) { create(:observ_trace) }
+
+    context 'with a string response' do
+      it 'finalizes with the string as output' do
+        result = trace.finalize_with_response('simple response')
+        expect(trace.output).to eq('simple response')
+        expect(result).to eq('simple response')
+      end
+    end
+
+    context 'with a complex response object' do
+      it 'extracts content and metadata' do
+        response = double(
+          content: 'response content',
+          model_id: 'gpt-4o-mini',
+          input_tokens: 50,
+          output_tokens: 50,
+          role: :assistant
+        )
+
+        result = trace.finalize_with_response(response)
+        expect(trace.output).to eq('response content')
+        expect(trace.metadata['model_id']).to eq('gpt-4o-mini')
+        expect(trace.metadata['total_tokens']).to eq(100)
+      end
+    end
+  end
+
+  describe '#duration_ms' do
+    it 'returns nil when not finalized' do
+      trace = create(:observ_trace, end_time: nil)
+      expect(trace.duration_ms).to be_nil
+    end
+
+    it 'calculates duration in milliseconds' do
+      start = Time.current
+      trace = create(:observ_trace, start_time: start, end_time: start + 2.5.seconds)
+      expect(trace.duration_ms).to eq(2500.0)
+    end
+  end
+
+  describe '#update_aggregated_metrics' do
+    let(:trace) { create(:observ_trace) }
+
+    before do
+      create(:observ_generation, trace: trace, cost_usd: 0.001,
+             usage: { total_tokens: 50 })
+      create(:observ_generation, trace: trace, cost_usd: 0.002,
+             usage: { total_tokens: 100 })
+    end
+
+    it 'updates total_cost from generations' do
+      trace.update_aggregated_metrics
+      expect(trace.total_cost).to eq(0.003)
+    end
+
+    it 'updates total_tokens from generations' do
+      trace.update_aggregated_metrics
+      expect(trace.total_tokens).to eq(150)
+    end
+  end
+
+  describe 'scopes' do
+    let(:session) { create(:observ_session) }
+
+    describe '#generations' do
+      it 'returns only generation observations' do
+        trace = create(:observ_trace, observ_session: session)
+        gen = create(:observ_generation, trace: trace)
+        span = create(:observ_span, trace: trace)
+
+        expect(trace.generations).to include(gen)
+        expect(trace.generations).not_to include(span)
+      end
+    end
+
+    describe '#spans' do
+      it 'returns only span observations' do
+        trace = create(:observ_trace, observ_session: session)
+        gen = create(:observ_generation, trace: trace)
+        span = create(:observ_span, trace: trace)
+
+        expect(trace.spans).to include(span)
+        expect(trace.spans).not_to include(gen)
+      end
+    end
+  end
+end

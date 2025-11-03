@@ -1,0 +1,164 @@
+<% content_for :title, "Generation #{truncate_id(@observation.observation_id, 12)}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div class="observ-page-header__breadcrumb">
+      <%= link_to "Observations", observations_path, class: "observ-link" %> /
+    </div>
+    <h1 class="observ-page-header__title">
+      Generation <code class="observ-code observ-code--inline"><%= truncate_id(@observation.observation_id, 12) %></code>
+    </h1>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-metrics-grid observ-metrics-grid--4col">
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Model</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value observ-metric-card__value--small">
+          <%= @observation.model || "—" %>
+        </p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Total Tokens</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_tokens(@observation.total_tokens) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card observ-metric-card--highlighted">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Cost</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_currency(@observation.cost_usd) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Duration</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value">
+          <% if @observation.duration_ms %>
+            <%= format_duration_ms(@observation.duration_ms) %>
+          <% else %>
+            <span class="observ-text--muted">—</span>
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="observ-card">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Details</h2>
+    </header>
+    <div class="observ-card__body">
+      <dl class="observ-definition-list">
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Trace</dt>
+          <dd class="observ-definition-list__definition">
+            <%= link_to truncate_id(@observation.trace.trace_id, 12), trace_path(@observation.trace), class: "observ-link" %>
+          </dd>
+        </div>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Name</dt>
+          <dd class="observ-definition-list__definition"><%= @observation.name %></dd>
+        </div>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Start Time</dt>
+          <dd class="observ-definition-list__definition"><%= observ_timestamp(@observation.start_time) %></dd>
+        </div>
+        <% if @observation.end_time %>
+          <div class="observ-definition-list__item">
+            <dt class="observ-definition-list__term">End Time</dt>
+            <dd class="observ-definition-list__definition"><%= observ_timestamp(@observation.end_time) %></dd>
+          </div>
+        <% end %>
+        <% if @observation.finish_reason %>
+          <div class="observ-definition-list__item">
+            <dt class="observ-definition-list__term">Finish Reason</dt>
+            <dd class="observ-definition-list__definition"><%= @observation.finish_reason %></dd>
+          </div>
+        <% end %>
+        <% if @observation.time_to_first_token_ms %>
+          <div class="observ-definition-list__item">
+            <dt class="observ-definition-list__term">Time to First Token</dt>
+            <dd class="observ-definition-list__definition"><%= format_duration_ms(@observation.time_to_first_token_ms) %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </section>
+
+  <% if @observation.usage.present? && @observation.usage.any? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Token Usage</h2>
+      </header>
+      <div class="observ-card__body">
+        <dl class="observ-definition-list observ-definition-list--horizontal">
+          <% @observation.usage.each do |key, value| %>
+            <div class="observ-definition-list__item">
+              <dt class="observ-definition-list__term"><%= key.humanize %></dt>
+              <dd class="observ-definition-list__definition"><%= format_tokens(value) %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @observation.input.present? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Input</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= @observation.input %></pre>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @observation.output.present? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Output</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= @observation.output %></pre>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @observation.messages.present? && @observation.messages.any? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Messages</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= JSON.pretty_generate(@observation.messages) %></pre>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @observation.provider_metadata.present? && @observation.provider_metadata.any? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Provider Metadata</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= JSON.pretty_generate(@observation.provider_metadata) %></pre>
+      </div>
+    </section>
+  <% end %>
+</div>

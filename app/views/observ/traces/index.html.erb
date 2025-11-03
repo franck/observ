@@ -1,0 +1,84 @@
+<% content_for :title, "Traces" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <h1 class="observ-page-header__title">Traces</h1>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <% if @traces.any? %>
+        <table class="observ-table">
+          <thead class="observ-table__header">
+            <tr class="observ-table__row">
+              <th class="observ-table__cell">Trace ID</th>
+              <th class="observ-table__cell">Session ID</th>
+              <th class="observ-table__cell">Name</th>
+              <th class="observ-table__cell">Start Time</th>
+              <th class="observ-table__cell">Duration</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Observations</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Annotations</th>
+              <th class="observ-table__cell">Status</th>
+              <th class="observ-table__cell"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @traces.each do |trace| %>
+              <tr class="observ-table__row">
+                <td class="observ-table__cell">
+                  <code class="observ-code observ-code--inline"><%= truncate_id(trace.trace_id, 12) %></code>
+                </td>
+                <td class="observ-table__cell">
+                  <%= link_to truncate_id(trace.observ_session.session_id, 8), session_path(trace.observ_session), class: "observ-link" %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= trace.name || "—" %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= observ_timestamp(trace.start_time) %>
+                </td>
+                <td class="observ-table__cell">
+                  <% if trace.duration_ms %>
+                    <%= format_duration_ms(trace.duration_ms) %>
+                  <% else %>
+                    <span class="observ-text--muted">In Progress</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= trace.observations.count %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= format_tokens(trace.total_tokens) %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= format_currency(trace.total_cost) %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <% if trace.annotations.any? %>
+                    <span class="observ-badge observ-badge--info"><%= trace.annotations.count %></span>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= observ_status_badge(observ_trace_status(trace)) %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--actions">
+                  <%= link_to "View", trace_path(trace), class: "observ-button observ-button--sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="observ-card__empty">
+          <p>No traces found.</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

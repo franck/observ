@@ -1,0 +1,4 @@
+<%# Highlight {{variables}} in prompt content with proper HTML escaping %>
+<%= ERB::Util.html_escape(content).gsub(/(\{\{[^}]+\}\})/) { |match|
+  "<span style='color: #2563eb; font-weight: 600;'>#{match}</span>"
+}.html_safe %>

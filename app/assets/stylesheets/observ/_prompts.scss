@@ -1,0 +1,365 @@
+@import 'variables';
+
+// Prompts Index Page - Filters
+.observ-prompts-filters {
+  margin-bottom: var(--spacing-lg, 1.5rem);
+
+  &__form {
+    display: flex;
+    gap: var(--spacing-md, 1rem);
+    align-items: flex-end;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+
+    &--search {
+      flex: 1;
+    }
+
+    &--state {
+      width: 12rem;
+    }
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: var(--spacing-xs, 0.5rem);
+    font-weight: 500;
+    color: $observ-gray-900;
+    font-size: $observ-font-size-sm;
+  }
+
+  &__input,
+  &__select {
+    width: 100%;
+    padding: var(--spacing-sm, 0.5rem);
+    border: 1px solid $observ-gray-300;
+    border-radius: $observ-border-radius-sm;
+    font-size: $observ-font-size-base;
+    color: $observ-gray-900;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $observ-primary;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &::placeholder {
+      color: $observ-gray-400;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--spacing-sm, 0.5rem);
+  }
+}
+
+// Prompts Table - Link Styling
+.observ-prompts-table {
+  &__link {
+    font-weight: 500;
+    color: $observ-primary;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: darken($observ-primary, 10%);
+      text-decoration: underline;
+    }
+  }
+
+  &__action-group {
+    display: flex;
+    gap: var(--spacing-sm, 0.5rem);
+  }
+}
+
+// Prompts Pagination
+.observ-prompts-pagination {
+  margin-top: var(--spacing-lg, 1.5rem);
+}
+
+// Empty State
+.observ-card__empty-text {
+  margin-bottom: var(--spacing-md, 1rem);
+}
+
+// Prompt Show Page - Version Details Layout
+.prompt-details {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: $observ-spacing-lg;
+
+  @media (max-width: $observ-breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Prompt Versions Sidebar
+.prompt-versions {
+  &__sidebar {
+    position: sticky;
+    top: $observ-spacing-md;
+  }
+
+  &__header {
+    padding: $observ-spacing-lg;
+    border-bottom: 1px solid $observ-gray-200;
+  }
+
+  &__title {
+    font-size: $observ-font-size-lg;
+    font-weight: 600;
+    margin: 0;
+    color: $observ-gray-900;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  &__item {
+    display: block;
+    padding: 0.75rem $observ-spacing-md;
+    border-bottom: 1px solid $observ-gray-200;
+    text-decoration: none;
+    color: inherit;
+    transition: $observ-transition;
+
+    &:hover {
+      background-color: $observ-gray-50;
+    }
+
+    &--active {
+      background-color: #eff6ff;
+      border-left: 3px solid $observ-primary;
+    }
+  }
+
+  &__item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $observ-spacing-xs;
+  }
+
+  &__version-number {
+    font-weight: 500;
+    color: $observ-gray-900;
+  }
+
+  &__commit-message {
+    font-size: $observ-font-size-xs;
+    color: $observ-gray-500;
+    margin: $observ-spacing-xs 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__timestamp {
+    font-size: $observ-font-size-xs;
+    color: $observ-gray-400;
+    margin: $observ-spacing-xs 0 0;
+  }
+
+  &__footer {
+    padding: 0.75rem $observ-spacing-md;
+  }
+}
+
+// Prompt Details Panel
+.prompt-detail {
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: $observ-spacing-md;
+  }
+
+  &__header-section {
+    width: 100%;
+    padding-bottom: $observ-spacing-md;
+    border-bottom: 1px solid $observ-gray-200;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+
+  &__badges-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &__badges {
+    display: flex;
+    align-items: center;
+    gap: $observ-spacing-sm;
+  }
+
+  &__metadata {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $observ-spacing-lg;
+    font-size: $observ-font-size-sm;
+
+    @media (max-width: $observ-breakpoint-lg) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: $observ-breakpoint-sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: $observ-spacing-xs;
+  }
+
+  &__metadata-label {
+    color: $observ-gray-500;
+    font-size: $observ-font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__metadata-value {
+    font-weight: 500;
+    color: $observ-gray-900;
+    margin: 0;
+  }
+
+  &__commit {
+    padding: 0.75rem;
+    background-color: $observ-gray-50;
+    border-radius: $observ-border-radius-sm;
+  }
+
+  &__commit-title {
+    font-size: $observ-font-size-sm;
+    font-weight: 600;
+    margin: 0 0 $observ-spacing-xs 0;
+    color: $observ-gray-900;
+  }
+
+  &__commit-message {
+    font-size: $observ-font-size-sm;
+    color: $observ-gray-700;
+    margin: 0;
+  }
+
+  &__section-title {
+    font-size: $observ-font-size-lg;
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+    color: $observ-gray-900;
+  }
+
+  &__content-block {
+    background-color: $observ-gray-50;
+    padding: $observ-spacing-md;
+    border-radius: $observ-border-radius-sm;
+    overflow-x: auto;
+
+    pre {
+      margin: 0;
+      font-family: $observ-font-family-mono;
+      font-size: $observ-font-size-sm;
+      white-space: pre-wrap;
+    }
+  }
+
+  &__config-block {
+    background-color: $observ-gray-50;
+    padding: $observ-spacing-md;
+    border-radius: $observ-border-radius-sm;
+    overflow-x: auto;
+
+    pre {
+      font-size: $observ-font-size-sm;
+      margin: 0;
+    }
+  }
+
+  &__no-config {
+    color: $observ-gray-500;
+    font-size: $observ-font-size-sm;
+  }
+
+  &__body-section {
+    border-bottom: 1px solid $observ-gray-200;
+  }
+}
+
+// Page Header Customizations for Prompts
+.prompt-page-header {
+  &__back-link {
+    display: inline-block;
+    margin-bottom: $observ-spacing-sm;
+    color: $observ-primary;
+    text-decoration: none;
+    font-weight: 500;
+    transition: $observ-transition;
+
+    &:hover {
+      color: darken($observ-primary, 10%);
+    }
+  }
+
+  &__subtitle {
+    color: $observ-gray-500;
+    margin-top: $observ-spacing-xs;
+    font-size: $observ-font-size-sm;
+  }
+}
+
+// Badge modifier for "default" state
+.observ-badge--default {
+  background-color: $observ-gray-100;
+  color: $observ-gray-600;
+}
+
+// Prompt Actions Component
+.prompt-actions {
+  display: flex;
+  gap: $observ-spacing-sm;
+  align-items: center;
+
+  // Ensure button_to forms display inline and don't affect layout
+  form {
+    display: inline-flex;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+  }
+
+  // Ensure all buttons (both links and actual buttons) have same height
+  .observ-button,
+  button.observ-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  // Reset button element defaults
+  button.observ-button {
+    border: 1px solid $observ-gray-300;
+    font-family: inherit;
+  }
+}

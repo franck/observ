@@ -1,0 +1,33 @@
+<%= form_with(model: message, url: chat_messages_path(chat), id: "new_message", data: { controller: "observ--message-form" }) do |form| %>
+  <% if message.errors.any? %>
+    <div class="observ-alert observ-alert--danger">
+      <h3 class="observ-alert__title"><%= pluralize(message.errors.count, "error") %> prohibited this message from being saved:</h3>
+      <ul class="observ-alert__list">
+        <% message.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="observ-form-group">
+    <%= form.text_field :content, 
+      class: "observ-input observ-input--wide", 
+      placeholder: "Type your message...", 
+      autofocus: true,
+      data: { 
+        observ__message_form_target: "input",
+        action: "input->observ--message-form#toggleSubmit"
+      } %>
+  </div>
+
+  <div class="observ-form-actions">
+    <%= form.submit "Send message", 
+      class: "observ-button observ-button--primary",
+      data: { observ__message_form_target: "submit" } %>
+    <span class="observ-loading-indicator" data-observ--message-form-target="loadingIndicator" style="display: none;">
+      <span class="observ-spinner"></span>
+      <span>Waiting for response...</span>
+    </span>
+  </div>
+<% end %>

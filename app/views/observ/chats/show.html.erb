@@ -1,0 +1,40 @@
+<%= turbo_stream_from "chat_#{@chat.id}" %>
+
+<% content_for :title, "Chat ##{@chat.id}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <h1 class="observ-page-header__title">Agent Test Chat #<%= @chat.id %></h1>
+    <div class="observ-page-header__meta">
+      <span class="observ-badge observ-badge--secondary"><%= @chat.model&.name || 'Default' %></span>
+      <span class="observ-badge observ-badge--info"><%= @chat.agent_class_name.presence || 'BaseAgent' %></span>
+    </div>
+  </div>
+<% end %>
+
+<% if notice.present? %>
+  <div class="observ-alert observ-alert--success">
+    <%= notice %>
+  </div>
+<% end %>
+
+<div class="observ-card">
+  <div class="observ-card__body" data-controller="observ--autoscroll">
+    <div id="messages" class="observ-chat-messages" data-observ--autoscroll-target="container">
+      <% @chat.messages.where.not(id: nil).each do |message| %>
+        <%= render message %>
+      <% end %>
+    </div>
+
+    <div class="observ-form-separator">
+      <%= render "observ/messages/form", chat: @chat, message: @message %>
+    </div>
+  </div>
+
+  <div class="observ-card__footer">
+    <%= link_to "← Back to chats", chats_path, class: "observ-link" %>
+    <% if @chat.observ_session %>
+      | <%= link_to "View Observability Data →", session_path(@chat.observ_session), class: "observ-link" %>
+    <% end %>
+  </div>
+</div>

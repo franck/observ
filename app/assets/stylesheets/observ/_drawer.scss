@@ -1,0 +1,136 @@
+@import 'variables';
+
+.observ-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  pointer-events: none;
+
+  &.open {
+    pointer-events: auto;
+
+    .observ-drawer__overlay {
+      opacity: 1;
+    }
+
+    .observ-drawer__panel {
+      transform: translateX(0);
+    }
+  }
+}
+
+.observ-drawer__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($observ-black, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.observ-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 600px;
+  background-color: $observ-white;
+  box-shadow: $observ-shadow-lg;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @media (max-width: $observ-breakpoint-md) {
+    max-width: 90%;
+  }
+}
+
+.observ-drawer__header {
+  display: flex;
+  align-items: center;
+  gap: $observ-spacing-md;
+  padding: $observ-spacing-lg;
+  border-bottom: 1px solid $observ-gray-200;
+  background-color: $observ-white;
+  flex-shrink: 0;
+}
+
+.observ-drawer__close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: $observ-gray-600;
+  cursor: pointer;
+  border-radius: $observ-border-radius-sm;
+  transition: $observ-transition;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: $observ-gray-100;
+    color: $observ-gray-900;
+  }
+
+  &:active {
+    background-color: $observ-gray-200;
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.observ-drawer__title {
+  margin: 0;
+  font-size: $observ-font-size-xl;
+  font-weight: 600;
+  color: $observ-gray-900;
+  flex: 1;
+  min-width: 0;
+
+  .observ-spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.observ-drawer__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $observ-spacing-lg;
+  background-color: $observ-white;
+}
+
+.observ-drawer__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $observ-spacing-2xl;
+  color: $observ-gray-500;
+
+  .observ-spinner {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+.observ-drawer__error {
+  padding: $observ-spacing-lg;
+  background-color: lighten($observ-danger, 45%);
+  color: darken($observ-danger, 10%);
+  border-radius: $observ-border-radius;
+  text-align: center;
+}

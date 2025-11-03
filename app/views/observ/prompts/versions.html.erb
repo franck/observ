@@ -1,0 +1,87 @@
+<% content_for :title, "Version History" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Prompt", prompt_path(@prompt_name), style: "display: inline-block; margin-bottom: 0.5rem; color: #2563eb;" %>
+      <h1 class="observ-page-header__title">Version History</h1>
+      <p style="color: #6b7280; margin-top: 0.25rem;"><%= @prompt_name %></p>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <!-- Timeline View -->
+  <div class="observ-card">
+    <div class="observ-card__body">
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <% @versions.each_with_index do |version, index| %>
+          <div style="display: flex; gap: 1rem;">
+            <!-- Timeline Line -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 1rem; height: 1rem; border-radius: 50%; <%= case version.state
+                  when 'production' then 'background-color: #10b981;'
+                  when 'draft' then 'background-color: #f59e0b;'
+                  when 'archived' then 'background-color: #9ca3af;'
+                  end %>">
+              </div>
+              <% unless index == @versions.count - 1 %>
+                <div style="width: 2px; height: 100%; background-color: #d1d5db; flex: 1; margin: 0.25rem 0;"></div>
+              <% end %>
+            </div>
+
+            <!-- Version Card -->
+            <div style="flex: 1; padding-bottom: 1.5rem;">
+              <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; transition: box-shadow 0.2s;">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.75rem;">
+                  <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                      <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0;">Version <%= version.version %></h3>
+                      <span class="observ-badge <%= case version.state
+                          when 'draft' then 'observ-badge--warning'
+                          when 'production' then 'observ-badge--success'
+                          when 'archived' then 'observ-badge--default'
+                          end %>" style="font-size: 0.75rem;">
+                        <%= version.state.titleize %>
+                      </span>
+                    </div>
+
+                    <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">
+                      <%= version.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+                      <% if version.created_by.present? %>
+                        by <span style="font-weight: 500;"><%= version.created_by %></span>
+                      <% end %>
+                    </p>
+
+                    <% if version.commit_message.present? %>
+                      <p style="font-size: 0.875rem; color: #374151; margin: 0.5rem 0 0; font-style: italic;">
+                        "<%= version.commit_message %>"
+                      </p>
+                    <% end %>
+                  </div>
+
+                  <div style="display: flex; gap: 0.5rem;">
+                    <%= link_to "View", prompt_path(@prompt_name, version: version.version), class: "observ-button observ-button--sm observ-button--secondary" %>
+
+                    <% if @production_version && version != @production_version %>
+                      <%= link_to "Compare with Production",
+                        compare_prompt_path(@prompt_name,
+                          from: @production_version.version,
+                          to: version.version),
+                        class: "observ-button observ-button--sm" %>
+                    <% end %>
+                  </div>
+                </div>
+
+                <!-- Preview -->
+                <div style="margin-top: 0.75rem; padding: 0.75rem; background-color: #f9fafb; border-radius: 0.375rem; font-family: monospace; font-size: 0.875rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  <%= truncate(version.prompt, length: 200) %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

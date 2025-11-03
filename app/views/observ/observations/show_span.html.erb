@@ -1,0 +1,93 @@
+<% content_for :title, "Span #{truncate_id(@observation.observation_id, 12)}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div class="observ-page-header__breadcrumb">
+      <%= link_to "Observations", observations_path, class: "observ-link" %> /
+    </div>
+    <h1 class="observ-page-header__title">
+      Span <code class="observ-code observ-code--inline"><%= truncate_id(@observation.observation_id, 12) %></code>
+    </h1>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-card">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Details</h2>
+    </header>
+    <div class="observ-card__body">
+      <dl class="observ-definition-list">
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Trace</dt>
+          <dd class="observ-definition-list__definition">
+            <%= link_to truncate_id(@observation.trace.trace_id, 12), trace_path(@observation.trace), class: "observ-link" %>
+          </dd>
+        </div>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Name</dt>
+          <dd class="observ-definition-list__definition"><%= @observation.name %></dd>
+        </div>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Start Time</dt>
+          <dd class="observ-definition-list__definition"><%= observ_timestamp(@observation.start_time) %></dd>
+        </div>
+        <% if @observation.end_time %>
+          <div class="observ-definition-list__item">
+            <dt class="observ-definition-list__term">End Time</dt>
+            <dd class="observ-definition-list__definition"><%= observ_timestamp(@observation.end_time) %></dd>
+          </div>
+        <% end %>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Duration</dt>
+          <dd class="observ-definition-list__definition">
+            <% if @observation.duration_ms %>
+              <%= format_duration_ms(@observation.duration_ms) %>
+            <% else %>
+              <span class="observ-text--muted">In Progress</span>
+            <% end %>
+          </dd>
+        </div>
+        <% if @observation.status_message %>
+          <div class="observ-definition-list__item">
+            <dt class="observ-definition-list__term">Status</dt>
+            <dd class="observ-definition-list__definition"><%= @observation.status_message %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </section>
+
+  <% if @observation.input.present? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Input</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= @observation.input %></pre>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @observation.output.present? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Output</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= @observation.output %></pre>
+      </div>
+    </section>
+  <% end %>
+
+  <% if @observation.metadata.present? && @observation.metadata.any? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Metadata</h2>
+      </header>
+      <div class="observ-card__body">
+        <pre class="observ-code-block"><%= JSON.pretty_generate(@observation.metadata) %></pre>
+      </div>
+    </section>
+  <% end %>
+</div>

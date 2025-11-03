@@ -1,0 +1,40 @@
+<div class="prompt-actions">
+  <% if prompt.draft? %>
+    <%= link_to "Edit", edit_prompt_path(prompt.name, version: prompt.version), 
+        class: "observ-button observ-button--sm observ-button--primary",
+        data: { turbo_frame: "_top" } %>
+    <%= button_to "Promote to Production",
+      promote_prompt_version_path(prompt.name, prompt),
+      method: :post,
+      form: { data: { turbo_confirm: "Promote this version to production?", turbo_frame: "_top" } },
+      class: "observ-button observ-button--sm observ-button--success" %>
+    <%= button_to "Delete", prompt_path(prompt.name, version: prompt.version),
+      method: :delete,
+      form: { data: { turbo_confirm: "Delete this draft version?", turbo_frame: "_top" } },
+      class: "observ-button observ-button--sm observ-button--danger" %>
+
+  <% elsif prompt.production? %>
+    <%= button_to "Clone to Draft",
+      clone_prompt_version_path(prompt.name, prompt),
+      method: :post,
+      form: { data: { turbo_frame: "_top" } },
+      class: "observ-button observ-button--sm observ-button--secondary" %>
+    <%= button_to "Demote to Archived",
+      demote_prompt_version_path(prompt.name, prompt),
+      method: :post,
+      form: { data: { turbo_confirm: "Demote this production version?", turbo_frame: "_top" } },
+      class: "observ-button observ-button--sm" %>
+
+  <% elsif prompt.archived? %>
+    <%= button_to "Clone to Draft",
+      clone_prompt_version_path(prompt.name, prompt),
+      method: :post,
+      form: { data: { turbo_frame: "_top" } },
+      class: "observ-button observ-button--sm observ-button--secondary" %>
+    <%= button_to "Restore to Production",
+      restore_prompt_version_path(prompt.name, prompt),
+      method: :post,
+      form: { data: { turbo_confirm: "Restore this version to production?", turbo_frame: "_top" } },
+      class: "observ-button observ-button--sm observ-button--success" %>
+  <% end %>
+</div>

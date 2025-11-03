@@ -1,0 +1,112 @@
+<% content_for :title, "Prompt Management" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <h1 class="observ-page-header__title">Prompt Management</h1>
+    <%= link_to "New Prompt", new_prompt_path, class: "observ-button observ-button--primary" %>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <!-- Search and Filters -->
+  <section class="observ-card observ-prompts-filters">
+    <div class="observ-card__body">
+      <%= form_with url: prompts_path, method: :get, class: "observ-prompts-filters__form" do |f| %>
+        <div class="observ-prompts-filters__field observ-prompts-filters__field--search">
+          <%= f.label :search, "Search prompts", class: "observ-prompts-filters__label" %>
+          <%= f.text_field :search,
+            value: params[:search],
+            placeholder: "Search by name...",
+            class: "observ-prompts-filters__input" %>
+        </div>
+
+        <div class="observ-prompts-filters__field observ-prompts-filters__field--state">
+          <%= f.label :state, "Filter by state", class: "observ-prompts-filters__label" %>
+          <%= f.select :state,
+            options_for_select(
+              [["All States", ""], ["Draft", "draft"], ["Production", "production"], ["Archived", "archived"]],
+              params[:state]
+            ),
+            {},
+            class: "observ-prompts-filters__select" %>
+        </div>
+
+        <div class="observ-prompts-filters__actions">
+          <%= f.submit "Filter", class: "observ-button observ-button--secondary" %>
+          <%= link_to "Clear", prompts_path, class: "observ-button" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Prompts Table -->
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <% if @prompt_data.any? %>
+        <table class="observ-table">
+          <thead class="observ-table__header">
+            <tr class="observ-table__row">
+              <th class="observ-table__cell">Name</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Versions</th>
+              <th class="observ-table__cell">Production</th>
+              <th class="observ-table__cell">Latest</th>
+              <th class="observ-table__cell">Last Updated</th>
+              <th class="observ-table__cell observ-table__cell--actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @prompt_data.each do |data| %>
+              <tr class="observ-table__row">
+                <td class="observ-table__cell">
+                  <%= link_to data[:name], prompt_path(data[:name]), class: "observ-prompts-table__link" %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= data[:total_versions] %>
+                </td>
+                <td class="observ-table__cell">
+                  <% if data[:production_version] %>
+                    <span class="observ-badge observ-badge--success">
+                      v<%= data[:production_version] %>
+                    </span>
+                  <% else %>
+                    <span class="observ-text--muted">None</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <span class="observ-badge <%= case data[:latest_state]
+                    when 'draft' then 'observ-badge--warning'
+                    when 'production' then 'observ-badge--success'
+                    when 'archived' then 'observ-badge--default'
+                    end %>">
+                    v<%= data[:latest_version] %> · <%= data[:latest_state] %>
+                  </span>
+                </td>
+                <td class="observ-table__cell">
+                  <%= time_ago_in_words(data[:last_updated]) %> ago
+                </td>
+                <td class="observ-table__cell observ-table__cell--actions">
+                  <div class="observ-prompts-table__action-group">
+                    <%= link_to "View", prompt_path(data[:name]), class: "observ-button observ-button--sm" %>
+                    <%= link_to "History", versions_prompt_path(data[:name]), class: "observ-button observ-button--sm" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="observ-card__empty">
+          <p class="observ-card__empty-text">No prompts found</p>
+          <%= link_to "Create your first prompt", new_prompt_path, class: "observ-button observ-button--primary" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Pagination -->
+  <% if @prompt_data.any? %>
+    <div class="observ-prompts-pagination">
+      <%= paginate @prompts %>
+    </div>
+  <% end %>
+</div>

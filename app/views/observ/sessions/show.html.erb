@@ -1,0 +1,251 @@
+<% content_for :title, "Session #{truncate_id(@session.session_id, 12)}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div class="observ-page-header__breadcrumb">
+      <%= link_to "Sessions", sessions_path, class: "observ-link" %> /
+    </div>
+    <h1 class="observ-page-header__title">
+      Session <code class="observ-code observ-code--inline"><%= truncate_id(@session.session_id, 12) %></code>
+    </h1>
+    <div class="observ-page-header__meta">
+      <%= observ_status_badge(observ_session_status(@session)) %>
+    </div>
+  </div>
+  <div class="observ-page-header__actions">
+    <%= link_to "#", 
+        class: "observ-button observ-button--primary observ-button--sm",
+        data: { 
+          action: "click->observ--drawer#open", 
+          drawer_url_param: annotations_drawer_session_path(@session)
+        } do %>
+      Annotate
+      <% if @session.annotations.any? %>
+        <span class="observ-badge observ-badge--light"><%= @session.annotations.count %></span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-metrics-grid observ-metrics-grid--4col">
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Traces</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= @session_metrics[:total_traces] %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">LLM Calls</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= @session_metrics[:total_llm_calls] %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Total Tokens</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_tokens(@session_metrics[:total_tokens]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card observ-metric-card--highlighted">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Total Cost</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_currency(@session_metrics[:total_cost]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Duration</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value">
+          <% if @session_metrics[:duration_s] %>
+            <%= format_duration_s(@session_metrics[:duration_s]) %>
+          <% else %>
+            <span class="observ-text--muted">In Progress</span>
+          <% end %>
+        </p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Avg Latency</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_duration_ms(@session_metrics[:average_llm_latency_ms]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Total LLM Time</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_duration_ms(@session_metrics[:total_llm_duration_ms]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Started</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value observ-metric-card__value--small">
+          <%= observ_relative_time(@session.start_time) %>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <% if @session.metadata.present? && @session.metadata.any? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Metadata</h2>
+      </header>
+      <div class="observ-card__body">
+        <dl class="observ-definition-list">
+          <% @session.metadata.each do |key, value| %>
+            <div class="observ-definition-list__item">
+              <dt class="observ-definition-list__term"><%= key %></dt>
+              <dd class="observ-definition-list__definition"><%= value %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    </section>
+  <% end %>
+
+  <section class="observ-card">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Traces (<%= @traces.count %>)</h2>
+    </header>
+    <div class="observ-card__body">
+      <% if @traces.any? %>
+        <table class="observ-table">
+          <thead class="observ-table__header">
+            <tr class="observ-table__row">
+              <th class="observ-table__cell">Trace ID</th>
+              <th class="observ-table__cell">Name</th>
+              <th class="observ-table__cell">Model(s)</th>
+              <th class="observ-table__cell">Start Time</th>
+              <th class="observ-table__cell">Duration</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Observations</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+              <th class="observ-table__cell">Status</th>
+              <th class="observ-table__cell"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @traces.each do |trace| %>
+              <tr class="observ-table__row">
+                <td class="observ-table__cell">
+                  <code class="observ-code observ-code--inline"><%= truncate_id(trace.trace_id, 12) %></code>
+                </td>
+                <td class="observ-table__cell">
+                  <%= trace.name || "—" %>
+                </td>
+                <td class="observ-table__cell">
+                  <% models = trace.models_used %>
+                  <% if models.any? %>
+                    <%= models.join(", ") %>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= observ_timestamp(trace.start_time) %>
+                </td>
+                <td class="observ-table__cell">
+                  <% if trace.duration_ms %>
+                    <%= format_duration_ms(trace.duration_ms) %>
+                  <% else %>
+                    <span class="observ-text--muted">—</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= trace.observations.count %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= format_tokens(trace.total_tokens) %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= format_currency(trace.total_cost) %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= observ_status_badge(observ_trace_status(trace)) %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--actions">
+                  <%= link_to "View", trace_path(trace), class: "observ-button observ-button--sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="observ-card__empty">
+          <p>No traces found for this session.</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <% if @chat.present? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Chat Conversation</h2>
+        <div class="observ-card__actions">
+          <%= link_to "View Chat", chat_path(@chat), class: "observ-button observ-button--sm" %>
+        </div>
+      </header>
+      <div class="observ-card__body">
+        <% if @chat.messages.any? %>
+          <div class="observ-chat-messages">
+            <% @chat.messages.order(created_at: :asc).each do |message| %>
+              <div class="observ-chat-message observ-chat-message--<%= message.role %>">
+                <div class="observ-chat-message__header">
+                  <span class="observ-chat-message__role"><%= message.role.capitalize %></span>
+                  <span class="observ-chat-message__time"><%= observ_relative_time(message.created_at) %></span>
+                  <% if message.traces.exists? %>
+                    <%= link_to "View Trace", trace_path(message.traces.first), class: "observ-chat-message__trace-link" %>
+                  <% end %>
+                  <% if message.input_tokens || message.output_tokens %>
+                    <span class="observ-chat-message__tokens">
+                      <% if message.input_tokens %>
+                        <span>In: <%= format_tokens(message.input_tokens) %></span>
+                      <% end %>
+                      <% if message.output_tokens %>
+                        <span>Out: <%= format_tokens(message.output_tokens) %></span>
+                      <% end %>
+                    </span>
+                  <% end %>
+                </div>
+                <div class="observ-chat-message__content">
+                  <%= simple_format(message.content) %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="observ-card__empty">
+            <p>No messages found in this chat.</p>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+</div>

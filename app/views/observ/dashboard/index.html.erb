@@ -1,0 +1,236 @@
+<% content_for :title, "Dashboard" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <h1 class="observ-page-header__title">Observability Dashboard</h1>
+    <div class="observ-page-header__actions">
+      <%= form_with url: dashboard_path, method: :get, class: "observ-period-selector" do |f| %>
+        <%= f.select :period, 
+          options_for_select([["Last 24 Hours", "24h"], ["Last 7 Days", "7d"], ["Last 30 Days", "30d"], ["All Time", "all"]], @time_period),
+          {}, 
+          { class: "observ-period-selector__select", onchange: "this.form.requestSubmit()" } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-dashboard">
+  <section class="observ-metrics-grid">
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Total Sessions</h3>
+        <%= observ_trend_badge(@metrics[:trends][:sessions]) %>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_number(@metrics[:total_sessions]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Total Traces</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_number(@metrics[:total_traces]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">LLM Calls</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_number(@metrics[:total_llm_calls]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card observ-metric-card--highlighted">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Total Cost</h3>
+        <%= observ_trend_badge(@metrics[:trends][:cost]) %>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_currency(@metrics[:total_cost]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Total Tokens</h3>
+        <%= observ_trend_badge(@metrics[:trends][:tokens]) %>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_tokens(@metrics[:total_tokens]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Avg Latency</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_duration_ms(@metrics[:avg_latency_ms]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Success Rate</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= observ_percentage(@metrics[:success_rate]) %></p>
+      </div>
+    </div>
+
+    <div class="observ-metric-card">
+      <div class="observ-metric-card__header">
+        <h3 class="observ-metric-card__label">Avg Cost/Call</h3>
+      </div>
+      <div class="observ-metric-card__body">
+        <p class="observ-metric-card__value"><%= format_currency(@metrics[:avg_cost_per_call]) %></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="observ-dashboard__grid">
+    <section class="observ-card observ-card--span-2">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Metrics by Agent</h2>
+      </header>
+      <div class="observ-card__body">
+        <% if @metrics_by_agent.any? %>
+          <table class="observ-table observ-table--compact">
+            <thead class="observ-table__header">
+              <tr class="observ-table__row">
+                <th class="observ-table__cell">Agent</th>
+                <th class="observ-table__cell observ-table__cell--numeric">Sessions</th>
+                <th class="observ-table__cell observ-table__cell--numeric">Traces</th>
+                <th class="observ-table__cell observ-table__cell--numeric">LLM Calls</th>
+                <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
+                <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @metrics_by_agent.each do |metrics| %>
+                <tr class="observ-table__row">
+                  <td class="observ-table__cell">
+                    <%= metrics[:agent_type] %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= format_number(metrics[:sessions]) %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= format_number(metrics[:traces]) %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= format_number(metrics[:llm_calls]) %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= format_tokens(metrics[:tokens]) %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= format_currency(metrics[:cost]) %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="observ-card__empty">No agent metrics available for this period.</p>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="observ-card observ-card--span-2">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Cost by Model</h2>
+      </header>
+      <div class="observ-card__body">
+        <% if @cost_by_model.any? %>
+          <table class="observ-table observ-table--compact">
+            <thead class="observ-table__header">
+              <tr class="observ-table__row">
+                <th class="observ-table__cell">Model</th>
+                <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+                <th class="observ-table__cell observ-table__cell--numeric">Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% total_cost = @cost_by_model.values.sum %>
+              <% @cost_by_model.sort_by { |_, cost| -cost }.each do |model, cost| %>
+                <tr class="observ-table__row">
+                  <td class="observ-table__cell">
+                    <%= observ_model_badge(model) %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= format_currency(cost) %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= observ_percentage((cost / total_cost) * 100) %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="observ-card__empty">No cost data available for this period.</p>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="observ-card observ-card--span-2">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Recent Sessions</h2>
+        <div class="observ-card__actions">
+          <%= link_to "View All →", sessions_path, class: "observ-link" %>
+        </div>
+      </header>
+      <div class="observ-card__body">
+        <% if @recent_sessions.any? %>
+          <table class="observ-table observ-table--compact">
+            <thead class="observ-table__header">
+              <tr class="observ-table__row">
+                <th class="observ-table__cell">Session ID</th>
+                <th class="observ-table__cell">Agent</th>
+                <th class="observ-table__cell">Started</th>
+                <th class="observ-table__cell observ-table__cell--numeric">Traces</th>
+                <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+                <th class="observ-table__cell">Status</th>
+                <th class="observ-table__cell"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_sessions.each do |session| %>
+                <tr class="observ-table__row">
+                  <td class="observ-table__cell">
+                    <code class="observ-code observ-code--inline"><%= truncate_id(session.session_id, 12) %></code>
+                  </td>
+                  <td class="observ-table__cell">
+                    <%= session.metadata&.dig("agent_type") || "—" %>
+                  </td>
+                  <td class="observ-table__cell">
+                    <%= observ_relative_time(session.start_time) %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= session.end_time ? session.total_traces_count : session.traces.count %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--numeric">
+                    <%= format_currency(session.end_time ? session.total_cost : session.traces.sum(:total_cost)) %>
+                  </td>
+                  <td class="observ-table__cell">
+                    <%= observ_status_badge(observ_session_status(session)) %>
+                  </td>
+                  <td class="observ-table__cell observ-table__cell--actions">
+                    <%= link_to "View", session_path(session), class: "observ-button observ-button--sm" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="observ-card__empty">No sessions found for this period.</p>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</div>
