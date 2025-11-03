@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "aasm", "~> 5.5"
 
   # Development and testing
-  spec.add_development_dependency "rspec-rails", "~> 7.0"
+  spec.add_development_dependency "rspec-rails", "~> 8.0"
   spec.add_development_dependency "factory_bot_rails", "~> 6.0"
   spec.add_development_dependency "shoulda-matchers", "~> 6.0"
   spec.add_development_dependency "faker", "~> 3.0"
