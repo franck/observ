@@ -1,6 +1,5 @@
 module Observ
   class PromptVersionsController < ApplicationController
-
     before_action :set_prompt_name
     before_action :set_prompt
 

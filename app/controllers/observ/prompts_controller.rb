@@ -1,6 +1,5 @@
 module Observ
   class PromptsController < ApplicationController
-
     before_action :set_prompt_name, only: [ :show, :edit, :update, :destroy, :versions, :compare ]
     before_action :set_prompt, only: [ :edit, :update, :destroy ]
 

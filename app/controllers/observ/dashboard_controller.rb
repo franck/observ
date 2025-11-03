@@ -1,6 +1,5 @@
 module Observ
   class DashboardController < ApplicationController
-
     def index
       @time_period = params[:period] || "24h"
       @metrics = calculate_dashboard_metrics

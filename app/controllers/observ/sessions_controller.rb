@@ -1,6 +1,5 @@
 module Observ
   class SessionsController < ApplicationController
-
     def index
       @sessions = Observ::Session.order(start_time: :desc)
       apply_filters if params[:filter].present?

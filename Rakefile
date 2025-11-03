@@ -18,26 +18,26 @@ namespace :gem do
   task :publish do
     require_relative "lib/observ/version"
     version = Observ::VERSION
-    
+
     puts "Publishing observ v#{version}..."
-    
+
     # Build the gem
     puts "\n1. Building gem..."
     Rake::Task["build"].invoke
-    
+
     # Tag the release
     puts "\n2. Creating git tag v#{version}..."
     sh "git tag -a v#{version} -m 'Release v#{version}'" rescue puts "Tag already exists"
-    
+
     # Push gem to RubyGems
     puts "\n3. Pushing to RubyGems..."
     gem_file = "pkg/observ-#{version}.gem"
     sh "gem push #{gem_file}"
-    
+
     # Push tags to remote
     puts "\n4. Pushing tags to remote..."
     sh "git push origin --tags"
-    
+
     puts "\n✓ Successfully published observ v#{version}!"
     puts "  View at: https://rubygems.org/gems/observ"
   end

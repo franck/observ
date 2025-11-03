@@ -1,6 +1,5 @@
 module Observ
   class TracesController < ApplicationController
-
     def index
       @traces = Observ::Trace
         .includes(:observ_session)
