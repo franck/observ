@@ -5,12 +5,13 @@ Gem::Specification.new do |spec|
   spec.version     = Observ::VERSION
   spec.authors     = [ "Franck D'agostini" ]
   spec.email       = [ "franck.dagostini@gmail.com" ]
-  spec.homepage    = "https://github.com/yourusername/observ"
+  spec.homepage    = "https://github.com/franck/observ"
   spec.summary     = "Rails observability engine for LLM applications"
   spec.description = "A Rails engine providing comprehensive observability for LLM-powered applications, including session tracking, trace analysis, prompt management, and cost monitoring."
   spec.license     = "MIT"
 
-  spec.metadata["homepage_uri"] = spec.homepage
+  spec.required_ruby_version = ">= 3.0"
+
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
 
@@ -27,6 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "factory_bot_rails", "~> 6.0"
   spec.add_development_dependency "shoulda-matchers", "~> 6.0"
   spec.add_development_dependency "faker", "~> 3.0"
-  spec.add_development_dependency "capybara"
-  spec.add_development_dependency "sqlite3", ">= 1.4"
+  spec.add_development_dependency "capybara", "~> 3.0"
+  spec.add_development_dependency "sqlite3", "~> 1.4"
 end
