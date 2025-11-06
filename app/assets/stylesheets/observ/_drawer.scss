@@ -134,3 +134,75 @@
   border-radius: $observ-border-radius;
   text-align: center;
 }
+
+// Text output specific styles
+.observ-drawer__text-output {
+  position: relative;
+  width: 100%;
+}
+
+.observ-drawer__textarea {
+  width: 100%;
+  min-height: 600px;
+  padding: $observ-spacing-md;
+  border: 1px solid $observ-gray-300;
+  border-radius: $observ-border-radius;
+  font-family: $observ-font-family-mono;
+  font-size: 12px;
+  line-height: 1.6;
+  resize: vertical;
+  background-color: $observ-gray-50;
+  color: $observ-gray-900;
+  
+  &:focus {
+    outline: none;
+    border-color: $observ-primary;
+    box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
+  }
+}
+
+.observ-drawer__copy-btn {
+  position: absolute;
+  top: $observ-spacing-sm;
+  right: $observ-spacing-sm;
+}
+
+.observ-drawer__instructions {
+  margin-bottom: $observ-spacing-md;
+  padding: $observ-spacing-sm;
+  background-color: lighten($observ-info, 45%);
+  border-left: 3px solid $observ-info;
+  border-radius: $observ-border-radius-sm;
+  font-size: $observ-font-size-sm;
+  color: $observ-gray-700;
+}
+
+.observ-drawer__help {
+  margin-top: $observ-spacing-md;
+  
+  details {
+    cursor: pointer;
+    
+    summary {
+      color: $observ-gray-600;
+      font-size: $observ-font-size-sm;
+      font-weight: 500;
+      padding: $observ-spacing-xs;
+      
+      &:hover {
+        color: $observ-gray-900;
+      }
+    }
+  }
+  
+  &-list {
+    margin-top: $observ-spacing-sm;
+    padding-left: $observ-spacing-lg;
+    font-size: $observ-font-size-sm;
+    color: $observ-gray-600;
+    
+    li {
+      margin-bottom: $observ-spacing-xs;
+    }
+  }
+}

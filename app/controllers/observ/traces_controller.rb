@@ -33,6 +33,11 @@ module Observ
       @annotation = @trace.annotations.build
     end
 
+    def text_output_drawer
+      @trace = Observ::Trace.includes(:observations, :annotations, observ_session: :annotations).find(params[:id])
+      @formatted_text = Observ::TraceTextFormatter.new(@trace).format
+    end
+
     private
 
     def apply_filters

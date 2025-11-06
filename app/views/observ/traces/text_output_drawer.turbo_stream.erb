@@ -1,0 +1,48 @@
+<%= turbo_stream.update "drawer-header-title" do %>
+  Trace Text Output
+<% end %>
+
+<%= turbo_stream.update "drawer-content" do %>
+  <div class="observ-drawer__section">
+    <div class="observ-drawer__instructions">
+      <strong>💡 Quick Start:</strong> Click the textarea to select all text, then copy and paste it into ChatGPT, Claude, or any LLM for analysis.
+    </div>
+    
+    <div 
+      class="observ-drawer__text-output"
+      data-controller="observ--text-select observ--copy"
+    >
+      <textarea 
+        class="observ-drawer__textarea" 
+        readonly
+        data-observ--text-select-target="text"
+        data-observ--copy-target="source"
+        data-action="click->observ--text-select#select"
+        aria-label="Formatted trace text output"
+      ><%= @formatted_text %></textarea>
+      
+      <button 
+        type="button"
+        class="observ-button observ-button--sm observ-button--secondary observ-drawer__copy-btn"
+        data-observ--copy-target="button"
+        data-action="click->observ--copy#copy"
+      >
+        📋 Copy to Clipboard
+      </button>
+    </div>
+    
+    <div class="observ-drawer__help">
+      <details>
+        <summary>What can you do with this text?</summary>
+        <ul class="observ-drawer__help-list">
+          <li>Paste into ChatGPT/Claude for performance analysis</li>
+          <li>Ask LLMs to identify optimization opportunities</li>
+          <li>Get suggestions for cost reduction strategies</li>
+          <li>Analyze error patterns and get debugging suggestions</li>
+          <li>Review quality and accuracy of AI responses</li>
+          <li>Generate reports or documentation from trace data</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+<% end %>

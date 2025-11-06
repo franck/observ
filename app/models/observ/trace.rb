@@ -4,11 +4,11 @@ module Observ
   class Trace < ApplicationRecord
     self.table_name = "observ_traces"
 
-  belongs_to :observ_session, class_name: "Observ::Session", inverse_of: :traces
-  has_many :observations, class_name: "Observ::Observation",
-           foreign_key: :observ_trace_id, dependent: :destroy, inverse_of: :trace
-  belongs_to :message, optional: true
-  has_many :annotations, as: :annotatable, dependent: :destroy
+    belongs_to :observ_session, class_name: "Observ::Session", inverse_of: :traces
+    has_many :observations, class_name: "Observ::Observation",
+      foreign_key: :observ_trace_id, dependent: :destroy, inverse_of: :trace
+    belongs_to :message, optional: true
+    has_many :annotations, as: :annotatable, dependent: :destroy
 
     validates :trace_id, presence: true, uniqueness: true
     validates :start_time, presence: true

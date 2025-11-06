@@ -14,6 +14,15 @@
   </div>
   <div class="observ-page-header__actions">
     <%= link_to "#", 
+        class: "observ-button observ-button--secondary observ-button--sm",
+        data: { 
+          action: "click->observ--drawer#open", 
+          drawer_url_param: text_output_drawer_trace_path(@trace)
+        } do %>
+      📄 See Text Output
+    <% end %>
+    
+    <%= link_to "#", 
         class: "observ-button observ-button--primary observ-button--sm",
         data: { 
           action: "click->observ--drawer#open", 

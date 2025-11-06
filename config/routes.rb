@@ -24,6 +24,7 @@ Observ::Engine.routes.draw do
     end
     member do
       get :annotations_drawer
+      get :text_output_drawer
     end
     resources :annotations, only: [ :index, :create, :destroy ]
   end
