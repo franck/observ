@@ -1,4 +1,4 @@
-class FixPromptConfigStrings < ActiveRecord::Migration[8.0]
+class FixPromptConfigStrings < ActiveRecord::Migration[7.0]
   def up
     # Find all prompts where config is stored as a String instead of JSON
     Observ::Prompt.find_each do |prompt|

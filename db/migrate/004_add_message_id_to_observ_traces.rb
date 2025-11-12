@@ -1,4 +1,4 @@
-class AddMessageIdToObservTraces < ActiveRecord::Migration[8.0]
+class AddMessageIdToObservTraces < ActiveRecord::Migration[7.0]
   def change
     add_column :observ_traces, :message_id, :integer
     add_index :observ_traces, :message_id
