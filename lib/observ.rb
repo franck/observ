@@ -1,6 +1,9 @@
 require "observ/version"
 require "observ/engine"
 require "observ/configuration"
+require "observ/asset_syncer"
+require "observ/asset_installer"
+require "observ/index_file_generator"
 
 module Observ
   class << self

@@ -33,11 +33,71 @@ rails observ:install:migrations
 rails db:migrate
 ```
 
+Install assets (stylesheets and JavaScript controllers):
+
+```bash
+# For first-time installation (recommended)
+rails generate observ:install
+
+# Or use the rake task
+rails observ:install_assets
+```
+
+This will:
+- Show you the destination paths where assets will be copied
+- Ask for confirmation before proceeding
+- Automatically mount the engine in `config/routes.rb` (if not already present)
+- Copy Observ stylesheets to `app/javascript/stylesheets/observ`
+- Copy Observ JavaScript Stimulus controllers to `app/javascript/controllers/observ`
+- Generate index files for easy importing
+- Check if controllers are properly registered in your application
+
+**Custom asset destinations:**
+
+```bash
+# Install to custom locations
+rails generate observ:install --styles-dest=app/assets/stylesheets/observ --js-dest=app/javascript/controllers/custom
+
+# Or with rake task
+rails observ:install_assets[app/assets/stylesheets/observ,app/javascript/controllers/custom]
+```
+
+**Skip confirmation (useful for CI/CD or automated scripts):**
+
+```bash
+# Skip confirmation prompt
+rails generate observ:install --force
+
+# With custom destinations
+rails generate observ:install --force --styles-dest=custom/path --js-dest=custom/path
+
+# Skip automatic route mounting (if you want to mount manually)
+rails generate observ:install --skip-routes
+```
+
+**Updating assets:**
+
+When you update the Observ gem, sync the latest assets:
+
+```bash
+rails observ:sync_assets
+```
+
+This will update only changed files without regenerating index files.
+
 ## Configuration
 
-### 1. Mount the Engine
+### 1. Mount the Engine (Automatic)
 
-In `config/routes.rb`:
+The install generator automatically adds the engine mount to `config/routes.rb`:
+
+```ruby
+mount Observ::Engine, at: "/observ"
+```
+
+This makes Observ available at `/observ` in your application.
+
+If you used `--skip-routes` during installation, manually add the route to `config/routes.rb`:
 
 ```ruby
 Rails.application.routes.draw do
@@ -46,8 +106,6 @@ Rails.application.routes.draw do
   # Your other routes...
 end
 ```
-
-This makes Observ available at `/observ` in your application.
 
 ### 2. Configure the Engine
 
@@ -228,6 +286,64 @@ session.annotations.create(
 # Visit /observ/annotations/export in browser
 ```
 
+## Asset Management
+
+Observ provides several tools for managing assets in your Rails application:
+
+### Generators
+
+```bash
+# Install assets for the first time (recommended)
+rails generate observ:install
+
+# Install to custom locations
+rails generate observ:install --styles-dest=custom/path --js-dest=custom/controllers
+
+# Skip index file generation
+rails generate observ:install --skip-index
+```
+
+### Rake Tasks
+
+```bash
+# Install assets (with index file generation)
+rails observ:install_assets
+rails observ:install  # shorthand
+
+# Sync assets (update only, no index generation)
+rails observ:sync_assets
+rails observ:sync  # shorthand
+
+# Custom destinations
+rails observ:install_assets[app/assets/stylesheets/observ,app/javascript/controllers/custom]
+```
+
+### Programmatic API
+
+You can also use the Ruby API directly:
+
+```ruby
+require 'observ/asset_installer'
+
+installer = Observ::AssetInstaller.new(
+  gem_root: Observ::Engine.root,
+  app_root: Rails.root
+)
+
+# Full installation with index generation
+result = installer.install(
+  styles_dest: 'app/javascript/stylesheets/observ',
+  js_dest: 'app/javascript/controllers/observ',
+  generate_index: true
+)
+
+# Just sync existing files
+result = installer.sync(
+  styles_dest: 'app/javascript/stylesheets/observ',
+  js_dest: 'app/javascript/controllers/observ'
+)
+```
+
 ## Development
 
 After checking out the repo, run:
@@ -285,7 +401,48 @@ Make sure you've mounted the engine in `config/routes.rb` and restarted your ser
 
 ### Assets not loading
 
-Ensure your asset pipeline includes engine assets. For Vite, you may need to import Observ styles and JavaScript.
+First, make sure you've installed the assets:
+
+```bash
+rails generate observ:install
+```
+
+Then ensure you've imported them in your application:
+
+**For JavaScript/Vite/esbuild setups:**
+
+Add to `app/javascript/application.js`:
+```javascript
+import 'observ'
+```
+
+And ensure `app/javascript/controllers/index.js` includes:
+```javascript
+import './observ'
+```
+
+**For Sprockets (traditional asset pipeline):**
+
+Add to `app/assets/stylesheets/application.scss`:
+```scss
+@use 'observ';
+```
+
+Or for older Sass versions:
+```scss
+@import 'observ';
+```
+
+**Verifying Stimulus controllers:**
+
+Check your browser console for any Stimulus connection errors. Observ controllers should register with the `observ--` prefix (e.g., `observ--drawer`, `observ--copy`).
+
+**Syncing after gem updates:**
+
+If you've updated the Observ gem, run:
+```bash
+rails observ:sync_assets
+```
 
 ### Concerns not found
 

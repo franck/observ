@@ -96,6 +96,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `capybara`
 - `sqlite3 >= 1.4`
 
+## [0.1.2] - 2025-11-12
+
+### Added
+
+- **Asset Installation Service Classes**:
+  - `Observ::AssetInstaller` - High-level orchestration for asset installation
+  - `Observ::AssetSyncer` - File synchronization with change detection
+  - `Observ::IndexFileGenerator` - Automatic Stimulus controller index generation
+
+- **Rails Generator**:
+  - `rails generate observ:install` - Interactive asset installation
+  - Options for custom destinations (--styles-dest, --js-dest)
+  - Option to skip index generation (--skip-index)
+  - Color-coded output with clear next steps
+
+- **New Rake Tasks**:
+  - `rails observ:install_assets` - Full installation with index generation
+  - `rails observ:install` - Shorthand alias
+  - Enhanced `rails observ:sync_assets` - Now uses service classes
+
+- **Automatic Index File Generation**:
+  - Creates `app/javascript/controllers/observ/index.js` with all imports
+  - Registers controllers with `observ--` prefix
+  - Checks if main controllers index imports Observ
+  - Provides actionable suggestions for manual registration
+
+- **Comprehensive Test Coverage**:
+  - `spec/lib/observ/asset_installer_spec.rb`
+  - `spec/lib/observ/asset_syncer_spec.rb`
+  - `spec/lib/observ/index_file_generator_spec.rb`
+
+- **Documentation**:
+  - `ASSET_INSTALLATION_IMPROVEMENTS.md` - Technical overview
+  - `UPGRADE_GUIDE.md` - Migration guide for existing users
+  - Enhanced README with asset management section
+  - Improved troubleshooting section
+
+### Changed
+
+- Refactored rake tasks to use service classes (from 160 lines to ~75 lines)
+- Improved first-time installation experience
+- Better error messages and user guidance
+
+### Improved
+
+- Asset installation now creates necessary index files automatically
+- File synchronization only copies changed files
+- Better logging with progress indicators
+- Enhanced documentation with step-by-step instructions
+
+### Technical
+
+- Extracted business logic from rake tasks to service classes
+- Single Responsibility Principle applied throughout
+- Dependency injection for better testability
+- Comprehensive RSpec coverage for new features
+
 ## [Unreleased]
 
 ### Planned for v0.2.0
