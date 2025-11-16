@@ -96,5 +96,23 @@ module Observ
       text = json_data.is_a?(String) ? json_data : json_data.to_json
       truncate(text, length: max_length)
     end
+
+    def format_json_with_newlines(data)
+      return "" if data.nil?
+
+      # Convert to JSON with pretty formatting
+      json_string = JSON.pretty_generate(data)
+
+      # This regex finds string values in JSON and unescapes newlines within them
+      # It preserves the JSON structure while making newlines visible
+      json_string.gsub(/: "((?:[^"\\]|\\.)*)"/m) do |match|
+        content = $1
+        # Unescape the newlines in the string content
+        unescaped = content.gsub('\\n', "\n")
+                          .gsub('\\t', "\t")
+                          .gsub('\\r', "\r")
+        ': "' + unescaped + '"'
+      end
+    end
   end
 end
