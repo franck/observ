@@ -50,24 +50,62 @@ module Observ
 
         say "\n"
         say "=" * 80, :cyan
-        say "Observ Asset Installation", :cyan
+        say "Observ Installation", :cyan
         say "=" * 80, :cyan
         say "\n"
+
+        # Collect files that will actually be copied
+        stylesheets_to_copy = collect_files_to_copy("stylesheets", "*.scss", styles_dest)
+        js_files_to_copy = collect_files_to_copy("javascripts", "*.js", js_dest)
+        index_will_be_generated = !options[:skip_index] && will_generate_index?(js_dest)
+        route_will_be_added = !options[:skip_routes] && !route_already_exists?
+
+        # Check if there are any changes to make
+        total_changes = stylesheets_to_copy.count + js_files_to_copy.count +
+                       (index_will_be_generated ? 1 : 0) + (route_will_be_added ? 1 : 0)
+
+        if total_changes == 0
+          say "No changes needed - all files are up to date!", :green
+          say "\n"
+          return
+        end
+
         say "The following changes will be made:", :yellow
         say "\n"
-        say "Assets will be copied to:", :yellow
-        say "  Stylesheets: #{styles_dest}", :yellow
-        say "  JavaScript:  #{js_dest}", :yellow
-        say "\n"
 
-        unless options[:skip_routes]
-          if route_already_exists?
-            say "Routes:", :yellow
-            say "  Engine already mounted in config/routes.rb", :yellow
-          else
-            say "Routes (will be added to config/routes.rb):", :yellow
-            say '  mount Observ::Engine, at: "/observ"', :yellow
+        # Show stylesheet files that will be copied
+        if stylesheets_to_copy.any?
+          say "Stylesheets (#{stylesheets_to_copy.count} files to #{styles_dest}):", :yellow
+          stylesheets_to_copy.each do |file|
+            say "  • #{File.basename(file)}", :white
           end
+          say "\n"
+        end
+
+        # Show JavaScript files that will be copied
+        if js_files_to_copy.any?
+          say "JavaScript Controllers (#{js_files_to_copy.count} files to #{js_dest}):", :yellow
+          js_files_to_copy.each do |file|
+            say "  • #{File.basename(file)}", :white
+          end
+          say "\n"
+        end
+
+        # Show generated files
+        if index_will_be_generated
+          say "Generated Files:", :yellow
+          say "  • #{js_dest}/index.js (controller index)", :white
+          say "\n"
+        end
+
+        # Show routes
+        if route_will_be_added
+          say "Routes (will be added to config/routes.rb):", :yellow
+          say '  mount Observ::Engine, at: "/observ"', :white
+          say "\n"
+        elsif !options[:skip_routes]
+          say "Routes:", :green
+          say "  Engine already mounted in config/routes.rb", :green
           say "\n"
         end
 
@@ -145,6 +183,59 @@ module Observ
 
         routes_content = File.read(routes_file)
         routes_content.match?(/mount\s+Observ::Engine/)
+      end
+
+      # Collect only files that will actually be copied (new or modified)
+      # @param asset_type [String] "stylesheets" or "javascripts"
+      # @param pattern [String] File glob pattern (e.g., "*.scss", "*.js")
+      # @param dest_path [String] Destination directory path
+      # @return [Array<String>] List of source file paths that will be copied
+      def collect_files_to_copy(asset_type, pattern, dest_path)
+        source_path = get_source_path(asset_type)
+        return [] unless source_path.directory?
+
+        dest_path = Rails.root.join(dest_path)
+
+        files_to_copy = []
+        Dir.glob(source_path.join(pattern)).sort.each do |source_file|
+          filename = File.basename(source_file)
+          dest_file = dest_path.join(filename)
+
+          if should_copy_file?(source_file, dest_file)
+            files_to_copy << source_file
+          end
+        end
+
+        files_to_copy
+      end
+
+      # Get the source path for the given asset type
+      # @param asset_type [String] "stylesheets" or "javascripts"
+      # @return [Pathname] Source directory path
+      def get_source_path(asset_type)
+        if asset_type == "stylesheets"
+          Observ::Engine.root.join("app", "assets", "stylesheets", "observ")
+        else
+          Observ::Engine.root.join("app", "assets", "javascripts", "observ", "controllers")
+        end
+      end
+
+      # Determine if a file should be copied (matches AssetSyncer logic)
+      # @param source_file [String] Path to source file
+      # @param dest_file [Pathname] Path to destination file
+      # @return [Boolean] true if file should be copied
+      def should_copy_file?(source_file, dest_file)
+        !dest_file.exist? || !FileUtils.identical?(source_file, dest_file.to_s)
+      end
+
+      # Check if index.js will be generated (new or different content)
+      # @param js_dest [String] Destination path for JavaScript controllers
+      # @return [Boolean] true if index.js will be generated
+      def will_generate_index?(js_dest)
+        index_file = Rails.root.join(js_dest, "index.js")
+        # Index file will be generated if it doesn't exist
+        # (we don't check content as the generator always creates it)
+        !index_file.exist?
       end
 
       # Logger adapter for Rails generator
