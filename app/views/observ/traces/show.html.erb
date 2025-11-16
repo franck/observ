@@ -113,7 +113,7 @@
         <h2 class="observ-card__title">Metadata</h2>
       </header>
       <div class="observ-card__body">
-        <pre class="observ-code-block observ-code-block--compact"><%= format_json_with_newlines(@trace.metadata) %></pre>
+        <%= render_json_viewer(@trace.metadata, compact: true) %>
       </div>
     </section>
   <% end %>
@@ -229,21 +229,21 @@
               <% if observation.is_a?(Observ::Generation) && observation.messages.present? && observation.messages.any? %>
                 <div class="observ-observation-card__section observ-observation-card__section--compact">
                   <h4 class="observ-observation-card__section-title">Messages</h4>
-                  <pre class="observ-code-block observ-code-block--compact"><%= format_json_with_newlines(observation.messages) %></pre>
+                  <%= render_json_viewer(observation.messages, compact: true) %>
                 </div>
               <% end %>
 
               <% if observation.is_a?(Observ::Generation) && observation.provider_metadata.present? && observation.provider_metadata.any? %>
                 <div class="observ-observation-card__section observ-observation-card__section--compact">
                   <h4 class="observ-observation-card__section-title">Provider Metadata</h4>
-                  <pre class="observ-code-block observ-code-block--compact"><%= format_json_with_newlines(observation.provider_metadata) %></pre>
+                  <%= render_json_viewer(observation.provider_metadata, compact: true) %>
                 </div>
               <% end %>
 
               <% if observation.is_a?(Observ::Span) && observation.metadata.present? && observation.metadata.any? %>
                 <div class="observ-observation-card__section observ-observation-card__section--compact">
                   <h4 class="observ-observation-card__section-title">Metadata</h4>
-                  <pre class="observ-code-block observ-code-block--compact"><%= format_json_with_newlines(observation.metadata) %></pre>
+                  <%= render_json_viewer(observation.metadata, compact: true) %>
                 </div>
               <% end %>
 

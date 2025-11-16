@@ -114,5 +114,21 @@ module Observ
         ': "' + unescaped + '"'
       end
     end
+
+    def render_json_viewer(data, compact: false)
+      return "" if data.nil?
+
+      css_classes = [ "observ-json-viewer" ]
+      css_classes << "observ-json-viewer--compact" if compact
+
+      content_tag(:div,
+        "",
+        class: css_classes.join(" "),
+        data: {
+          controller: "observ--json-viewer",
+          observ__json_viewer_data_value: data.to_json
+        }
+      )
+    end
   end
 end
