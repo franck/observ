@@ -1,5 +1,3 @@
-require "csv"
-
 module Observ
   class AnnotationsController < ApplicationController
     before_action :set_annotatable, except: [ :sessions_index, :traces_index, :export ]

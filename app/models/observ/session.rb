@@ -100,7 +100,7 @@ module Observ
     end
 
     def chat
-      @chat ||= Chat.find_by(observability_session_id: session_id)
+      @chat ||= ::Chat.find_by(observability_session_id: session_id) if defined?(::Chat)
     end
 
     private

@@ -5,8 +5,11 @@ Observ::Engine.routes.draw do
   get "dashboard/metrics", to: "dashboard#metrics"
   get "dashboard/cost_analysis", to: "dashboard#cost_analysis"
 
-  resources :chats, only: [ :index, :new, :create, :show ] do
-    resources :messages, only: [ :create ]
+  # Chat routes - only available if Chat model exists in host app
+  if defined?(::Chat) && ::Chat.respond_to?(:acts_as_chat)
+    resources :chats, only: [ :index, :new, :create, :show ] do
+      resources :messages, only: [ :create ]
+    end
   end
 
   resources :sessions, only: [ :index, :show ] do

@@ -4,36 +4,98 @@ A Rails engine providing comprehensive observability for LLM-powered application
 
 ## Features
 
+### Core Observability Features
 - **Session Tracking**: Automatically track user sessions across LLM interactions
 - **Trace Analysis**: Detailed execution traces with token usage and cost metrics
 - **Prompt Management**: Version-controlled prompts with state machine (draft/production/archived)
 - **Cost Monitoring**: Real-time tracking of API costs across models and providers
 - **Annotation Tools**: Add notes and export data for analysis
 - **Advanced Caching**: Sophisticated caching system with Redis support and monitoring
-- **RubyLLM Integration**: Optional automatic instrumentation for RubyLLM gem
+
+### Optional Chat/Agent Testing Feature
+- **Agent Testing UI**: Interactive chat interface for testing LLM agents at `/observ/chats`
+- **Agent Management**: Create, select, and configure different agents
+- **Message Streaming**: Real-time response streaming with Turbo
+- **Tool Visualization**: See tool calls in action
+- **RubyLLM Integration**: Full integration with RubyLLM gem for agent development
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Observ offers **two installation modes**: Core (observability only) or Core + Chat (with agent testing).
+
+### Core Installation (Recommended for Most Users)
+
+For LLM observability without the chat UI:
+
+**1. Add to Gemfile:**
 
 ```ruby
-gem "observ", path: "observ" # Or git/rubygems source
+gem "observ"
 ```
 
-And then execute:
+**2. Install:**
 
 ```bash
 bundle install
+rails observ:install:migrations
+rails db:migrate
+rails generate observ:install
 ```
 
-Install and run migrations:
+**What you get:**
+- Dashboard at `/observ`
+- Session tracking and analysis
+- Trace visualization
+- Prompt management
+- Cost monitoring
+- Annotation tools
+
+**No chat UI** - Perfect if you're instrumenting an existing application and just want observability.
+
+---
+
+### Core + Chat Installation (For Agent Testing)
+
+For full observability + interactive agent testing UI:
+
+**1. Add to Gemfile:**
+
+```ruby
+gem "observ"
+gem "ruby_llm"  # Required for chat feature
+```
+
+**2. Install core + chat:**
 
 ```bash
+bundle install
+
+# Install RubyLLM infrastructure first
+rails generate ruby_llm:install
+rails db:migrate
+rails ruby_llm:load_models
+
+# Then install Observ
 rails observ:install:migrations
+rails generate observ:install         # Core features
+rails generate observ:install:chat    # Chat feature
 rails db:migrate
 ```
 
-Install assets (stylesheets and JavaScript controllers):
+**What you get:**
+- Everything from Core installation
+- Chat UI at `/observ/chats`
+- Agent testing interface
+- Observ enhancements on RubyLLM infrastructure
+- Example agents and tools
+
+See **[Chat Installation Guide](docs/CHAT_INSTALLATION.md)** for detailed setup.
+
+---
+
+### Asset Installation
+
+After running either installation mode:
 
 ```bash
 # For first-time installation (recommended)
@@ -135,29 +197,74 @@ Observ.configure do |config|
   # UI configuration
   config.back_to_app_path = -> { Rails.application.routes.url_helpers.root_path }
   config.back_to_app_label = "← Back to App"
+  
+  # Chat UI (auto-detects if Chat model exists with acts_as_chat)
+  # Manually override if needed:
+  # config.chat_ui_enabled = true
 end
 ```
 
 ### 3. Configure Observability Features
 
-Create `config/initializers/observability.rb`:
+The `observ:install:chat` generator automatically creates `config/initializers/observability.rb`:
 
 ```ruby
-Rails.application.config.observability = ActiveSupport::OrderedOptions.new
-
-# Enable/disable observability
-Rails.application.config.observability.enabled = ENV.fetch("OBSERVABILITY_ENABLED", "true") == "true"
-
-# Auto-instrument RubyLLM chats
-Rails.application.config.observability.auto_instrument_chats = ENV.fetch("OBSERVABILITY_AUTO_INSTRUMENT", "true") == "true"
-
-# Debug logging
-Rails.application.config.observability.debug = ENV.fetch("OBSERVABILITY_DEBUG", Rails.env.development?.to_s) == "true"
+Rails.application.configure do
+  config.observability = ActiveSupport::OrderedOptions.new
+  
+  # Enable observability instrumentation
+  # When enabled, sessions, traces, and observations are automatically tracked
+  config.observability.enabled = true
+  
+  # Automatically instrument RubyLLM chats with observability
+  # When enabled, LLM calls, tool usage, and metrics are tracked
+  config.observability.auto_instrument_chats = true
+  
+  # Enable debug logging for observability metrics
+  # When enabled, job completion metrics (tokens, cost) will be logged
+  config.observability.debug = Rails.env.development?
+end
 ```
 
-### 4. Add Concerns to Your Models
+**Environment-based configuration:**
 
-For chat models (or any model that uses LLMs):
+```ruby
+# Use environment variables for production
+config.observability.enabled = ENV.fetch("OBSERVABILITY_ENABLED", "true") == "true"
+config.observability.auto_instrument_chats = ENV.fetch("AUTO_INSTRUMENT", "true") == "true"
+config.observability.debug = ENV.fetch("OBSERVABILITY_DEBUG", "false") == "true"
+```
+
+**Important:** 
+- `enabled` must be `true` for observability sessions to be created
+- `auto_instrument_chats` must be `true` for automatic LLM call tracking
+- Without these settings, observability features will be disabled
+
+### 4. Configure RubyLLM (Chat Feature Only)
+
+**Skip this if you're using Core installation only.**
+
+If you installed the chat feature, create `config/initializers/ruby_llm.rb`:
+
+```ruby
+RubyLLM.configure do |config|
+  config.openai_api_key = ENV['OPENAI_API_KEY']
+  config.default_model = "gpt-4o-mini"
+  
+  # Use the new association-based acts_as API (recommended)
+  config.use_new_acts_as = true
+  
+  # Optional: Other providers
+  # config.anthropic_api_key = ENV['ANTHROPIC_API_KEY']
+  # config.google_api_key = ENV['GOOGLE_API_KEY']
+end
+```
+
+### 5. Add Concerns to Your Models (Chat Feature Only)
+
+**Skip this if you're using Core installation only.**
+
+The `observ:install:chat` generator creates these models automatically. If you're manually setting up:
 
 ```ruby
 class Chat < ApplicationRecord
@@ -184,26 +291,11 @@ end
 
 This adds `has_many :traces` relationship.
 
-### 5. Add Database Column
-
-Add `observability_session_id` to models using `ObservabilityInstrumentation`:
-
-```ruby
-# Generate migration
-rails generate migration AddObservabilityToChats observability_session_id:string
-
-# Or manually:
-class AddObservabilityToChats < ActiveRecord::Migration[8.0]
-  def change
-    add_column :chats, :observability_session_id, :string
-    add_index :chats, :observability_session_id
-  end
-end
-```
+**Note:** The `observ:install:chat` generator handles all of this automatically, including migrations!
 
 ## Usage
 
-### Basic Usage
+### Basic Usage (Core Features)
 
 Once installed, Observ automatically tracks:
 
@@ -216,6 +308,156 @@ Visit `/observ` in your browser to see:
 - Session history
 - Trace details
 - Prompt management UI
+
+### Chat Feature Usage (If Installed)
+
+If you installed the chat feature with `rails generate observ:install:chat`:
+
+**1. Visit `/observ/chats`**
+
+**2. Create a new chat:**
+   - Click "New Chat"
+   - Select an agent (e.g., SimpleAgent)
+   - Start chatting!
+
+**3. Create custom agents:**
+
+```ruby
+# app/agents/my_agent.rb
+class MyAgent < BaseAgent
+  include AgentSelectable
+  
+  def self.display_name
+    "My Custom Agent"
+  end
+  
+  def self.system_prompt
+    "You are a helpful assistant that..."
+  end
+  
+  def self.default_model
+    "gpt-4o-mini"
+  end
+end
+```
+
+**4. View session data:**
+   - All chat interactions appear in `/observ/sessions`
+   - Full observability of tokens, costs, and tool calls
+
+See **[Chat Installation Guide](docs/CHAT_INSTALLATION.md)** for complete documentation.
+
+### Phase Tracking (Optional Chat Feature)
+
+For multi-phase agent workflows (e.g., scoping → research → writing), add phase tracking:
+
+**1. Add phase tracking to your installation:**
+
+```bash
+# During initial installation
+rails generate observ:install:chat --with-phase-tracking
+
+# Or add to existing installation
+rails generate observ:add_phase_tracking
+rails db:migrate
+```
+
+**2. Use phase transitions in your agents:**
+
+```ruby
+# app/agents/research_agent.rb
+class ResearchAgent < BaseAgent
+  def perform_research(chat, query)
+    # Transition to research phase
+    chat.transition_to_phase('research')
+    
+    # Do research work...
+    results = research(query)
+    
+    # Transition to writing phase
+    chat.transition_to_phase('writing', depth: 'comprehensive')
+    
+    # Generate report...
+  end
+end
+```
+
+**3. Check current phase:**
+
+```ruby
+chat.current_phase  # => 'research'
+chat.in_phase?('research')  # => true
+```
+
+**4. (Optional) Define allowed phases:**
+
+```ruby
+# app/models/chat.rb
+class Chat < ApplicationRecord
+  include Observ::ObservabilityInstrumentation
+  include Observ::AgentPhaseable
+  
+  def allowed_phases
+    %w[scoping research writing review]
+  end
+end
+```
+
+**Benefits:**
+- Phase transitions are automatically tracked in observability metadata
+- View phase progression in `/observ/sessions`
+- Analyze time and cost per phase
+- Debug which phase causes issues
+
+**Phase data in observability:**
+
+All phase transitions are captured in session metadata:
+```ruby
+session.metadata
+# => {
+#   "agent_type" => "ResearchAgent",
+#   "chat_id" => 42,
+#   "agent_phase" => "writing",
+#   "phase_transition" => "research -> writing",
+#   "depth" => "comprehensive"
+# }
+```
+
+### Extending Observability Metadata (Advanced)
+
+You can extend observability metadata by overriding hook methods in your Chat model:
+
+```ruby
+# app/models/chat.rb
+class Chat < ApplicationRecord
+  include Observ::ObservabilityInstrumentation
+  
+  # Override to add custom metadata to session
+  def observability_metadata
+    super.merge(
+      user_id: user_id,
+      subscription_tier: user.subscription_tier,
+      feature_flags: enabled_features
+    )
+  end
+  
+  # Override to add custom context to instrumenter
+  def observability_context
+    super.merge(
+      locale: I18n.locale,
+      timezone: Time.zone.name
+    )
+  end
+end
+```
+
+This allows you to:
+- Track user-specific information
+- Add business logic metadata
+- Include feature flags for A/B testing analysis
+- Track localization and timezone data
+
+**Note:** The `AgentPhaseable` concern uses these same hooks to inject phase data.
 
 ### Manual Instrumentation
 
@@ -369,11 +611,18 @@ Observ uses:
 - **Kaminari for pagination**: Session and trace listings
 - **Stimulus controllers**: Interactive UI components
 - **Rails.cache**: Pluggable caching backend (Redis, Memory, etc.)
+- **Conditional routes**: Chat routes only mount if Chat model exists (Phase 1)
+- **Global namespace**: Controllers use `::Chat` and `::Message` for host app models
 
 ## Optional Dependencies
 
-- **RubyLLM**: For automatic LLM call instrumentation
+### Core Features
 - **Redis**: For production caching (optional, can use memory cache)
+
+### Chat Feature (Optional Add-on)
+- **RubyLLM**: Required for chat/agent testing feature
+- Installed with `rails generate observ:install:chat`
+- See [Chat Installation Guide](docs/CHAT_INSTALLATION.md)
 
 ## Testing
 
@@ -454,6 +703,63 @@ Check that:
 - `prompt_cache_ttl > 0`
 - Rails cache store is configured (Redis recommended for production)
 - Rails.cache is working: `Rails.cache.write("test", "value")` / `Rails.cache.read("test")`
+
+### Observability sessions not being created
+
+If chats are created but observability sessions are not:
+
+**1. Check observability is enabled:**
+
+```ruby
+rails runner "puts Rails.configuration.observability.enabled.inspect"
+# Should output: true
+```
+
+If it outputs `nil` or `false`, check `config/initializers/observability.rb` exists and sets:
+```ruby
+config.observability.enabled = true
+```
+
+**2. Check the observability_session_id column exists:**
+
+```ruby
+rails runner "puts Chat.column_names.include?('observability_session_id')"
+# Should output: true
+```
+
+If it outputs `false`, you're missing the migration. Run:
+```bash
+rails generate migration AddObservabilitySessionIdToChats observability_session_id:string:index
+rails db:migrate
+```
+
+**3. Check for errors in logs:**
+
+```bash
+tail -f log/development.log | grep Observability
+```
+
+Look for `[Observability] Failed to initialize session:` messages.
+
+**4. Verify the concern is included:**
+
+```ruby
+rails runner "puts Chat.included_modules.include?(Observ::ObservabilityInstrumentation)"
+# Should output: true
+```
+
+### Phase tracking errors
+
+If you see `AgentPhaseable requires a 'current_phase' column`:
+
+You're trying to use phase tracking without the database column. Run:
+
+```bash
+rails generate observ:add_phase_tracking
+rails db:migrate
+```
+
+Or remove `include Observ::AgentPhaseable` from your Chat model if you don't need phase tracking.
 
 ## Contributing
 

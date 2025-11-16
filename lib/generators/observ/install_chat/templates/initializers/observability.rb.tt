@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+# Observability configuration
+# This file is optional and is used to configure observability settings
+
+Rails.application.configure do
+  config.observability = ActiveSupport::OrderedOptions.new
+  
+  # Enable observability instrumentation
+  # When enabled, sessions, traces, and observations are automatically tracked
+  config.observability.enabled = true
+  
+  # Automatically instrument RubyLLM chats with observability
+  # When enabled, LLM calls, tool usage, and metrics are tracked
+  config.observability.auto_instrument_chats = true
+  
+  # Enable debug logging for observability metrics
+  # When enabled, job completion metrics (tokens, cost) will be logged
+  config.observability.debug = Rails.env.development?
+end

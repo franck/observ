@@ -1,0 +1,55 @@
+# SimpleAgent - A basic agent example
+#
+# This agent demonstrates the minimum required implementation
+# for a working agent in the Observ chat UI.
+#
+# To create your own agent:
+# 1. Extend BaseAgent
+# 2. Include AgentSelectable to make it appear in the UI
+# 3. Implement required methods: system_prompt, default_model, display_name
+# 4. Optionally add tools and initial_greeting
+class SimpleAgent < BaseAgent
+  include AgentSelectable
+
+  # Display name shown in the Observ UI
+  def self.display_name
+    "Simple Agent"
+  end
+
+  # Description shown in agent selection
+  def self.description
+    "A basic conversational agent"
+  end
+
+  # System prompt that defines the agent's behavior
+  def self.system_prompt
+    <<~PROMPT
+      You are a helpful AI assistant.
+      
+      Your role is to:
+      - Answer questions clearly and concisely
+      - Be friendly and professional
+      - Admit when you don't know something
+      
+      Current date: #{Time.current.strftime("%B %d, %Y")}
+    PROMPT
+  end
+
+  # Default model to use for this agent
+  def self.default_model
+    "gpt-4o-mini"
+  end
+
+  # Optional: Greeting message when chat starts
+  def self.initial_greeting
+    <<~GREETING
+      Hello! I'm a simple AI assistant. How can I help you today?
+    GREETING
+  end
+
+  # Optional: Tools available to this agent
+  # Uncomment and add tool classes as needed:
+  # def self.tools
+  #   [ThinkTool]
+  # end
+end

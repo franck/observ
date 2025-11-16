@@ -153,9 +153,138 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dependency injection for better testability
 - Comprehensive RSpec coverage for new features
 
+## [0.3.0] - 2025-11-15
+
+### 🎉 Major: Chat Feature Now Optional
+
+The chat/agent testing feature is now **completely optional**, making Observ more flexible and easier to adopt for pure observability use cases.
+
+### Added
+
+#### Phase 1: Core Engine Fixes
+- **Conditional Route Mounting**: Chat routes (`/observ/chats`) only mount if `Chat` model exists with `acts_as_chat`
+- **Configuration Option**: Added `config.chat_ui_enabled` (auto-detects Chat model presence)
+- **Global Namespace**: Fixed controllers to use `::Chat` and `::Message` for host app models
+- **Session Model**: Safe Chat reference with `if defined?(::Chat)` check
+
+#### Phase 2: Install:Chat Generator
+- **New Generator**: `rails generate observ:install:chat` for one-command RubyLLM setup
+- **Complete Infrastructure Scaffolding**:
+  - 6 migration templates (chats, messages, tool_calls, models, references, agent_class_name)
+  - 4 model templates (Chat, Message, ToolCall, Model) with Observ concerns
+  - Agent infrastructure (BaseAgent, AgentProvider, concerns)
+  - Example agent (SimpleAgent) ready to use
+  - ChatResponseJob for async message processing
+  - ThinkTool example
+- **Generator Options**:
+  - `--skip-tools` - Skip tool generation
+  - `--skip-migrations` - Skip migrations
+  - `--skip-job` - Skip job generation
+- **Smart Detection**: Checks for RubyLLM gem and existing Chat model
+- **Comprehensive Documentation**: Added `docs/CHAT_INSTALLATION.md` (370+ lines)
+
+#### Phase 3: Documentation Updates
+- **Two-Tier Installation**: Clear separation of Core vs Core + Chat
+- **Updated README**: Restructured installation section with feature comparison
+- **Migration Guide**: Help for existing users
+- **Architecture Documentation**: Explained conditional routing and namespace handling
+
+### Changed
+
+#### Breaking Changes (Backward Compatible!)
+- **Chat Routes**: Now conditionally mounted (auto-detected, no action needed for existing apps)
+- **Controllers**: Use global namespace (`::Chat`, `::Message`) instead of implicit lookup
+- **Installation Flow**: New two-tier approach (Core-only or Core + Chat)
+
+**Note:** Existing apps with Chat model continue to work without changes. The Chat model is auto-detected and routes mount automatically.
+
+### Fixed
+
+- **NameError Fixed**: `uninitialized constant Observ::ChatsController::Chat` no longer occurs
+- **500 Errors**: `/observ/chats` no longer returns 500 in fresh installations without Chat
+- **Namespace Issues**: Proper global namespace resolution for host app models
+
+### Documentation
+
+- Added `docs/PHASE_1_COMPLETION.md` - Core engine fixes summary
+- Added `docs/PHASE_2_COMPLETION.md` - Generator implementation details  
+- Added `docs/PHASE_3_COMPLETION.md` - Documentation and release notes
+- Added `docs/CHAT_INSTALLATION.md` - Complete chat feature guide
+- Updated main README with two-tier installation
+- Enhanced troubleshooting section
+
+### Migration Guide for Existing Users
+
+**If you have an existing app with Chat/RubyLLM:**
+
+No action needed! Your app will continue to work exactly as before:
+- Chat routes auto-detect and mount
+- All existing functionality preserved
+- Zero breaking changes
+
+**If you want to use Observ in a new app:**
+
+Choose your installation mode:
+
+**Option 1: Core Only** (observability without chat)
+```bash
+gem "observ"
+rails observ:install:migrations
+rails db:migrate
+rails generate observ:install
+```
+
+**Option 2: Core + Chat** (with agent testing)
+```bash
+gem "observ"
+gem "ruby_llm"
+rails observ:install:migrations
+rails generate observ:install
+rails generate observ:install:chat  # ⭐ New!
+rails db:migrate
+```
+
+### Technical Details
+
+#### Files Modified (Phase 1)
+- `app/controllers/observ/chats_controller.rb` - Fixed namespace (4 locations)
+- `app/controllers/observ/messages_controller.rb` - Fixed namespace (2 locations)
+- `app/models/observ/session.rb` - Safe Chat reference
+- `config/routes.rb` - Conditional route mounting
+- `lib/observ/configuration.rb` - Added `chat_ui_enabled` config
+
+#### Files Created (Phase 2)
+- `lib/generators/observ/install_chat/install_chat_generator.rb` (219 lines)
+- 17 template files (migrations, models, agents, jobs, tools)
+- `docs/CHAT_INSTALLATION.md` (370+ lines)
+
+#### Total Changes
+- **5 files modified** (Phase 1)
+- **19 files created** (Phase 2)
+- **3 documentation files updated** (Phase 3)
+- **27 total files changed**
+
+### Improvements
+
+- ✅ **Better Developer Experience**: Clear installation paths
+- ✅ **Reduced Friction**: Core features work out-of-the-box
+- ✅ **Flexibility**: Optional chat feature when needed
+- ✅ **Graceful Degradation**: Works with or without RubyLLM
+- ✅ **Production Ready**: All generated code includes error handling and observability
+
+### Dependencies
+
+No changes to core dependencies:
+- `rails >= 7.0, < 9.0`
+- `kaminari ~> 1.2`
+- `aasm ~> 5.5`
+
+Chat feature adds (optional):
+- `ruby_llm` - Only needed if using `rails generate observ:install:chat`
+
 ## [Unreleased]
 
-### Planned for v0.2.0
+### Planned for Future Versions
 
 - Langfuse export integration
 - Additional provider support (Anthropic, Gemini)
@@ -165,8 +294,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Advanced filtering and search
 - Custom metric definitions
 - Alert system for cost/usage thresholds
+- More example agents (ResearchAgent, SummarizationAgent)
+- Advanced tool library (WebSearchTool, FetchWebPageTool)
 
 ---
 
+[0.3.0]: https://github.com/yourusername/observ/releases/tag/v0.3.0
+[0.1.2]: https://github.com/yourusername/observ/releases/tag/v0.1.2
 [0.1.0]: https://github.com/yourusername/observ/releases/tag/v0.1.0
-[Unreleased]: https://github.com/yourusername/observ/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/yourusername/observ/compare/v0.3.0...HEAD

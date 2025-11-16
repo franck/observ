@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email       = [ "franck.dagostini@gmail.com" ]
   spec.homepage    = "https://github.com/franck/observ"
   spec.summary     = "Rails observability engine for LLM applications"
-  spec.description = "A Rails engine providing comprehensive observability for LLM-powered applications, including session tracking, trace analysis, prompt management, and cost monitoring."
+  spec.description = "A Rails engine providing comprehensive observability for LLM-powered applications. Features include session tracking, trace analysis, prompt management, cost monitoring, and optional chat/agent testing UI (with RubyLLM integration)."
   spec.license     = "MIT"
 
   spec.required_ruby_version = ">= 3.0"
@@ -22,6 +22,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", ">= 7.0", "< 9.0"
   spec.add_dependency "kaminari", "~> 1.2"
   spec.add_dependency "aasm", "~> 5.5"
+  spec.add_dependency "ruby_llm", ">= 1.0"
+  spec.add_dependency "ruby_llm-schema", ">= 0.2"
+  spec.add_dependency "csv", "~> 3.0"
 
   # Development and testing
   spec.add_development_dependency "rspec-rails", "~> 7.0"

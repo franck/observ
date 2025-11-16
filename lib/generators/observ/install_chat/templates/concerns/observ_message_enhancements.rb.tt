@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+module ObservMessageEnhancements
+  extend ActiveSupport::Concern
+
+  included do
+    include Observ::TraceAssociation
+    
+    broadcasts_to ->(message) { "chat_#{message.chat_id}" }, partial: "observ/messages/message"
+  end
+
+  def broadcast_append_chunk(content)
+    broadcast_append_to "chat_#{chat_id}",
+      target: "message_#{id}_content",
+      partial: "observ/messages/content",
+      locals: { content: content }
+  end
+end

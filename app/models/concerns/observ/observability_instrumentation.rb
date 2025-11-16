@@ -38,16 +38,32 @@ module Observ
 
   private
 
+  # Hook method for building observability session metadata
+  # Override this in your model or concerns to add custom metadata
+  # @return [Hash] metadata hash
+  def observability_metadata
+    {
+      agent_type: agent_class_name || "standard",
+      chat_id: id
+    }
+  end
+
+  # Hook method for building observability context
+  # Override this in your model or concerns to add custom context
+  # @return [Hash] context hash
+  def observability_context
+    {
+      agent_type: agent_class_name || "standard",
+      chat_id: id
+    }
+  end
+
   def initialize_observability_session
     return unless Rails.configuration.observability.enabled
 
     session = Observ::Session.create!(
       user_id: "chat_#{id}",
-      metadata: {
-        agent_type: agent_class_name || "standard",
-        chat_id: id,
-        agent_phase: current_phase
-      }
+      metadata: observability_metadata
     )
 
     update_column(:observability_session_id, session.session_id)
@@ -64,11 +80,7 @@ module Observ
     @instrumenter = Observ::ChatInstrumenter.new(
       observ_session,
       self,
-      context: {
-        agent_type: agent_class_name || "standard",
-        phase: current_phase,
-        chat_id: id
-      }
+      context: observability_context
     )
     @instrumenter.instrument!
 

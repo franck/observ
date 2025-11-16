@@ -1,0 +1,29 @@
+require "ruby_llm"
+
+# ThinkTool - A basic tool for agent reflection
+#
+# This tool allows agents to "think out loud" and reflect on their
+# reasoning process. Useful for debugging and understanding agent behavior.
+#
+# To create your own tools:
+# 1. Extend RubyLLM::Tool
+# 2. Add description and params
+# 3. Implement execute method
+# 4. Add tool to agent's tools array
+class ThinkTool < RubyLLM::Tool
+  description "Reflect on current progress and plan next steps. Use this to organize your thoughts."
+
+  param :reflection,
+        desc: "Your thoughts on what you've learned so far and what to do next",
+        type: :string
+
+  attr_accessor :observability
+
+  def initialize(observability = nil)
+    @observability = observability
+  end
+
+  def execute(reflection:)
+    "Reflection noted: #{reflection}"
+  end
+end
