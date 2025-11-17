@@ -142,6 +142,65 @@ RSpec.describe "PromptManager Integration" do
         expect(stats).to have_key(:misses)
         expect(stats).to have_key(:hit_rate)
       end
+
+      it "converts string model parameters to proper numeric types" do
+        # Create prompt with model parameters as strings (as they come from JSON)
+        create(:observ_prompt,
+          :production,
+          name: "test-agent-prompt",
+          prompt: "Test prompt",
+          config: {
+            "model" => "gpt-4",
+            "temperature" => "0.7",
+            "max_tokens" => "2000",
+            "top_p" => "0.9",
+            "frequency_penalty" => "0.5",
+            "presence_penalty" => "0.3"
+          }
+        )
+
+        # Fetch model parameters through PromptManagement concern
+        params = dummy_agent_class.model_parameters
+
+        # Verify parameters are converted to proper numeric types
+        expect(params[:temperature]).to eq(0.7)
+        expect(params[:temperature]).to be_a(Float)
+
+        expect(params[:max_tokens]).to eq(2000)
+        expect(params[:max_tokens]).to be_a(Integer)
+
+        expect(params[:top_p]).to eq(0.9)
+        expect(params[:top_p]).to be_a(Float)
+
+        expect(params[:frequency_penalty]).to eq(0.5)
+        expect(params[:frequency_penalty]).to be_a(Float)
+
+        expect(params[:presence_penalty]).to eq(0.3)
+        expect(params[:presence_penalty]).to be_a(Float)
+      end
+
+      it "preserves non-numeric parameter values" do
+        create(:observ_prompt,
+          :production,
+          name: "test-agent-prompt",
+          prompt: "Test prompt",
+          config: {
+            "model" => "gpt-4",
+            "temperature" => "0.7",
+            "stop" => [ "END", "STOP" ]
+          }
+        )
+
+        params = dummy_agent_class.model_parameters
+
+        # Numeric values should be converted
+        expect(params[:temperature]).to eq(0.7)
+        expect(params[:temperature]).to be_a(Float)
+
+        # Non-numeric values should be preserved
+        expect(params[:stop]).to eq([ "END", "STOP" ])
+        expect(params[:stop]).to be_a(Array)
+      end
     end
 
     context "when PromptManager.fetch fails" do
