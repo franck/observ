@@ -1,0 +1,27 @@
+Description:
+    Install Observ assets (stylesheets and JavaScript controllers) in your Rails application.
+    
+    This generator will:
+    - Copy Observ stylesheets to your app
+    - Copy Observ JavaScript Stimulus controllers to your app
+    - Generate index files for easy importing
+    - Check if controllers are properly registered
+
+Examples:
+    rails generate observ:install
+
+        This will install assets to default locations:
+        - Styles: app/javascript/stylesheets/observ
+        - JavaScript: app/javascript/controllers/observ
+
+    rails generate observ:install --styles-dest=app/assets/stylesheets/observ
+
+        This will install stylesheets to a custom location
+
+    rails generate observ:install --js-dest=app/javascript/controllers/custom_observ
+
+        This will install JavaScript controllers to a custom location
+
+    rails generate observ:install --skip-index
+
+        This will skip generation of index files (useful if you want to manage imports manually)

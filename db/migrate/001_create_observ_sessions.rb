@@ -1,4 +1,4 @@
-class CreateObservSessions < ActiveRecord::Migration[8.0]
+class CreateObservSessions < ActiveRecord::Migration[7.0]
   def change
     create_table :observ_sessions do |t|
       t.string :session_id, null: false

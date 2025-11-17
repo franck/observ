@@ -1,0 +1,120 @@
+// Custom JSON Viewer Styles
+// Fully custom implementation with proper newline handling
+
+.observ-json-viewer {
+  font-family: $observ-font-family-mono;
+  background-color: $observ-gray-900;
+  color: $observ-gray-100;
+  padding: $observ-spacing-md;
+  border-radius: $observ-border-radius;
+  overflow-x: auto;
+  font-size: $observ-font-size-sm;
+  line-height: 1.6;
+  margin: 0;
+
+  .json-container {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .json-line {
+    display: block;
+    
+    &.json-footer {
+      // Closing braces/brackets
+    }
+  }
+
+  .json-object,
+  .json-array {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .json-content {
+    display: block;
+  }
+
+  // Toggle buttons (▸/▾)
+  .json-toggle {
+    display: inline-block;
+    width: 1em;
+    margin-right: 0.25em;
+    color: $observ-gray-400;
+    cursor: pointer;
+    user-select: none;
+    
+    &:hover {
+      color: $observ-primary;
+    }
+  }
+
+  // Indentation
+  .json-indent {
+    display: inline-block;
+    white-space: pre;
+  }
+
+  // Item count when collapsed
+  .json-item-count {
+    color: $observ-gray-500;
+    font-style: italic;
+    font-size: 0.9em;
+    margin-left: 0.25em;
+  }
+
+  // Keys
+  .json-key {
+    color: $observ-info;
+    font-weight: 500;
+  }
+
+  // String values
+  .json-string {
+    color: $observ-success;
+    display: inline;
+    
+    .json-string-content {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    
+    .json-quote {
+      opacity: 0.7;
+    }
+  }
+
+  // Number values
+  .json-number {
+    color: #ff9800;
+  }
+
+  // Boolean values
+  .json-boolean {
+    color: #9c27b0;
+    font-weight: 500;
+  }
+
+  // Null values
+  .json-null {
+    color: $observ-gray-500;
+    font-style: italic;
+  }
+
+  // Punctuation (brackets, braces, colons, commas)
+  .json-punctuation {
+    color: $observ-gray-400;
+  }
+
+  // Unknown/fallback
+  .json-unknown {
+    color: $observ-warning;
+  }
+}
+
+// Compact variant for use in cards
+.observ-json-viewer--compact {
+  padding: $observ-spacing-sm;
+  font-size: $observ-font-size-xs;
+  line-height: 1.5;
+}

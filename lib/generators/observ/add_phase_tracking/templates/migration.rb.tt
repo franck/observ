@@ -1,0 +1,6 @@
+class AddPhaseTrackingToChats < ActiveRecord::Migration<%= migration_version %>
+  def change
+    add_column :chats, :current_phase, :string
+    add_index :chats, :current_phase
+  end
+end

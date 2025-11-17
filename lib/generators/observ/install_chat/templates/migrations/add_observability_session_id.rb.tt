@@ -1,0 +1,6 @@
+class AddObservabilitySessionIdToChats < ActiveRecord::Migration<%= migration_version %>
+  def change
+    add_column :chats, :observability_session_id, :string
+    add_index :chats, :observability_session_id
+  end
+end

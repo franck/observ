@@ -15,7 +15,9 @@ module Observ
                   :prompt_cache_critical_prompts,
                   :prompt_cache_monitoring_enabled,
                   :back_to_app_path,
-                  :back_to_app_label
+                  :back_to_app_label,
+                  :chat_ui_enabled,
+                  :agent_path
 
     def initialize
       @prompt_management_enabled = true
@@ -32,6 +34,15 @@ module Observ
       @prompt_cache_monitoring_enabled = true
       @back_to_app_path = -> { "/" }
       @back_to_app_label = "← Back to App"
+      @chat_ui_enabled = -> { defined?(::Chat) && ::Chat.respond_to?(:acts_as_chat) }
+      @agent_path = nil # Defaults to Rails.root.join("app", "agents")
+    end
+
+    # Check if chat UI is enabled
+    # @return [Boolean]
+    def chat_ui_enabled?
+      return @chat_ui_enabled.call if @chat_ui_enabled.respond_to?(:call)
+      @chat_ui_enabled
     end
   end
 end

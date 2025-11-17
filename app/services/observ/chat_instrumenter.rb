@@ -70,11 +70,15 @@ module Observ
 
       model_id = extract_model_id(chat_instance)
 
+      # Extract prompt metadata from the chat's agent (if available)
+      prompt_metadata = extract_prompt_metadata(chat_instance)
+
       generation = trace.create_generation(
         name: "llm_call",
         metadata: @context.merge(kwargs.slice(:temperature, :max_tokens)),
         model: model_id,
-        model_parameters: extract_model_parameters(kwargs)
+        model_parameters: extract_model_parameters(chat_instance),
+        **prompt_metadata
       )
 
       messages_snapshot = capture_messages(chat_instance)
@@ -203,6 +207,23 @@ module Observ
       Rails.logger.error "[Observability] Error captured: #{error.class.name} - #{error.message}"
     end
 
+    def extract_prompt_metadata(chat_instance)
+      metadata = {}
+
+      # Try to get the agent class from context
+      agent_class = @context[:agent_class]
+
+      if agent_class && agent_class.respond_to?(:prompt_metadata)
+        metadata = agent_class.prompt_metadata
+        Rails.logger.debug "[Observability] Extracted prompt metadata: #{metadata.inspect}"
+      end
+
+      metadata
+    rescue StandardError => e
+      Rails.logger.debug "[Observability] Could not extract prompt metadata: #{e.message}"
+      {}
+    end
+
     def extract_model_id(chat_instance)
       if chat_instance.respond_to?(:model)
         model = chat_instance.model
@@ -218,8 +239,32 @@ module Observ
       end
     end
 
-    def extract_model_parameters(kwargs)
-      kwargs.slice(
+    def extract_model_parameters(chat_instance)
+      # Extract parameters from the internal RubyLLM::Chat object
+      # The Chat ActiveRecord model stores the RubyLLM::Chat instance in @chat
+      # Parameters are set via with_params and stored in the RubyLLM::Chat object's @params
+
+      # Ensure agent is configured (sets params if not already set)
+      # This is safe to call multiple times - it's idempotent
+      chat_instance.ensure_agent_configured if chat_instance.respond_to?(:ensure_agent_configured)
+
+      # Access the internal RubyLLM::Chat object
+      llm_chat = chat_instance.instance_variable_get(:@chat)
+      return {} unless llm_chat
+
+      # Get params from the RubyLLM::Chat object
+      params = if llm_chat.respond_to?(:params)
+        llm_chat.params
+      elsif llm_chat.instance_variable_defined?(:@params)
+        llm_chat.instance_variable_get(:@params)
+      else
+        {}
+      end
+
+      params ||= {}
+
+      # Only include relevant model parameters and convert string values to proper types
+      extracted = params.slice(
         :temperature,
         :max_tokens,
         :top_p,
@@ -229,6 +274,25 @@ module Observ
         :response_format,
         :seed
       ).compact
+
+      # Convert string numeric values to actual numbers
+      # This is necessary because prompts may return string values from JSON config
+      extracted.transform_values do |value|
+        case value
+        when String
+          # Try to convert to float if it looks like a number
+          if value.match?(/\A-?\d+\.?\d*\z/)
+            value.include?(".") ? value.to_f : value.to_i
+          else
+            value
+          end
+        else
+          value
+        end
+      end
+    rescue StandardError => e
+      Rails.logger.debug "[Observability] Could not extract model parameters: #{e.message}"
+      {}
     end
 
     def capture_messages(chat_instance)

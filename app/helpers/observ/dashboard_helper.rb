@@ -96,5 +96,39 @@ module Observ
       text = json_data.is_a?(String) ? json_data : json_data.to_json
       truncate(text, length: max_length)
     end
+
+    def format_json_with_newlines(data)
+      return "" if data.nil?
+
+      # Convert to JSON with pretty formatting
+      json_string = JSON.pretty_generate(data)
+
+      # This regex finds string values in JSON and unescapes newlines within them
+      # It preserves the JSON structure while making newlines visible
+      json_string.gsub(/: "((?:[^"\\]|\\.)*)"/m) do |match|
+        content = $1
+        # Unescape the newlines in the string content
+        unescaped = content.gsub('\\n', "\n")
+                          .gsub('\\t', "\t")
+                          .gsub('\\r', "\r")
+        ': "' + unescaped + '"'
+      end
+    end
+
+    def render_json_viewer(data, compact: false)
+      return "" if data.nil?
+
+      css_classes = [ "observ-json-viewer" ]
+      css_classes << "observ-json-viewer--compact" if compact
+
+      content_tag(:div,
+        "",
+        class: css_classes.join(" "),
+        data: {
+          controller: "observ--json-viewer",
+          observ__json_viewer_data_value: data.to_json
+        }
+      )
+    end
   end
 end

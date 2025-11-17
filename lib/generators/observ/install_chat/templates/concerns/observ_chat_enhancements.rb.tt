@@ -1,0 +1,34 @@
+# frozen_string_literal: true
+
+module ObservChatEnhancements
+  extend ActiveSupport::Concern
+
+  included do
+    include Observ::ObservabilityInstrumentation
+    
+    # Consolidated callback for agent initialization to reduce redundant queries
+    after_create :initialize_agent, if: -> { agent_class_name.present? }
+  end
+
+  def agent_class
+    return BaseAgent if agent_class_name.blank?
+
+    agent_class_name.constantize
+  rescue NameError
+    Rails.logger.warn "Agent class #{agent_class_name} not found, using BaseAgent"
+    BaseAgent
+  end
+
+  def setup_tools
+    agent_class.setup_tools(self)
+  end
+
+  private
+
+  def initialize_agent
+    # Execute both agent setup steps in one consolidated callback
+    # This prevents redundant association loading between callbacks
+    agent_class.setup_instructions(self)
+    agent_class.send_initial_greeting(self)
+  end
+end

@@ -3,15 +3,15 @@ module Observ
     before_action :set_chat, only: [ :show ]
 
     def index
-      @chats = Chat.order(created_at: :desc)
+      @chats = ::Chat.order(created_at: :desc)
     end
 
     def new
-      @chat = Chat.new
+      @chat = ::Chat.new
     end
 
     def create
-      @chat = Chat.new(params_chat)
+      @chat = ::Chat.new(params_chat)
 
       if @chat.save
         redirect_to chat_path(@chat), notice: "Chat was successfully created."
@@ -31,7 +31,7 @@ module Observ
     end
 
     def set_chat
-      @chat = Chat.find(params[:id])
+      @chat = ::Chat.find(params[:id])
     end
 
     def model

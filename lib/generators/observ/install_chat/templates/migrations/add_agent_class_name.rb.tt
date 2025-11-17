@@ -1,0 +1,6 @@
+class AddAgentClassNameToChats < ActiveRecord::Migration<%= migration_version %>
+  def change
+    add_column :chats, :agent_class_name, :string
+    add_index :chats, :agent_class_name
+  end
+end

@@ -136,6 +136,8 @@
   font-size: $observ-font-size-sm;
   line-height: 1.6;
   margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .observ-model-badge {

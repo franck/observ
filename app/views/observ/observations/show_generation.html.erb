@@ -96,9 +96,40 @@
             <dd class="observ-definition-list__definition"><%= format_duration_ms(@observation.time_to_first_token_ms) %></dd>
           </div>
         <% end %>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">Prompt</dt>
+          <dd class="observ-definition-list__definition">
+            <% if @observation.prompt_name.present? %>
+              <%= @observation.prompt_name %>
+              <% if @observation.prompt_version.present? %>
+                <span class="observ-text--muted">(v<%= @observation.prompt_version %>)</span>
+              <% end %>
+            <% else %>
+              <span class="observ-text--muted">default prompt</span>
+            <% end %>
+          </dd>
+        </div>
       </dl>
     </div>
   </section>
+
+  <% if @observation.model_parameters.present? && @observation.model_parameters.any? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Model Parameters</h2>
+      </header>
+      <div class="observ-card__body">
+        <dl class="observ-definition-list observ-definition-list--horizontal">
+          <% @observation.model_parameters.each do |key, value| %>
+            <div class="observ-definition-list__item">
+              <dt class="observ-definition-list__term"><%= key.to_s.humanize %></dt>
+              <dd class="observ-definition-list__definition"><%= value %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    </section>
+  <% end %>
 
   <% if @observation.usage.present? && @observation.usage.any? %>
     <section class="observ-card">
@@ -146,7 +177,7 @@
         <h2 class="observ-card__title">Messages</h2>
       </header>
       <div class="observ-card__body">
-        <pre class="observ-code-block"><%= JSON.pretty_generate(@observation.messages) %></pre>
+        <%= render_json_viewer(@observation.messages) %>
       </div>
     </section>
   <% end %>
@@ -157,7 +188,7 @@
         <h2 class="observ-card__title">Provider Metadata</h2>
       </header>
       <div class="observ-card__body">
-        <pre class="observ-code-block"><%= JSON.pretty_generate(@observation.provider_metadata) %></pre>
+        <%= render_json_viewer(@observation.provider_metadata) %>
       </div>
     </section>
   <% end %>

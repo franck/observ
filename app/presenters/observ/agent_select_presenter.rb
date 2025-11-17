@@ -9,7 +9,7 @@
 # It only knows about the AgentSelectable interface that agents must implement.
 #
 # Usage with dependency injection (recommended):
-#   agents = AgentProvider.all_agents
+#   agents = Observ::AgentProvider.all_agents
 #   presenter = Observ::AgentSelectPresenter.new(agents: agents)
 #   presenter.options
 #   # => [["Default Agent", ""], ["Deep Research", "DeepResearchAgent"], ...]
@@ -34,11 +34,11 @@ module Observ
       [ default_option ] + agent_options
     end
 
-    # Convenience class method that injects agents from AgentProvider
+    # Convenience class method that injects agents from Observ::AgentProvider
     # Useful when you don't need to filter or transform agents
-    # @param agents [Array<Class>] optional array of agents (defaults to AgentProvider.all_agents)
+    # @param agents [Array<Class>] optional array of agents (defaults to Observ::AgentProvider.all_agents)
     # @return [Array<Array<String>>] options array for select dropdown
-    def self.options(agents: AgentProvider.all_agents)
+    def self.options(agents: Observ::AgentProvider.all_agents)
       new(agents: agents).options
     end
 

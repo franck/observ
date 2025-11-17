@@ -5,6 +5,82 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **BREAKING**: Core agent infrastructure moved into Observ gem with proper namespacing
+  - `PromptManagement` → `Observ::PromptManagement`
+  - `AgentSelectable` → `Observ::AgentSelectable`
+  - `AgentProvider` → `Observ::AgentProvider`
+  - All three now live in the gem (no generation needed)
+  - Update agents from `include PromptManagement` to `include Observ::PromptManagement`
+  - Update agents from `include AgentSelectable` to `include Observ::AgentSelectable`
+  - Delete generated files after migration:
+    - `app/agents/concerns/prompt_management.rb`
+    - `app/agents/concerns/agent_selectable.rb`
+    - `app/agents/agent_provider.rb`
+  - See [PROMPT_MANAGEMENT_MIGRATION.md](docs/PROMPT_MANAGEMENT_MIGRATION.md) for complete migration guide
+- `rails generate observ:install:chat` no longer generates `AgentProvider` or concerns (all built into gem)
+- **Model Parameters Architecture**:
+  - Parameters now configured via `setup_parameters` hook (called during chat initialization)
+  - `chat.ask()` no longer accepts `**model_parameters` argument
+  - Parameters automatically extracted from chat instance for observability
+  - **Existing apps**: Remove `**agent_class.model_parameters` from all `chat.ask()` calls
+- Generator templates updated to use namespaced components:
+  - `base_agent.rb.tt` includes `setup_parameters` method
+  - `simple_agent.rb.tt` uses `Observ::AgentSelectable`
+  - `chat_response_job.rb.tt` now calls `chat.ask(content)` without parameters
+
+### Added
+
+- `Observ::PromptManagement` concern now distributed with gem (no generation needed)
+- `Observ::AgentSelectable` concern now distributed with gem (no generation needed)
+- `Observ::AgentProvider` service now distributed with gem (no generation needed)
+- Model parameters support in `BaseAgent` with `default_model_parameters` and `model_parameters` methods
+- `setup_parameters` hook in BaseAgent for configuring chat parameters during initialization
+- `ChatEnhancements` now calls `setup_parameters` in `initialize_agent` callback
+- Configuration option `agent_path` for customizing agent discovery location
+- Comprehensive migration guide for namespace changes
+
+### Fixed
+
+- **Model Parameter Observability**: Parameters now correctly captured in traces and observations
+  - `ChatInstrumenter` extracts parameters from chat instance (via `chat.params`)
+  - Temperature, max_tokens, and other parameters now visible in UI
+- **Model Parameter Type Conversion**: Parameters loaded from database now have correct numeric types
+  - `PromptManagement#extract_llm_parameters` converts string values to proper Float/Integer types
+  - Fixes OpenAI API errors: "Invalid type for 'temperature': expected a decimal, but got a string"
+  - String values like `"0.7"` now converted to `0.7` (Float)
+  - String values like `"2000"` now converted to `2000` (Integer)
+  - Non-numeric values (arrays, hashes) preserved unchanged
+  - Parameters configured once during chat creation (via `initialize_agent` callback)
+- **System Prompt Duplication**: Instructions no longer added multiple times on each message
+  - `ChatEnhancements#ensure_agent_configured` now only re-applies parameters, not instructions
+  - Instructions are set once at chat creation and persist across messages
+  - Fixes issue where system prompt appeared multiple times in conversation context
+- Agent selector in chat UI now works correctly with namespaced `Observ::AgentSelectable`
+  - Fixes issue where agents wouldn't appear in dropdown after namespace migration
+
+### Migration Required
+
+**For existing applications:**
+
+1. **Update ChatResponseJob** (`app/jobs/chat_response_job.rb`):
+   ```ruby
+   # BEFORE:
+   chat.ask(content, **chat.agent_class.model_parameters) do |chunk|
+   
+   # AFTER:
+   chat.ask(content) do |chunk|
+   ```
+
+2. **Update Service Files** (any files that call `chat.ask` with parameters):
+   - Remove `**AgentClass.model_parameters` from all `ask()` calls
+   - Parameters are now set automatically during chat initialization
+
+3. **No changes needed to BaseAgent** - the `model_parameters` method is still used, just called differently internally
+
 ## [0.1.0] - 2025-11-02
 
 ### Added
@@ -96,9 +172,195 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `capybara`
 - `sqlite3 >= 1.4`
 
+## [0.1.2] - 2025-11-12
+
+### Added
+
+- **Asset Installation Service Classes**:
+  - `Observ::AssetInstaller` - High-level orchestration for asset installation
+  - `Observ::AssetSyncer` - File synchronization with change detection
+  - `Observ::IndexFileGenerator` - Automatic Stimulus controller index generation
+
+- **Rails Generator**:
+  - `rails generate observ:install` - Interactive asset installation
+  - Options for custom destinations (--styles-dest, --js-dest)
+  - Option to skip index generation (--skip-index)
+  - Color-coded output with clear next steps
+
+- **New Rake Tasks**:
+  - `rails observ:install_assets` - Full installation with index generation
+  - `rails observ:install` - Shorthand alias
+  - Enhanced `rails observ:sync_assets` - Now uses service classes
+
+- **Automatic Index File Generation**:
+  - Creates `app/javascript/controllers/observ/index.js` with all imports
+  - Registers controllers with `observ--` prefix
+  - Checks if main controllers index imports Observ
+  - Provides actionable suggestions for manual registration
+
+- **Comprehensive Test Coverage**:
+  - `spec/lib/observ/asset_installer_spec.rb`
+  - `spec/lib/observ/asset_syncer_spec.rb`
+  - `spec/lib/observ/index_file_generator_spec.rb`
+
+- **Documentation**:
+  - `ASSET_INSTALLATION_IMPROVEMENTS.md` - Technical overview
+  - `UPGRADE_GUIDE.md` - Migration guide for existing users
+  - Enhanced README with asset management section
+  - Improved troubleshooting section
+
+### Changed
+
+- Refactored rake tasks to use service classes (from 160 lines to ~75 lines)
+- Improved first-time installation experience
+- Better error messages and user guidance
+
+### Improved
+
+- Asset installation now creates necessary index files automatically
+- File synchronization only copies changed files
+- Better logging with progress indicators
+- Enhanced documentation with step-by-step instructions
+
+### Technical
+
+- Extracted business logic from rake tasks to service classes
+- Single Responsibility Principle applied throughout
+- Dependency injection for better testability
+- Comprehensive RSpec coverage for new features
+
+## [0.3.0] - 2025-11-15
+
+### 🎉 Major: Chat Feature Now Optional
+
+The chat/agent testing feature is now **completely optional**, making Observ more flexible and easier to adopt for pure observability use cases.
+
+### Added
+
+#### Phase 1: Core Engine Fixes
+- **Conditional Route Mounting**: Chat routes (`/observ/chats`) only mount if `Chat` model exists with `acts_as_chat`
+- **Configuration Option**: Added `config.chat_ui_enabled` (auto-detects Chat model presence)
+- **Global Namespace**: Fixed controllers to use `::Chat` and `::Message` for host app models
+- **Session Model**: Safe Chat reference with `if defined?(::Chat)` check
+
+#### Phase 2: Install:Chat Generator
+- **New Generator**: `rails generate observ:install:chat` for one-command RubyLLM setup
+- **Complete Infrastructure Scaffolding**:
+  - 6 migration templates (chats, messages, tool_calls, models, references, agent_class_name)
+  - 4 model templates (Chat, Message, ToolCall, Model) with Observ concerns
+  - Agent infrastructure (BaseAgent, AgentProvider, concerns)
+  - Example agent (SimpleAgent) ready to use
+  - ChatResponseJob for async message processing
+  - ThinkTool example
+- **Generator Options**:
+  - `--skip-tools` - Skip tool generation
+  - `--skip-migrations` - Skip migrations
+  - `--skip-job` - Skip job generation
+- **Smart Detection**: Checks for RubyLLM gem and existing Chat model
+- **Comprehensive Documentation**: Added `docs/CHAT_INSTALLATION.md` (370+ lines)
+
+#### Phase 3: Documentation Updates
+- **Two-Tier Installation**: Clear separation of Core vs Core + Chat
+- **Updated README**: Restructured installation section with feature comparison
+- **Migration Guide**: Help for existing users
+- **Architecture Documentation**: Explained conditional routing and namespace handling
+
+### Changed
+
+#### Breaking Changes (Backward Compatible!)
+- **Chat Routes**: Now conditionally mounted (auto-detected, no action needed for existing apps)
+- **Controllers**: Use global namespace (`::Chat`, `::Message`) instead of implicit lookup
+- **Installation Flow**: New two-tier approach (Core-only or Core + Chat)
+
+**Note:** Existing apps with Chat model continue to work without changes. The Chat model is auto-detected and routes mount automatically.
+
+### Fixed
+
+- **NameError Fixed**: `uninitialized constant Observ::ChatsController::Chat` no longer occurs
+- **500 Errors**: `/observ/chats` no longer returns 500 in fresh installations without Chat
+- **Namespace Issues**: Proper global namespace resolution for host app models
+
+### Documentation
+
+- Added `docs/PHASE_1_COMPLETION.md` - Core engine fixes summary
+- Added `docs/PHASE_2_COMPLETION.md` - Generator implementation details  
+- Added `docs/PHASE_3_COMPLETION.md` - Documentation and release notes
+- Added `docs/CHAT_INSTALLATION.md` - Complete chat feature guide
+- Updated main README with two-tier installation
+- Enhanced troubleshooting section
+
+### Migration Guide for Existing Users
+
+**If you have an existing app with Chat/RubyLLM:**
+
+No action needed! Your app will continue to work exactly as before:
+- Chat routes auto-detect and mount
+- All existing functionality preserved
+- Zero breaking changes
+
+**If you want to use Observ in a new app:**
+
+Choose your installation mode:
+
+**Option 1: Core Only** (observability without chat)
+```bash
+gem "observ"
+rails observ:install:migrations
+rails db:migrate
+rails generate observ:install
+```
+
+**Option 2: Core + Chat** (with agent testing)
+```bash
+gem "observ"
+gem "ruby_llm"
+rails observ:install:migrations
+rails generate observ:install
+rails generate observ:install:chat  # ⭐ New!
+rails db:migrate
+```
+
+### Technical Details
+
+#### Files Modified (Phase 1)
+- `app/controllers/observ/chats_controller.rb` - Fixed namespace (4 locations)
+- `app/controllers/observ/messages_controller.rb` - Fixed namespace (2 locations)
+- `app/models/observ/session.rb` - Safe Chat reference
+- `config/routes.rb` - Conditional route mounting
+- `lib/observ/configuration.rb` - Added `chat_ui_enabled` config
+
+#### Files Created (Phase 2)
+- `lib/generators/observ/install_chat/install_chat_generator.rb` (219 lines)
+- 17 template files (migrations, models, agents, jobs, tools)
+- `docs/CHAT_INSTALLATION.md` (370+ lines)
+
+#### Total Changes
+- **5 files modified** (Phase 1)
+- **19 files created** (Phase 2)
+- **3 documentation files updated** (Phase 3)
+- **27 total files changed**
+
+### Improvements
+
+- ✅ **Better Developer Experience**: Clear installation paths
+- ✅ **Reduced Friction**: Core features work out-of-the-box
+- ✅ **Flexibility**: Optional chat feature when needed
+- ✅ **Graceful Degradation**: Works with or without RubyLLM
+- ✅ **Production Ready**: All generated code includes error handling and observability
+
+### Dependencies
+
+No changes to core dependencies:
+- `rails >= 7.0, < 9.0`
+- `kaminari ~> 1.2`
+- `aasm ~> 5.5`
+
+Chat feature adds (optional):
+- `ruby_llm` - Only needed if using `rails generate observ:install:chat`
+
 ## [Unreleased]
 
-### Planned for v0.2.0
+### Planned for Future Versions
 
 - Langfuse export integration
 - Additional provider support (Anthropic, Gemini)
@@ -108,8 +370,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Advanced filtering and search
 - Custom metric definitions
 - Alert system for cost/usage thresholds
+- More example agents (ResearchAgent, SummarizationAgent)
+- Advanced tool library (WebSearchTool, FetchWebPageTool)
 
 ---
 
+[0.3.0]: https://github.com/yourusername/observ/releases/tag/v0.3.0
+[0.1.2]: https://github.com/yourusername/observ/releases/tag/v0.1.2
 [0.1.0]: https://github.com/yourusername/observ/releases/tag/v0.1.0
-[Unreleased]: https://github.com/yourusername/observ/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/yourusername/observ/compare/v0.3.0...HEAD

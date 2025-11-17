@@ -113,7 +113,7 @@
         <h2 class="observ-card__title">Metadata</h2>
       </header>
       <div class="observ-card__body">
-        <pre class="observ-code-block observ-code-block--compact"><%= JSON.pretty_generate(@trace.metadata) %></pre>
+        <%= render_json_viewer(@trace.metadata, compact: true) %>
       </div>
     </section>
   <% end %>
@@ -176,6 +176,19 @@
                         </dd>
                       </div>
                     <% end %>
+                    <div class="observ-definition-list__item">
+                      <dt class="observ-definition-list__term">Prompt</dt>
+                      <dd class="observ-definition-list__definition">
+                        <% if observation.prompt_name.present? %>
+                          <%= observation.prompt_name %>
+                          <% if observation.prompt_version.present? %>
+                            <span class="observ-text--muted">(v<%= observation.prompt_version %>)</span>
+                          <% end %>
+                        <% else %>
+                          <span class="observ-text--muted">default prompt</span>
+                        <% end %>
+                      </dd>
+                    </div>
                   <% end %>
                   <div class="observ-definition-list__item">
                     <dt class="observ-definition-list__term">Duration</dt>
@@ -229,21 +242,21 @@
               <% if observation.is_a?(Observ::Generation) && observation.messages.present? && observation.messages.any? %>
                 <div class="observ-observation-card__section observ-observation-card__section--compact">
                   <h4 class="observ-observation-card__section-title">Messages</h4>
-                  <pre class="observ-code-block observ-code-block--compact"><%= JSON.pretty_generate(observation.messages) %></pre>
+                  <%= render_json_viewer(observation.messages, compact: true) %>
                 </div>
               <% end %>
 
               <% if observation.is_a?(Observ::Generation) && observation.provider_metadata.present? && observation.provider_metadata.any? %>
                 <div class="observ-observation-card__section observ-observation-card__section--compact">
                   <h4 class="observ-observation-card__section-title">Provider Metadata</h4>
-                  <pre class="observ-code-block observ-code-block--compact"><%= JSON.pretty_generate(observation.provider_metadata) %></pre>
+                  <%= render_json_viewer(observation.provider_metadata, compact: true) %>
                 </div>
               <% end %>
 
               <% if observation.is_a?(Observ::Span) && observation.metadata.present? && observation.metadata.any? %>
                 <div class="observ-observation-card__section observ-observation-card__section--compact">
                   <h4 class="observ-observation-card__section-title">Metadata</h4>
-                  <pre class="observ-code-block observ-code-block--compact"><%= JSON.pretty_generate(observation.metadata) %></pre>
+                  <%= render_json_viewer(observation.metadata, compact: true) %>
                 </div>
               <% end %>
 

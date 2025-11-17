@@ -1,0 +1,56 @@
+class ChatResponseJob < ApplicationJob
+  retry_on RubyLLM::BadRequestError, wait: 2.seconds, attempts: 1
+
+  def perform(chat_id, content)
+    chat = Chat.find(chat_id)
+
+    # Observability is automatically enabled via after_find callback
+    # All LLM calls, tool calls, and metrics are tracked automatically
+
+    chat.setup_tools
+
+    begin
+      # Model parameters (temperature, max_tokens, etc.) are automatically configured
+      # via the initialize_agent callback when the chat is created
+      chat.ask(content) do |chunk|
+        if chunk.content && !chunk.content.blank?
+          message = chat.messages.last
+          message.broadcast_append_chunk(chunk.content)
+        end
+      end
+    rescue RubyLLM::BadRequestError => e
+      Rails.logger.error "[ChatResponseJob] BadRequestError: #{e.message}"
+
+      error_message = chat.messages.create!(
+        role: :assistant,
+        content: "I apologize, but I encountered an error while processing your request. This might be due to a tool call issue. Please try rephrasing your question or try again."
+      )
+
+      error_message.broadcast_replace_to(
+        "chat_#{chat.id}",
+        target: "messages",
+        partial: "observ/messages/message",
+        locals: { message: error_message }
+      )
+
+      raise
+    end
+
+    chat.finalize_observability_session if chat.observ_session
+
+    if observability_debug_enabled? && chat.observ_session
+      metrics = chat.observ_session.session_metrics
+      Rails.logger.info "[Observability] Job completed - Tokens: #{metrics[:total_tokens]}, Cost: $#{metrics[:total_cost]}"
+    end
+  end
+
+  private
+
+  def observability_debug_enabled?
+    Rails.configuration.respond_to?(:observability) &&
+      Rails.configuration.observability.respond_to?(:debug) &&
+      Rails.configuration.observability.debug
+  rescue NoMethodError
+    false
+  end
+end
