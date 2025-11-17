@@ -70,11 +70,15 @@ module Observ
 
       model_id = extract_model_id(chat_instance)
 
+      # Extract prompt metadata from the chat's agent (if available)
+      prompt_metadata = extract_prompt_metadata(chat_instance)
+
       generation = trace.create_generation(
         name: "llm_call",
         metadata: @context.merge(kwargs.slice(:temperature, :max_tokens)),
         model: model_id,
-        model_parameters: extract_model_parameters(kwargs)
+        model_parameters: extract_model_parameters(kwargs),
+        **prompt_metadata
       )
 
       messages_snapshot = capture_messages(chat_instance)
@@ -201,6 +205,23 @@ module Observ
       generation&.update(status_message: "FAILED", finish_reason: "error") rescue nil
 
       Rails.logger.error "[Observability] Error captured: #{error.class.name} - #{error.message}"
+    end
+
+    def extract_prompt_metadata(chat_instance)
+      metadata = {}
+
+      # Try to get the agent class from context
+      agent_class = @context[:agent_class]
+
+      if agent_class && agent_class.respond_to?(:prompt_metadata)
+        metadata = agent_class.prompt_metadata
+        Rails.logger.debug "[Observability] Extracted prompt metadata: #{metadata.inspect}"
+      end
+
+      metadata
+    rescue StandardError => e
+      Rails.logger.debug "[Observability] Could not extract prompt metadata: #{e.message}"
+      {}
     end
 
     def extract_model_id(chat_instance)

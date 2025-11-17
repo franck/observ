@@ -254,66 +254,52 @@ module Observ
       end
 
       def enhance_chat_model
-        concern_path = Rails.root.join("app/models/concerns/observ_chat_enhancements.rb")
-
-        # Generate or update the concern file
-        if File.exist?(concern_path)
-          if options[:force]
-            template "concerns/observ_chat_enhancements.rb.tt",
-                    "app/models/concerns/observ_chat_enhancements.rb",
-                    force: true
-            say "  ✓ Overwrote ObservChatEnhancements concern", :yellow
-          else
-            say "  ⚠ ObservChatEnhancements concern already exists (use --force to overwrite)", :yellow
-          end
-        else
-          template "concerns/observ_chat_enhancements.rb.tt",
-                  "app/models/concerns/observ_chat_enhancements.rb"
-          say "  ✓ Created ObservChatEnhancements concern", :green
-        end
-
-        # Include the concern in Chat model if not already included
+        # Include the concern from gem in Chat model if not already included
         chat_content = File.read(Rails.root.join("app/models/chat.rb"))
 
-        unless chat_content.include?("ObservChatEnhancements")
+        unless chat_content.include?("Observ::ChatEnhancements")
           inject_into_file "app/models/chat.rb", after: /class Chat < ApplicationRecord\n/ do
-            "  include ObservChatEnhancements\n\n"
+            "  include Observ::ChatEnhancements\n\n"
           end
-          say "  ✓ Included ObservChatEnhancements in Chat model", :green
+          say "  ✓ Included Observ::ChatEnhancements in Chat model", :green
         else
-          say "  ⚠ Chat model already includes ObservChatEnhancements", :yellow
+          say "  ⚠ Chat model already includes Observ::ChatEnhancements", :yellow
+        end
+
+        # Add agent_class method if agent_class_name column exists
+        unless chat_content.include?("def agent_class")
+          inject_into_file "app/models/chat.rb", before: /^end\s*$/ do
+            <<~RUBY
+
+                # Return the agent class for this chat
+                # Override this method if you need custom agent class resolution
+                def agent_class
+                  return BaseAgent if agent_class_name.blank?
+
+                  agent_class_name.constantize
+                rescue NameError
+                  Rails.logger.warn "Agent class \#{agent_class_name} not found, using BaseAgent"
+                  BaseAgent
+                end
+            RUBY
+          end
+          say "  ✓ Added agent_class method to Chat model", :green
+        else
+          say "  ⚠ Chat model already has agent_class method", :yellow
         end
       end
 
       def enhance_message_model
-        concern_path = Rails.root.join("app/models/concerns/observ_message_enhancements.rb")
-
-        # Generate or update the concern file
-        if File.exist?(concern_path)
-          if options[:force]
-            template "concerns/observ_message_enhancements.rb.tt",
-                    "app/models/concerns/observ_message_enhancements.rb",
-                    force: true
-            say "  ✓ Overwrote ObservMessageEnhancements concern", :yellow
-          else
-            say "  ⚠ ObservMessageEnhancements concern already exists (use --force to overwrite)", :yellow
-          end
-        else
-          template "concerns/observ_message_enhancements.rb.tt",
-                  "app/models/concerns/observ_message_enhancements.rb"
-          say "  ✓ Created ObservMessageEnhancements concern", :green
-        end
-
-        # Include the concern in Message model if not already included
+        # Include the concern from gem in Message model if not already included
         message_content = File.read(Rails.root.join("app/models/message.rb"))
 
-        unless message_content.include?("ObservMessageEnhancements")
+        unless message_content.include?("Observ::MessageEnhancements")
           inject_into_file "app/models/message.rb", after: /class Message < ApplicationRecord\n/ do
-            "  include ObservMessageEnhancements\n\n"
+            "  include Observ::MessageEnhancements\n\n"
           end
-          say "  ✓ Included ObservMessageEnhancements in Message model", :green
+          say "  ✓ Included Observ::MessageEnhancements in Message model", :green
         else
-          say "  ⚠ Message model already includes ObservMessageEnhancements", :yellow
+          say "  ⚠ Message model already includes Observ::MessageEnhancements", :yellow
         end
       end
 

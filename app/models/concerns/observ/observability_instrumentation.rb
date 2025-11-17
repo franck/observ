@@ -52,10 +52,17 @@ module Observ
   # Override this in your model or concerns to add custom context
   # @return [Hash] context hash
   def observability_context
-    {
+    context = {
       agent_type: agent_class_name || "standard",
       chat_id: id
     }
+
+    # Include agent_class if available for prompt metadata extraction
+    if respond_to?(:agent_class)
+      context[:agent_class] = agent_class
+    end
+
+    context
   end
 
   def initialize_observability_session

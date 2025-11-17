@@ -159,7 +159,7 @@ module Observ
     end
 
     def prompt_params
-      params.require(:observ_prompt).permit(
+      params.require(:prompt).permit(
         :name, :prompt, :config, :commit_message, :promote_to_production
       )
     end

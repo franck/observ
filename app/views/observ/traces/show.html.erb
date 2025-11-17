@@ -176,6 +176,19 @@
                         </dd>
                       </div>
                     <% end %>
+                    <div class="observ-definition-list__item">
+                      <dt class="observ-definition-list__term">Prompt</dt>
+                      <dd class="observ-definition-list__definition">
+                        <% if observation.prompt_name.present? %>
+                          <%= observation.prompt_name %>
+                          <% if observation.prompt_version.present? %>
+                            <span class="observ-text--muted">(v<%= observation.prompt_version %>)</span>
+                          <% end %>
+                        <% else %>
+                          <span class="observ-text--muted">default prompt</span>
+                        <% end %>
+                      </dd>
+                    </div>
                   <% end %>
                   <div class="observ-definition-list__item">
                     <dt class="observ-definition-list__term">Duration</dt>
