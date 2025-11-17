@@ -96,17 +96,52 @@ RSpec.describe Observ::ChatInstrumenter do
     end
 
     describe '#extract_model_parameters' do
-      it 'extracts relevant parameters from kwargs' do
-        kwargs = {
-          temperature: 0.7,
-          max_tokens: 100,
-          top_p: 0.9,
-          irrelevant: 'param'
-        }
+      it 'extracts relevant parameters from internal RubyLLM chat object' do
+        llm_chat = double('RubyLLM::Chat',
+          params: {
+            temperature: 0.7,
+            max_tokens: 100,
+            top_p: 0.9,
+            irrelevant: 'param'
+          }
+        )
 
-        params = instrumenter.send(:extract_model_parameters, kwargs)
+        chat_instance = double('Chat')
+        allow(chat_instance).to receive(:instance_variable_get).with(:@chat).and_return(llm_chat)
+
+        params = instrumenter.send(:extract_model_parameters, chat_instance)
         expect(params).to include(temperature: 0.7, max_tokens: 100, top_p: 0.9)
         expect(params).not_to have_key(:irrelevant)
+      end
+
+      it 'returns empty hash when chat has no internal @chat object' do
+        chat_without_llm = double('Chat')
+        allow(chat_without_llm).to receive(:instance_variable_get).with(:@chat).and_return(nil)
+
+        params = instrumenter.send(:extract_model_parameters, chat_without_llm)
+        expect(params).to eq({})
+      end
+
+      it 'returns empty hash when params is nil' do
+        llm_chat = double('RubyLLM::Chat', params: nil)
+        chat_instance = double('Chat')
+        allow(chat_instance).to receive(:instance_variable_get).with(:@chat).and_return(llm_chat)
+
+        params = instrumenter.send(:extract_model_parameters, chat_instance)
+        expect(params).to eq({})
+      end
+
+      it 'extracts params via instance variable if params method not available' do
+        llm_chat = double('RubyLLM::Chat')
+        allow(llm_chat).to receive(:respond_to?).with(:params).and_return(false)
+        allow(llm_chat).to receive(:instance_variable_defined?).with(:@params).and_return(true)
+        allow(llm_chat).to receive(:instance_variable_get).with(:@params).and_return({ temperature: 0.5 })
+
+        chat_instance = double('Chat')
+        allow(chat_instance).to receive(:instance_variable_get).with(:@chat).and_return(llm_chat)
+
+        params = instrumenter.send(:extract_model_parameters, chat_instance)
+        expect(params).to include(temperature: 0.5)
       end
     end
 

@@ -10,6 +10,8 @@ class ChatResponseJob < ApplicationJob
     chat.setup_tools
 
     begin
+      # Model parameters (temperature, max_tokens, etc.) are automatically configured
+      # via the initialize_agent callback when the chat is created
       chat.ask(content) do |chunk|
         if chunk.content && !chunk.content.blank?
           message = chat.messages.last

@@ -77,7 +77,7 @@ module Observ
         name: "llm_call",
         metadata: @context.merge(kwargs.slice(:temperature, :max_tokens)),
         model: model_id,
-        model_parameters: extract_model_parameters(kwargs),
+        model_parameters: extract_model_parameters(chat_instance),
         **prompt_metadata
       )
 
@@ -239,8 +239,32 @@ module Observ
       end
     end
 
-    def extract_model_parameters(kwargs)
-      kwargs.slice(
+    def extract_model_parameters(chat_instance)
+      # Extract parameters from the internal RubyLLM::Chat object
+      # The Chat ActiveRecord model stores the RubyLLM::Chat instance in @chat
+      # Parameters are set via with_params and stored in the RubyLLM::Chat object's @params
+
+      # Ensure agent is configured (sets params if not already set)
+      # This is safe to call multiple times - it's idempotent
+      chat_instance.ensure_agent_configured if chat_instance.respond_to?(:ensure_agent_configured)
+
+      # Access the internal RubyLLM::Chat object
+      llm_chat = chat_instance.instance_variable_get(:@chat)
+      return {} unless llm_chat
+
+      # Get params from the RubyLLM::Chat object
+      params = if llm_chat.respond_to?(:params)
+        llm_chat.params
+      elsif llm_chat.instance_variable_defined?(:@params)
+        llm_chat.instance_variable_get(:@params)
+      else
+        {}
+      end
+
+      params ||= {}
+
+      # Only include relevant model parameters and convert string values to proper types
+      extracted = params.slice(
         :temperature,
         :max_tokens,
         :top_p,
@@ -250,6 +274,25 @@ module Observ
         :response_format,
         :seed
       ).compact
+
+      # Convert string numeric values to actual numbers
+      # This is necessary because prompts may return string values from JSON config
+      extracted.transform_values do |value|
+        case value
+        when String
+          # Try to convert to float if it looks like a number
+          if value.match?(/\A-?\d+\.?\d*\z/)
+            value.include?(".") ? value.to_f : value.to_i
+          else
+            value
+          end
+        else
+          value
+        end
+      end
+    rescue StandardError => e
+      Rails.logger.debug "[Observability] Could not extract model parameters: #{e.message}"
+      {}
     end
 
     def capture_messages(chat_instance)

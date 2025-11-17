@@ -21,9 +21,9 @@
 #     end
 #   end
 #
-# For agents that want prompt management, include the PromptManagement concern:
+# For agents that want prompt management, include the Observ::PromptManagement concern:
 #   class MyAgent < BaseAgent
-#     include PromptManagement
+#     include Observ::PromptManagement
 #     # ...
 #   end
 class BaseAgent
@@ -56,10 +56,23 @@ class BaseAgent
   end
 
   # Model to use for this agent
-  # Can be overridden by concerns (e.g., PromptManagement)
+  # Can be overridden by concerns (e.g., Observ::PromptManagement)
   # @return [String] The model identifier to use
   def self.model
     default_model
+  end
+
+  # Default model parameters for this agent (temperature, max_tokens, etc.)
+  # @return [Hash] Hash of model parameters
+  def self.default_model_parameters
+    {}  # Override in subclasses for custom defaults
+  end
+
+  # Model parameters to use for this agent
+  # Can be overridden by concerns (e.g., Observ::PromptManagement)
+  # @return [Hash] The model parameters to use
+  def self.model_parameters
+    default_model_parameters
   end
 
   # ============================================
@@ -92,6 +105,32 @@ class BaseAgent
       end
       chat.with_tools(*instantiated_tools)
     end
+    chat
+  end
+
+  # Setup model parameters for the chat session
+  # @param chat [Chat] The chat session
+  # @return [Chat] The configured chat session
+  def self.setup_parameters(chat)
+    params = model_parameters
+    
+    # Convert string numeric values to proper types for API compatibility
+    # This is necessary because prompt configs may return string values
+    normalized_params = params.transform_values do |value|
+      case value
+      when String
+        # Convert numeric strings to numbers
+        if value.match?(/\A-?\d+\.?\d*\z/)
+          value.include?('.') ? value.to_f : value.to_i
+        else
+          value
+        end
+      else
+        value
+      end
+    end
+    
+    chat.with_params(**normalized_params) if normalized_params.any?
     chat
   end
 

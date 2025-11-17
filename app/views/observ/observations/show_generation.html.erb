@@ -113,6 +113,24 @@
     </div>
   </section>
 
+  <% if @observation.model_parameters.present? && @observation.model_parameters.any? %>
+    <section class="observ-card">
+      <header class="observ-card__header">
+        <h2 class="observ-card__title">Model Parameters</h2>
+      </header>
+      <div class="observ-card__body">
+        <dl class="observ-definition-list observ-definition-list--horizontal">
+          <% @observation.model_parameters.each do |key, value| %>
+            <div class="observ-definition-list__item">
+              <dt class="observ-definition-list__term"><%= key.to_s.humanize %></dt>
+              <dd class="observ-definition-list__definition"><%= value %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    </section>
+  <% end %>
+
   <% if @observation.usage.present? && @observation.usage.any? %>
     <section class="observ-card">
       <header class="observ-card__header">
