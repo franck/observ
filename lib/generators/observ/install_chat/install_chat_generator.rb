@@ -88,16 +88,11 @@ module Observ
         say "-" * 80, :cyan
 
         template "agents/base_agent.rb.tt", "app/agents/base_agent.rb"
-        template "agents/agent_provider.rb.tt", "app/agents/agent_provider.rb"
-        template "agents/concerns/agent_selectable.rb.tt",
-                "app/agents/concerns/agent_selectable.rb"
-        template "agents/concerns/prompt_management.rb.tt",
-                "app/agents/concerns/prompt_management.rb"
 
         say "  ✓ Created BaseAgent", :green
-        say "  ✓ Created AgentProvider", :green
-        say "  ✓ Created AgentSelectable concern", :green
-        say "  ✓ Created PromptManagement concern", :green
+        say "  ℹ AgentProvider is now available as Observ::AgentProvider (no generation needed)", :yellow
+        say "  ℹ AgentSelectable is now available as Observ::AgentSelectable (no generation needed)", :yellow
+        say "  ℹ PromptManagement is now available as Observ::PromptManagement (no generation needed)", :yellow
         say "\n"
       end
 

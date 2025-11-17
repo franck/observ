@@ -5,11 +5,11 @@
 #
 # To create your own agent:
 # 1. Extend BaseAgent
-# 2. Include AgentSelectable to make it appear in the UI
+# 2. Include Observ::AgentSelectable to make it appear in the UI
 # 3. Implement required methods: system_prompt, default_model, display_name
 # 4. Optionally add tools and initial_greeting
 class SimpleAgent < BaseAgent
-  include AgentSelectable
+  include Observ::AgentSelectable
 
   # Display name shown in the Observ UI
   def self.display_name
