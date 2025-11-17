@@ -5,6 +5,82 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **BREAKING**: Core agent infrastructure moved into Observ gem with proper namespacing
+  - `PromptManagement` → `Observ::PromptManagement`
+  - `AgentSelectable` → `Observ::AgentSelectable`
+  - `AgentProvider` → `Observ::AgentProvider`
+  - All three now live in the gem (no generation needed)
+  - Update agents from `include PromptManagement` to `include Observ::PromptManagement`
+  - Update agents from `include AgentSelectable` to `include Observ::AgentSelectable`
+  - Delete generated files after migration:
+    - `app/agents/concerns/prompt_management.rb`
+    - `app/agents/concerns/agent_selectable.rb`
+    - `app/agents/agent_provider.rb`
+  - See [PROMPT_MANAGEMENT_MIGRATION.md](docs/PROMPT_MANAGEMENT_MIGRATION.md) for complete migration guide
+- `rails generate observ:install:chat` no longer generates `AgentProvider` or concerns (all built into gem)
+- **Model Parameters Architecture**:
+  - Parameters now configured via `setup_parameters` hook (called during chat initialization)
+  - `chat.ask()` no longer accepts `**model_parameters` argument
+  - Parameters automatically extracted from chat instance for observability
+  - **Existing apps**: Remove `**agent_class.model_parameters` from all `chat.ask()` calls
+- Generator templates updated to use namespaced components:
+  - `base_agent.rb.tt` includes `setup_parameters` method
+  - `simple_agent.rb.tt` uses `Observ::AgentSelectable`
+  - `chat_response_job.rb.tt` now calls `chat.ask(content)` without parameters
+
+### Added
+
+- `Observ::PromptManagement` concern now distributed with gem (no generation needed)
+- `Observ::AgentSelectable` concern now distributed with gem (no generation needed)
+- `Observ::AgentProvider` service now distributed with gem (no generation needed)
+- Model parameters support in `BaseAgent` with `default_model_parameters` and `model_parameters` methods
+- `setup_parameters` hook in BaseAgent for configuring chat parameters during initialization
+- `ChatEnhancements` now calls `setup_parameters` in `initialize_agent` callback
+- Configuration option `agent_path` for customizing agent discovery location
+- Comprehensive migration guide for namespace changes
+
+### Fixed
+
+- **Model Parameter Observability**: Parameters now correctly captured in traces and observations
+  - `ChatInstrumenter` extracts parameters from chat instance (via `chat.params`)
+  - Temperature, max_tokens, and other parameters now visible in UI
+- **Model Parameter Type Conversion**: Parameters loaded from database now have correct numeric types
+  - `PromptManagement#extract_llm_parameters` converts string values to proper Float/Integer types
+  - Fixes OpenAI API errors: "Invalid type for 'temperature': expected a decimal, but got a string"
+  - String values like `"0.7"` now converted to `0.7` (Float)
+  - String values like `"2000"` now converted to `2000` (Integer)
+  - Non-numeric values (arrays, hashes) preserved unchanged
+  - Parameters configured once during chat creation (via `initialize_agent` callback)
+- **System Prompt Duplication**: Instructions no longer added multiple times on each message
+  - `ChatEnhancements#ensure_agent_configured` now only re-applies parameters, not instructions
+  - Instructions are set once at chat creation and persist across messages
+  - Fixes issue where system prompt appeared multiple times in conversation context
+- Agent selector in chat UI now works correctly with namespaced `Observ::AgentSelectable`
+  - Fixes issue where agents wouldn't appear in dropdown after namespace migration
+
+### Migration Required
+
+**For existing applications:**
+
+1. **Update ChatResponseJob** (`app/jobs/chat_response_job.rb`):
+   ```ruby
+   # BEFORE:
+   chat.ask(content, **chat.agent_class.model_parameters) do |chunk|
+   
+   # AFTER:
+   chat.ask(content) do |chunk|
+   ```
+
+2. **Update Service Files** (any files that call `chat.ask` with parameters):
+   - Remove `**AgentClass.model_parameters` from all `ask()` calls
+   - Parameters are now set automatically during chat initialization
+
+3. **No changes needed to BaseAgent** - the `model_parameters` method is still used, just called differently internally
+
 ## [0.1.0] - 2025-11-02
 
 ### Added
