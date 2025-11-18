@@ -1,0 +1,4 @@
+- [] validate prompt configuration format
+- [] add pagination to chats, sessions, traces, observations, prompts, annotations (with view helper)
+- [] remove select model in chat#new
+- [] in chat#new after selecting the agent, if agent use prompt management, add a select prompt version or 'use default prompt'

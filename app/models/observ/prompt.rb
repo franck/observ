@@ -17,6 +17,9 @@ module Observ
     # Only ONE production version per prompt name
     validate :only_one_production_per_name, if: :production?
 
+    # Validate config format
+    validate :validate_config_format
+
     # Prevent editing immutable prompts
     before_update :ensure_editable!, if: :content_changed?
 
@@ -204,6 +207,17 @@ module Observ
       existing_production = self.class.where(name: name, state: :production).where.not(id: id).exists?
       if existing_production
         errors.add(:state, "Only one production version allowed per prompt name")
+      end
+    end
+
+    def validate_config_format
+      return if config.blank?
+
+      validator = Observ::PromptConfigValidator.new(config)
+      unless validator.valid?
+        validator.errors.each do |error|
+          errors.add(:config, error)
+        end
       end
     end
 

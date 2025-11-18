@@ -14,6 +14,8 @@ module Observ
                   :prompt_cache_warming_enabled,
                   :prompt_cache_critical_prompts,
                   :prompt_cache_monitoring_enabled,
+                  :prompt_config_schema,
+                  :prompt_config_schema_strict,
                   :back_to_app_path,
                   :back_to_app_label,
                   :chat_ui_enabled,
@@ -32,6 +34,8 @@ module Observ
       @prompt_cache_warming_enabled = true
       @prompt_cache_critical_prompts = []
       @prompt_cache_monitoring_enabled = true
+      @prompt_config_schema = default_prompt_config_schema
+      @prompt_config_schema_strict = false
       @back_to_app_path = -> { "/" }
       @back_to_app_label = "← Back to App"
       @chat_ui_enabled = -> { defined?(::Chat) && ::Chat.respond_to?(:acts_as_chat) }
@@ -43,6 +47,60 @@ module Observ
     def chat_ui_enabled?
       return @chat_ui_enabled.call if @chat_ui_enabled.respond_to?(:call)
       @chat_ui_enabled
+    end
+
+    # Default schema for prompt configuration validation
+    # @return [Hash]
+    def default_prompt_config_schema
+      {
+        temperature: {
+          type: :float,
+          required: false,
+          range: 0.0..1.0,
+          default: 0.7
+        },
+        max_tokens: {
+          type: :integer,
+          required: false,
+          range: 1..100000
+        },
+        top_p: {
+          type: :float,
+          required: false,
+          range: 0.0..1.0
+        },
+        frequency_penalty: {
+          type: :float,
+          required: false,
+          range: -2.0..2.0
+        },
+        presence_penalty: {
+          type: :float,
+          required: false,
+          range: -2.0..2.0
+        },
+        stop_sequences: {
+          type: :array,
+          required: false,
+          item_type: :string
+        },
+        model: {
+          type: :string,
+          required: false
+        },
+        response_format: {
+          type: :hash,
+          required: false
+        },
+        seed: {
+          type: :integer,
+          required: false
+        },
+        stream: {
+          type: :boolean,
+          required: false
+        }
+      }
     end
   end
 end
