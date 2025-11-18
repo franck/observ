@@ -403,4 +403,182 @@ RSpec.describe Observ::Prompt, type: :model do
       expect(prompt.config["temperature"]).to eq(0.9)
     end
   end
+
+  describe "config validation" do
+    context "with valid config" do
+      it "accepts valid temperature" do
+        prompt = build(:observ_prompt, config: { temperature: 0.7 })
+        expect(prompt).to be_valid
+      end
+
+      it "accepts valid max_tokens" do
+        prompt = build(:observ_prompt, config: { max_tokens: 1000 })
+        expect(prompt).to be_valid
+      end
+
+      it "accepts valid top_p" do
+        prompt = build(:observ_prompt, config: { top_p: 0.9 })
+        expect(prompt).to be_valid
+      end
+
+      it "accepts valid frequency_penalty" do
+        prompt = build(:observ_prompt, config: { frequency_penalty: 0.5 })
+        expect(prompt).to be_valid
+      end
+
+      it "accepts valid presence_penalty" do
+        prompt = build(:observ_prompt, config: { presence_penalty: -0.5 })
+        expect(prompt).to be_valid
+      end
+
+      it "accepts valid stop_sequences" do
+        prompt = build(:observ_prompt, config: { stop_sequences: [ "STOP", "END" ] })
+        expect(prompt).to be_valid
+      end
+
+      it "accepts valid model" do
+        prompt = build(:observ_prompt, config: { model: "gpt-4o" })
+        expect(prompt).to be_valid
+      end
+
+      it "accepts multiple valid config keys" do
+        prompt = build(:observ_prompt, config: {
+          model: "gpt-4o",
+          temperature: 0.8,
+          max_tokens: 2000,
+          top_p: 0.95
+        })
+        expect(prompt).to be_valid
+      end
+
+      it "accepts blank config" do
+        prompt = build(:observ_prompt, config: {})
+        expect(prompt).to be_valid
+      end
+
+      it "accepts nil config" do
+        prompt = build(:observ_prompt, config: nil)
+        expect(prompt).to be_valid
+      end
+    end
+
+    context "with invalid config" do
+      it "rejects temperature out of range" do
+        prompt = build(:observ_prompt, config: { temperature: 3.0 })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("temperature must be between 0.0 and 2.0")
+      end
+
+      it "rejects negative temperature" do
+        prompt = build(:observ_prompt, config: { temperature: -0.5 })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("temperature must be between 0.0 and 2.0")
+      end
+
+      it "rejects max_tokens out of range" do
+        prompt = build(:observ_prompt, config: { max_tokens: 0 })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("max_tokens must be between 1 and 100000")
+      end
+
+      it "rejects max_tokens above maximum" do
+        prompt = build(:observ_prompt, config: { max_tokens: 100001 })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("max_tokens must be between 1 and 100000")
+      end
+
+      it "rejects top_p out of range" do
+        prompt = build(:observ_prompt, config: { top_p: 1.5 })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("top_p must be between 0.0 and 1.0")
+      end
+
+      it "rejects frequency_penalty out of range" do
+        prompt = build(:observ_prompt, config: { frequency_penalty: 3.0 })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("frequency_penalty must be between -2.0 and 2.0")
+      end
+
+      it "rejects presence_penalty out of range" do
+        prompt = build(:observ_prompt, config: { presence_penalty: -3.0 })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("presence_penalty must be between -2.0 and 2.0")
+      end
+
+      it "rejects invalid temperature type" do
+        prompt = build(:observ_prompt, config: { temperature: "high" })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("temperature must be a number")
+      end
+
+      it "rejects invalid max_tokens type" do
+        prompt = build(:observ_prompt, config: { max_tokens: "1000" })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("max_tokens must be an integer")
+      end
+
+      it "rejects invalid stop_sequences type" do
+        prompt = build(:observ_prompt, config: { stop_sequences: "STOP" })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("stop_sequences must be an array")
+      end
+
+      it "rejects invalid array items in stop_sequences" do
+        prompt = build(:observ_prompt, config: { stop_sequences: [ "STOP", 123 ] })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("stop_sequences[1] must be a string")
+      end
+
+      it "rejects invalid model type" do
+        prompt = build(:observ_prompt, config: { model: 123 })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("model must be a string")
+      end
+
+      it "collects multiple validation errors" do
+        prompt = build(:observ_prompt, config: {
+          temperature: 3.0,
+          max_tokens: "invalid",
+          top_p: -0.5
+        })
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config].size).to eq(3)
+      end
+    end
+
+    context "with config normalization and validation" do
+      it "normalizes and validates config before save" do
+        prompt = build(:observ_prompt, config: '{"temperature": 0.7}')
+        expect(prompt).to be_valid
+        prompt.save!
+        expect(prompt.config).to be_a(Hash)
+        expect(prompt.config["temperature"]).to eq(0.7)
+      end
+
+      it "normalizes invalid JSON to empty hash (which is valid)" do
+        prompt = build(:observ_prompt, config: "{invalid json}")
+        expect(prompt).to be_valid
+        prompt.save!
+        expect(prompt.config).to eq({})
+      end
+
+      it "rejects normalized config with invalid values" do
+        prompt = build(:observ_prompt, config: '{"temperature": 3.0}')
+        expect(prompt).not_to be_valid
+        expect(prompt.errors[:config]).to include("temperature must be between 0.0 and 2.0")
+      end
+    end
+
+    context "backward compatibility" do
+      it "allows prompts with no config to be valid" do
+        prompt = build(:observ_prompt, config: nil)
+        expect(prompt).to be_valid
+      end
+
+      it "allows prompts with empty config to be valid" do
+        prompt = build(:observ_prompt, config: {})
+        expect(prompt).to be_valid
+      end
+    end
+  end
 end

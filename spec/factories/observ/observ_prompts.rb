@@ -41,5 +41,35 @@ FactoryBot.define do
     trait :version_3 do
       version { 3 }
     end
+
+    trait :with_invalid_temperature do
+      config { { temperature: 3.0 } }
+    end
+
+    trait :with_invalid_max_tokens do
+      config { { max_tokens: 0 } }
+    end
+
+    trait :with_invalid_top_p do
+      config { { top_p: 1.5 } }
+    end
+
+    trait :with_invalid_type do
+      config { { temperature: "high" } }
+    end
+
+    trait :with_valid_advanced_config do
+      config {
+        {
+          model: "gpt-4o",
+          temperature: 0.8,
+          max_tokens: 2000,
+          top_p: 0.95,
+          frequency_penalty: 0.5,
+          presence_penalty: 0.3,
+          stop_sequences: [ "STOP", "END" ]
+        }
+      }
+    end
   end
 end
