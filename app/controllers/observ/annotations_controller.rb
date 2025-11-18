@@ -7,13 +7,33 @@ module Observ
   end
 
   def sessions_index
-    @sessions = Observ::Session.joins(:annotations).distinct.order(created_at: :desc)
-    @annotations = Observ::Annotation.where(annotatable_type: "Observ::Session").includes(:annotatable).order(created_at: :desc)
+    @sessions = Observ::Session.joins(:annotations)
+      .distinct
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(Observ.config.pagination_per_page)
+
+    @annotations = Observ::Annotation
+      .where(annotatable_type: "Observ::Session")
+      .includes(:annotatable)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(Observ.config.pagination_per_page)
   end
 
   def traces_index
-    @traces = Observ::Trace.joins(:annotations).distinct.order(created_at: :desc)
-    @annotations = Observ::Annotation.where(annotatable_type: "Observ::Trace").includes(:annotatable).order(created_at: :desc)
+    @traces = Observ::Trace.joins(:annotations)
+      .distinct
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(Observ.config.pagination_per_page)
+
+    @annotations = Observ::Annotation
+      .where(annotatable_type: "Observ::Trace")
+      .includes(:annotatable)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(Observ.config.pagination_per_page)
   end
 
   def export

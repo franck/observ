@@ -104,9 +104,5 @@
   </section>
 
   <!-- Pagination -->
-  <% if @prompt_data.any? %>
-    <div class="observ-prompts-pagination">
-      <%= paginate @prompts %>
-    </div>
-  <% end %>
+  <%= observ_pagination(@prompts) %>
 </div>

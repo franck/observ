@@ -4,6 +4,8 @@ module Observ
 
     def index
       @chats = ::Chat.order(created_at: :desc)
+        .page(params[:page])
+        .per(Observ.config.pagination_per_page)
     end
 
     def new

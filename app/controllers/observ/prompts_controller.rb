@@ -19,7 +19,7 @@ module Observ
         @prompts = @prompts.where(state: params[:state])
       end
 
-      @prompts = @prompts.page(params[:page]).per(25)
+      @prompts = @prompts.page(params[:page]).per(Observ.config.pagination_per_page)
 
       # Enrich with metadata for display
       @prompt_data = @prompts.map do |prompt|
