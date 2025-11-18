@@ -3,7 +3,7 @@ module Observ
     def index
       @sessions = Observ::Session.order(start_time: :desc)
       apply_filters if params[:filter].present?
-      @sessions = @sessions.page(params[:page]).per(25)
+      @sessions = @sessions.page(params[:page]).per(Observ.config.pagination_per_page)
     end
 
     def show

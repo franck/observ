@@ -3,5 +3,6 @@ module Observ
     # Include helper modules to make them available across all views
     include Observ::DashboardHelper
     include Observ::ChatsHelper
+    include Observ::PaginationHelper
   end
 end

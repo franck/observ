@@ -5,7 +5,7 @@ module Observ
         .includes(:observ_session)
         .order(start_time: :desc)
         .page(params[:page])
-        .per(25)
+        .per(Observ.config.pagination_per_page)
 
       apply_filters if params[:filter].present?
     end
