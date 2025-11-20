@@ -9,12 +9,28 @@ class Chat < ApplicationRecord
 
   has_many :messages, dependent: :destroy
 
+  # Mock acts_as_chat for testing (normally provided by RubyLLM)
+  def self.acts_as_chat
+    true
+  end
+
   def agent_class
     DummyAgent
   end
 
   def agent_class_name
     self[:agent_class_name] || DummyAgent.name
+  end
+
+  # Get the model from the agent's configuration
+  def model
+    return nil unless agent_class_name.present?
+
+    begin
+      agent_class.default_model
+    rescue NameError
+      nil
+    end
   end
 
   def ask(message, **_options)

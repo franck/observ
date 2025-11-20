@@ -29,19 +29,11 @@ module Observ
     private
 
     def params_chat
-      params.require(:chat).permit(:model, :agent_class_name).with_defaults(model: RubyLLM.config.default_model)
+      params.require(:chat).permit(:agent_class_name)
     end
 
     def set_chat
       @chat = ::Chat.find(params[:id])
-    end
-
-    def model
-      params[:chat][:model].presence
-    end
-
-    def prompt
-      params[:chat][:prompt]
     end
   end
 end
