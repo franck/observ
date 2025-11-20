@@ -7,6 +7,10 @@ export default class extends Controller {
     successDuration: { type: Number, default: 2000 }
   }
 
+  connect() {
+    console.log('[Observ] copy controller connected')
+  }
+
   copy(event) {
     event.preventDefault()
 

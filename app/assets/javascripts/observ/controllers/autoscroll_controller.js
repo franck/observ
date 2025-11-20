@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = ["container"]
 
   connect() {
+    console.log('[Observ] autoscroll controller connected')
     this.scrollToBottom()
     this.observer = new MutationObserver(() => {
       this.scrollToBottom()

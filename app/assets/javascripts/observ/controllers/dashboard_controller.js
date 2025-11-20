@@ -8,6 +8,7 @@ export default class extends Controller {
   }
 
   connect() {
+    console.log('[Observ] dashboard controller connected')
     if (this.autoRefreshValue) {
       this.startAutoRefresh()
     }

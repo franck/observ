@@ -24,6 +24,7 @@ export default class extends Controller {
   static targets = ["input", "preview", "list"]
 
   connect() {
+    console.log('[Observ] prompt-variables controller connected')
     // Detect variables on initial load
     this.detectVariables()
   }

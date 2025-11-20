@@ -27,6 +27,8 @@ module Observ
       class_attribute :prompt_config, default: {}
       # Cache the fetched prompt template object for metadata access
       class_attribute :cached_prompt_template, default: nil
+      # Instance variable for version override (set per instance, not shared across class)
+      attr_accessor :prompt_version_override
     end
 
     class_methods do
@@ -57,7 +59,8 @@ module Observ
       end
 
       # Fetch prompt with fallback
-      def fetch_prompt(variables: {})
+      # Supports version override via thread-local storage or parameter
+      def fetch_prompt(variables: {}, version: nil)
         # Ensure defaults if prompt_config was never initialized
         config = prompt_config.presence || {}
         fallback = config[:fallback] || default_fallback_prompt
@@ -68,11 +71,23 @@ module Observ
         start_time = Time.current
 
         begin
-          prompt_template = Observ::PromptManager.fetch(
-            name: prompt_name,
-            state: :production,
-            fallback: fallback
-          )
+          # Check for version override from thread-local storage or parameter
+          version_to_use = Thread.current[:observ_prompt_version_override] || version
+
+          # Fetch prompt with version or state
+          if version_to_use.present?
+            prompt_template = Observ::PromptManager.fetch(
+              name: prompt_name,
+              version: version_to_use,
+              fallback: fallback
+            )
+          else
+            prompt_template = Observ::PromptManager.fetch(
+              name: prompt_name,
+              state: :production,
+              fallback: fallback
+            )
+          end
 
           # Cache the template for metadata access
           @_prompt_template = prompt_template
@@ -80,9 +95,10 @@ module Observ
           # Log fetch result
           duration_ms = ((Time.current - start_time) * 1000).round(2)
           if prompt_template.version
+            version_info = version_to_use.present? ? "(version: #{prompt_template.version})" : "(production, version: #{prompt_template.version})"
             Rails.logger.info(
               "Prompt fetched for #{name}: #{prompt_name} " \
-              "(version: #{prompt_template.version}, " \
+              "#{version_info}, " \
               "duration: #{duration_ms}ms)"
             )
           else

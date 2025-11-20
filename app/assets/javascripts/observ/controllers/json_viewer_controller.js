@@ -6,6 +6,7 @@ export default class extends Controller {
   }
 
   connect() {
+    console.log('[Observ] json-viewer controller connected')
     // Parse the JSON string to get the actual data
     let data
     try {

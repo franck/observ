@@ -1,4 +1,8 @@
-<%= form_with(model: chat, url: chats_path) do |form| %>
+<%= form_with(model: chat, url: chats_path, data: { 
+  controller: "observ--chat-form",
+  observ__chat_form_prompts_url_value: prompts_path,
+  observ__chat_form_agents_with_prompts_value: agents_with_prompts_map.to_json
+}) do |form| %>
   <% if chat.errors.any? %>
     <div class="observ-alert observ-alert--danger">
       <h3 class="observ-alert__title"><%= pluralize(chat.errors.count, "error") %> prohibited this chat from being saved:</h3>
@@ -15,7 +19,24 @@
     <%= form.select :agent_class_name, 
       agent_select_options, 
       {}, 
-      class: "observ-select" %>
+      class: "observ-select",
+      data: { 
+        observ__chat_form_target: "agentSelect",
+        action: "change->observ--chat-form#agentChanged"
+      } %>
+  </div>
+
+  <div class="observ-form-group observ-hidden" 
+       data-observ--chat-form-target="promptVersionGroup">
+    <%= form.label :prompt_version, "Select Prompt Version:", class: "observ-label" %>
+    <%= form.select :prompt_version,
+      [],
+      { include_blank: "Use default (production)" },
+      class: "observ-select",
+      data: { observ__chat_form_target: "promptVersionSelect" } %>
+    <p class="observ-form-help-text">
+      Leave as default to use the production version, or select a specific version to test.
+    </p>
   </div>
 
   <div>
