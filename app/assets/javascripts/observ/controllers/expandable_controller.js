@@ -8,6 +8,7 @@ export default class extends Controller {
   }
 
   connect() {
+    console.log('[Observ] expandable controller connected')
     this.updateState()
   }
 

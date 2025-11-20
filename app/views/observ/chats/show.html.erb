@@ -12,12 +12,6 @@
   </div>
 <% end %>
 
-<% if notice.present? %>
-  <div class="observ-alert observ-alert--success">
-    <%= notice %>
-  </div>
-<% end %>
-
 <div class="observ-card">
   <div class="observ-card__body" data-controller="observ--autoscroll">
     <div id="messages" class="observ-chat-messages" data-observ--autoscroll-target="container">

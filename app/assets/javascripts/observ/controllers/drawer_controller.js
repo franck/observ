@@ -3,6 +3,10 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["drawer", "content", "headerTitle"]
 
+  connect() {
+    console.log('[Observ] drawer controller connected')
+  }
+
   open(event) {
     event.preventDefault()
     const url = event.currentTarget.dataset.drawerUrlParam

@@ -44,4 +44,70 @@ RSpec.describe Observ::ChatsHelper, type: :helper do
       end
     end
   end
+
+  describe '#agents_with_prompts_map' do
+    before do
+      # Ensure DummyAgent uses prompt management
+      DummyAgent.use_prompt_management(enabled: true, prompt_name: "dummy-agent-system-prompt")
+    end
+
+    it 'returns a hash mapping agent class names to prompt names' do
+      result = helper.agents_with_prompts_map
+
+      expect(result).to be_a(Hash)
+    end
+
+    it 'includes agents that use prompt management' do
+      result = helper.agents_with_prompts_map
+
+      expect(result).to include("DummyAgent" => "dummy-agent-system-prompt")
+    end
+
+    it 'excludes agents that do not use prompt management' do
+      # Create a test agent without prompt management
+      stub_const("NonPromptAgent", Class.new(BaseAgent) do
+        include Observ::AgentSelectable
+
+        def self.system_prompt
+          "I am a test agent"
+        end
+
+        def self.default_model
+          "gpt-4o-mini"
+        end
+
+        def self.display_name
+          "Non Prompt Agent"
+        end
+
+        def self.description
+          "Test agent without prompt management"
+        end
+      end)
+
+      result = helper.agents_with_prompts_map
+
+      expect(result).not_to have_key("NonPromptAgent")
+    end
+
+    it 'memoizes the result' do
+      expect(Observ::AgentProvider).to receive(:all_agents).once.and_call_original
+
+      # Call twice
+      helper.agents_with_prompts_map
+      helper.agents_with_prompts_map
+    end
+
+    it 'only includes agents with prompt management enabled' do
+      # Temporarily disable prompt management for DummyAgent
+      DummyAgent.use_prompt_management(enabled: false)
+
+      result = helper.agents_with_prompts_map
+
+      expect(result).not_to have_key("DummyAgent")
+
+      # Re-enable for other tests
+      DummyAgent.use_prompt_management(enabled: true, prompt_name: "dummy-agent-system-prompt")
+    end
+  end
 end

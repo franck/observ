@@ -5,6 +5,7 @@ export default class extends Controller {
   static values = { loading: { type: Boolean, default: false } }
 
   connect() {
+    console.log('[Observ] message-form controller connected')
     this.toggleSubmit()
     this.boundHandleTurboSubmit = this.handleTurboSubmit.bind(this)
     this.boundHandleTurboRender = this.handleTurboRender.bind(this)

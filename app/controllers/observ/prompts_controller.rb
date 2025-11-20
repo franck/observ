@@ -131,6 +131,13 @@ module Observ
     def versions
       @versions = Observ::Prompt.where(name: @prompt_name).order(version: :desc)
       @production_version = @versions.find(&:production?)
+
+      respond_to do |format|
+        format.html # Render the HTML view
+        format.json do
+          render json: @versions.as_json(only: [ :version, :state, :commit_message, :created_at ])
+        end
+      end
     end
 
     # GET /observ/prompts/:id/compare?from=1&to=2

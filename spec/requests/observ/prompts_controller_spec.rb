@@ -291,6 +291,30 @@ RSpec.describe "Observ::PromptsController", type: :request do
       expect(response.body).to include("Version 1")
       expect(response.body).to include("Version 2")
     end
+
+    it "returns JSON response with version data" do
+      create(:observ_prompt, :production, name: "test-prompt", version: 1, commit_message: "Initial version")
+      create(:observ_prompt, :draft, name: "test-prompt", version: 2, commit_message: "Draft update")
+
+      get versions_observ_prompt_path("test-prompt", format: :json)
+
+      expect(response).to be_successful
+      expect(response.content_type).to include("application/json")
+
+      json = JSON.parse(response.body)
+      expect(json).to be_an(Array)
+      expect(json.length).to eq(2)
+
+      # Check first version (ordered desc, so version 2 first)
+      expect(json[0]["version"]).to eq(2)
+      expect(json[0]["state"]).to eq("draft")
+      expect(json[0]["commit_message"]).to eq("Draft update")
+
+      # Check second version
+      expect(json[1]["version"]).to eq(1)
+      expect(json[1]["state"]).to eq("production")
+      expect(json[1]["commit_message"]).to eq("Initial version")
+    end
   end
 
   describe "GET /observ/prompts/:id/compare" do

@@ -32,6 +32,11 @@ module Observ
       # Include agent_class if available for prompt metadata extraction
       if respond_to?(:agent_class)
         context[:agent_class] = agent_class
+
+        # Include prompt version override if specified
+        if respond_to?(:prompt_version) && prompt_version.present?
+          context[:prompt_version_override] = prompt_version
+        end
       end
 
       context
@@ -54,10 +59,20 @@ module Observ
       return unless respond_to?(:agent_class) && agent_class_name.present?
       return if @_agent_params_configured
 
-      # Only re-apply parameters, not instructions
-      # Instructions were already set at creation time
-      agent_class.setup_parameters(self)
-      @_agent_params_configured = true
+      # Set prompt version override if specified
+      if respond_to?(:prompt_version) && prompt_version.present? &&
+         agent_class.included_modules.include?(Observ::PromptManagement)
+        Thread.current[:observ_prompt_version_override] = prompt_version
+      end
+
+      begin
+        # Only re-apply parameters, not instructions
+        # Instructions were already set at creation time
+        agent_class.setup_parameters(self)
+        @_agent_params_configured = true
+      ensure
+        Thread.current[:observ_prompt_version_override] = nil
+      end
     end
 
     private
@@ -65,11 +80,23 @@ module Observ
     def initialize_agent_on_create
       return unless respond_to?(:agent_class)
 
-      # Execute all agent setup steps in one consolidated callback
-      # This prevents redundant association loading between callbacks
-      agent_class.setup_instructions(self)
-      agent_class.setup_parameters(self)
-      agent_class.send_initial_greeting(self)
+      # If chat has a specific prompt version, temporarily set it for setup
+      if respond_to?(:prompt_version) && prompt_version.present? &&
+         agent_class.included_modules.include?(Observ::PromptManagement)
+        # Store the version temporarily so setup_instructions can use it
+        Thread.current[:observ_prompt_version_override] = prompt_version
+      end
+
+      begin
+        # Execute all agent setup steps in one consolidated callback
+        # This prevents redundant association loading between callbacks
+        agent_class.setup_instructions(self)
+        agent_class.setup_parameters(self)
+        agent_class.send_initial_greeting(self)
+      ensure
+        # Clean up thread-local storage
+        Thread.current[:observ_prompt_version_override] = nil
+      end
     end
   end
 end
