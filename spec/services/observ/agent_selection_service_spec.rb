@@ -28,7 +28,7 @@ RSpec.describe Observ::AgentSelectionService do
         double(display_name: "Test Agent", agent_identifier: "TestAgent")
       ]
 
-      allow(AgentProvider).to receive(:all_agents).and_return(mock_agents)
+      allow(Observ::AgentProvider).to receive(:all_agents).and_return(mock_agents)
 
       expect(Observ::AgentSelectPresenter).to receive(:options)
         .with(agents: mock_agents)
@@ -51,7 +51,7 @@ RSpec.describe Observ::AgentSelectionService do
 
   describe '.all_agents' do
     it 'delegates to AgentProvider' do
-      expect(AgentProvider).to receive(:all_agents).and_call_original
+      expect(Observ::AgentProvider).to receive(:all_agents).and_call_original
 
       described_class.all_agents
     end
@@ -67,12 +67,12 @@ RSpec.describe Observ::AgentSelectionService do
       agents = described_class.all_agents
 
       agents.each do |agent|
-        expect(agent.ancestors).to include(AgentSelectable)
+        expect(agent.ancestors).to include(Observ::AgentSelectable)
       end
     end
 
     it 'returns the same result as AgentProvider.all_agents' do
-      direct_result = AgentProvider.all_agents
+      direct_result = Observ::AgentProvider.all_agents
       service_result = described_class.all_agents
 
       expect(service_result).to eq(direct_result)

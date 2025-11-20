@@ -31,9 +31,11 @@ module Observ
       def all_agents
         ensure_agents_loaded
 
-        BaseAgent.descendants
-                 .select { |agent_class| agent_class.include?(Observ::AgentSelectable) }
-                 .sort_by(&:display_name)
+        return [] unless defined?(::BaseAgent)
+
+        ::BaseAgent.descendants
+          .select { |agent_class| agent_class.included_modules.include?(Observ::AgentSelectable) }
+          .sort_by(&:display_name)
       end
 
       private

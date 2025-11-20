@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Observ::IndexFileGenerator do
   let(:app_root) { Dir.mktmpdir }
-  let(:logger) { StringIO.new }
+  let(:logger) { StringIO.new(+"") }
   let(:generator) { described_class.new(app_root: app_root, logger: logger) }
 
   after { FileUtils.remove_entry(app_root) }
@@ -96,7 +96,7 @@ RSpec.describe Observ::IndexFileGenerator do
       it "logs update message when updating" do
         # Create initial index
         generator.generate_controllers_index(controllers_path)
-        logger.string = ""
+        logger.string = String.new
 
         # Modify index manually
         index_file = File.join(controllers_path, "index.js")

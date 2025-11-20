@@ -197,6 +197,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.10-x86_64-linux-musl)
       racc (~> 1.4)
+    ostruct (0.6.3)
     parallel (1.27.0)
     parser (3.3.10.0)
       ast (~> 2.4.1)
@@ -361,6 +362,7 @@ DEPENDENCIES
   factory_bot_rails (~> 6.0)
   faker (~> 3.0)
   observ!
+  ostruct
   puma
   rspec-rails (~> 7.0)
   rubocop-rails-omakase

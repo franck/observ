@@ -29,7 +29,9 @@ RSpec.describe Observ::Engine do
           state: :production,
           fallback: "fallback value"
         )
-        expect(result).to eq("fallback value")
+
+        expect(result).to be_a(Observ::NullPrompt)
+        expect(result.prompt).to eq("fallback value")
       end
 
       it "can create new prompt versions" do

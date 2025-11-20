@@ -58,7 +58,7 @@ module Observ
         temperature: {
           type: :float,
           required: false,
-          range: 0.0..1.0,
+          range: 0.0..2.0,
           default: 0.7
         },
         max_tokens: {

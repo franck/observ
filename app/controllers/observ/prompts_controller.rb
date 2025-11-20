@@ -55,7 +55,7 @@ module Observ
         redirect_to prompt_path(@form.persisted_prompt.name),
           notice: "Prompt created successfully (v#{@form.persisted_prompt.version})"
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -110,7 +110,7 @@ module Observ
         redirect_to prompt_path(@prompt_name, version: @prompt.version),
           notice: "Prompt updated successfully"
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 
@@ -159,7 +159,7 @@ module Observ
     end
 
     def prompt_params
-      params.require(:prompt).permit(
+      params.require(:observ_prompt).permit(
         :name, :prompt, :config, :commit_message, :promote_to_production
       )
     end

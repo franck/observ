@@ -18,6 +18,7 @@ module Observ
     def generate_controllers_index(controllers_path)
       controllers_path = Pathname.new(controllers_path)
       index_file = controllers_path.join("index.js")
+      file_existed = index_file.exist?
 
       # Find all controller files
       controller_files = Dir.glob(controllers_path.join("*_controller.js")).sort
@@ -29,7 +30,7 @@ module Observ
 
       content = generate_index_content(controller_files, controllers_path)
 
-      if index_file.exist?
+      if file_existed
         existing_content = File.read(index_file)
         if existing_content == content
           log "  - Index file already up to date: #{index_file.relative_path_from(app_root)}"
@@ -42,7 +43,7 @@ module Observ
       end
 
       File.write(index_file, content)
-      { created: !index_file.exist?, updated: index_file.exist?, path: index_file }
+      { created: !file_existed, updated: file_existed, path: index_file }
     end
 
     # Check if Observ controllers are registered in the main controllers index

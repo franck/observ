@@ -94,6 +94,13 @@ RSpec.describe Observ::PromptConfigValidator do
         expect(validator.errors).to be_empty
       end
 
+      it 'accepts numeric string seed' do
+        config = { seed: "12345" }
+        validator = described_class.new(config)
+        expect(validator.valid?).to be true
+        expect(validator.errors).to be_empty
+      end
+
       it 'validates correct stream boolean' do
         config = { stream: true }
         validator = described_class.new(config)
@@ -123,8 +130,15 @@ RSpec.describe Observ::PromptConfigValidator do
     end
 
     context 'with invalid type' do
-      it 'rejects string for temperature (expects float)' do
+      it 'accepts numeric strings for temperature' do
         config = { temperature: "0.7" }
+        validator = described_class.new(config)
+        expect(validator.valid?).to be true
+        expect(validator.errors).to be_empty
+      end
+
+      it 'rejects non-numeric strings for temperature' do
+        config = { temperature: "hot" }
         validator = described_class.new(config)
         expect(validator.valid?).to be false
         expect(validator.errors).to include("temperature must be a number")
@@ -166,7 +180,7 @@ RSpec.describe Observ::PromptConfigValidator do
       end
 
       it 'rejects non-integer for seed' do
-        config = { seed: "12345" }
+        config = { seed: "abc" }
         validator = described_class.new(config)
         expect(validator.valid?).to be false
         expect(validator.errors).to include("seed must be an integer")

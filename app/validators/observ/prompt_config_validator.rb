@@ -27,7 +27,7 @@ module Observ
 
     def validate_against_schema
       schema.each do |key, rules|
-        value = config[key.to_s] || config[key.to_sym]
+        value, raw_key = value_with_key(key)
 
         # Check required fields
         if rules[:required] && value.nil?
@@ -37,6 +37,11 @@ module Observ
 
         # Skip validation if value is nil and not required
         next if value.nil?
+
+        # Coerce values like numeric strings before validation
+        coerced_value = coerce_value(value, rules[:type])
+        assign_value(raw_key, coerced_value) if raw_key && coerced_value != value
+        value = coerced_value
 
         # Validate type
         validate_type(key, value, rules)
@@ -144,6 +149,39 @@ module Observ
 
     def schema_strict?
       Observ.config.prompt_config_schema_strict
+    end
+
+    def value_with_key(key)
+      if config.key?(key.to_s)
+        [ config[key.to_s], key.to_s ]
+      elsif config.key?(key.to_sym)
+        [ config[key.to_sym], key.to_sym ]
+      else
+        [ nil, nil ]
+      end
+    end
+
+    def assign_value(raw_key, value)
+      return unless raw_key
+      config[raw_key] = value
+    end
+
+    def coerce_value(value, expected_type)
+      case expected_type
+      when :integer
+        return value.to_i if integer_string?(value)
+      when :float
+        return value.to_f if numeric_string?(value)
+      end
+      value
+    end
+
+    def integer_string?(value)
+      value.is_a?(String) && value.match?(/\A-?\d+\z/)
+    end
+
+    def numeric_string?(value)
+      value.is_a?(String) && value.match?(/\A-?\d+(?:\.\d+)?\z/)
     end
   end
 end

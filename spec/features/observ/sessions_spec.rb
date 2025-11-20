@@ -3,8 +3,14 @@ require 'rails_helper'
 RSpec.feature "Observ Sessions", type: :feature do
   let!(:session1) { create(:observ_session, user_id: "user-123", start_time: 1.hour.ago, total_tokens: 1500, total_cost: 0.05) }
   let!(:session2) { create(:observ_session, user_id: "user-456", start_time: 2.hours.ago, total_tokens: 3000, total_cost: 0.15) }
-  let!(:trace1) { create(:observ_trace, observ_session: session1, name: "Chat Request") }
-  let!(:trace2) { create(:observ_trace, observ_session: session2, name: "Background Job") }
+  let!(:trace1) do
+    create(:observ_trace, observ_session: session1, name: "Chat Request",
+           total_tokens: 1500, total_cost: 0.05)
+  end
+  let!(:trace2) do
+    create(:observ_trace, observ_session: session2, name: "Background Job",
+           total_tokens: 3000, total_cost: 0.15)
+  end
 
   scenario "User views sessions list" do
     visit observ_sessions_path

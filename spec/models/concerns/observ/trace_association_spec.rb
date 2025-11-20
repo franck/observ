@@ -28,7 +28,7 @@ RSpec.describe Observ::TraceAssociation, type: :concern do
 
   describe 'behavior with Message model', observability: true do
     let(:chat) { create(:chat) }
-    let!(:message) { chat.messages.first }
+    let!(:message) { chat.messages.create!(role: "user", content: "Hello world") }
 
     it 'can have multiple traces' do
       trace1 = create(:observ_trace, message: message)

@@ -16,7 +16,7 @@ module Observ
             redirect_to prompt_path(@prompt_name, version: @prompt.version),
               alert: "Only draft prompts can be promoted"
           end
-          format.json { render json: { error: "Only draft prompts can be promoted" }, status: :unprocessable_entity }
+          format.json { render json: { error: "Only draft prompts can be promoted" }, status: :unprocessable_content }
         end
         return
       end
@@ -37,7 +37,7 @@ module Observ
             redirect_to prompt_path(@prompt_name, version: @prompt.version),
               alert: e.message
           end
-          format.json { render json: { error: e.message }, status: :unprocessable_entity }
+          format.json { render json: { error: e.message }, status: :unprocessable_content }
         end
       end
     end
@@ -50,7 +50,7 @@ module Observ
             redirect_to prompt_path(@prompt_name, version: @prompt.version),
               alert: "Only production prompts can be demoted"
           end
-          format.json { render json: { error: "Only production prompts can be demoted" }, status: :unprocessable_entity }
+          format.json { render json: { error: "Only production prompts can be demoted" }, status: :unprocessable_content }
         end
         return
       end
@@ -71,7 +71,7 @@ module Observ
             redirect_to prompt_path(@prompt_name, version: @prompt.version),
               alert: e.message
           end
-          format.json { render json: { error: e.message }, status: :unprocessable_entity }
+          format.json { render json: { error: e.message }, status: :unprocessable_content }
         end
       end
     end
@@ -84,7 +84,7 @@ module Observ
             redirect_to prompt_path(@prompt_name, version: @prompt.version),
               alert: "Only archived prompts can be restored"
           end
-          format.json { render json: { error: "Only archived prompts can be restored" }, status: :unprocessable_entity }
+          format.json { render json: { error: "Only archived prompts can be restored" }, status: :unprocessable_content }
         end
         return
       end
@@ -105,7 +105,7 @@ module Observ
             redirect_to prompt_path(@prompt_name, version: @prompt.version),
               alert: e.message
           end
-          format.json { render json: { error: e.message }, status: :unprocessable_entity }
+          format.json { render json: { error: e.message }, status: :unprocessable_content }
         end
       end
     end

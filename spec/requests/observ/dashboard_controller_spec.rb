@@ -112,7 +112,11 @@ RSpec.describe Observ::DashboardController, type: :request do
 
     context "with no data" do
       before do
-        Observ::Session.destroy_all
+        Observ::Session.connection_pool.with_connection do
+          Observ::Observation.delete_all
+          Observ::Trace.delete_all
+          Observ::Session.delete_all
+        end
       end
 
       it "handles empty metrics gracefully" do

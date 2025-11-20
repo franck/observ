@@ -158,7 +158,7 @@ RSpec.describe "Observ::PromptsController", type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("error")
     end
 
@@ -185,7 +185,7 @@ RSpec.describe "Observ::PromptsController", type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("must be valid JSON")
     end
   end
@@ -243,7 +243,7 @@ RSpec.describe "Observ::PromptsController", type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

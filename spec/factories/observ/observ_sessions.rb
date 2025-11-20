@@ -20,6 +20,7 @@ FactoryBot.define do
     end
 
     trait :with_metrics do
+      end_time { start_time + 60.seconds }
       total_traces_count { 5 }
       total_llm_calls_count { 10 }
       total_tokens { 1000 }

@@ -58,7 +58,7 @@ RSpec.describe "Observ::PromptVersionsController", type: :request do
 
       post promote_observ_prompt_version_path("promote-test-5", production), headers: { "Accept" => "application/json" }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       json = JSON.parse(response.body)
       expect(json["error"]).to be_present
     end

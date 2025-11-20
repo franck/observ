@@ -70,7 +70,7 @@ RSpec.describe "PromptManager Integration" do
         # This will fail with NoMethodError if Caching module is not loaded
         expect {
           dummy_agent_class.fetch_prompt
-        }.not_to raise_error(NoMethodError, /undefined method.*fetch/)
+        }.not_to raise_error
       end
 
       it "returns fallback when prompt doesn't exist" do

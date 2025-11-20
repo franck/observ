@@ -150,9 +150,7 @@ RSpec.describe "Prompt Management", type: :feature do
 
     visit observ_prompt_path("temp-prompt", version: draft.version)
 
-    accept_confirm do
-      click_button "Delete"
-    end
+    click_button "Delete"
 
     expect(page).to have_content("Prompt version")
     expect(page).to have_content("deleted")
@@ -182,9 +180,7 @@ RSpec.describe "Prompt Management", type: :feature do
 
     visit observ_prompt_path("old-prompt", version: archived.version)
 
-    accept_confirm do
-      click_button "Restore to Production"
-    end
+    click_button "Restore to Production"
 
     expect(page).to have_content("restored to production")
     expect(page).to have_content("Production")

@@ -24,7 +24,7 @@ module Observ
     before_update :ensure_editable!, if: :content_changed?
 
     # Ensure config is always a Hash, not a String
-    before_save :normalize_config
+    before_validation :normalize_config
 
     # ============================================
     # SCOPES

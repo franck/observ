@@ -511,8 +511,13 @@ RSpec.describe Observ::Prompt, type: :model do
         expect(prompt.errors[:config]).to include("temperature must be a number")
       end
 
-      it "rejects invalid max_tokens type" do
+      it "accepts numeric string max_tokens" do
         prompt = build(:observ_prompt, config: { max_tokens: "1000" })
+        expect(prompt).to be_valid
+      end
+
+      it "rejects invalid max_tokens type" do
+        prompt = build(:observ_prompt, config: { max_tokens: "10OO" })
         expect(prompt).not_to be_valid
         expect(prompt.errors[:config]).to include("max_tokens must be an integer")
       end

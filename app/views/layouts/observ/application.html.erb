@@ -6,9 +6,11 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%# Load Vite assets (includes Observ styles in application bundle) %>
-    <%= vite_client_tag %>
-    <%= vite_javascript_tag 'application' %>
+    <%# Load Vite assets in environments where the helper is available (e.g., demo app) %>
+    <% if respond_to?(:vite_client_tag) %>
+      <%= vite_client_tag %>
+      <%= vite_javascript_tag 'application' %>
+    <% end %>
   </head>
 
   <body class="observ-layout" data-controller="observ--drawer">
@@ -22,9 +24,11 @@
           <li class="observ-nav__item">
             <%= link_to "Dashboard", dashboard_path, class: "observ-nav__link #{current_page?(dashboard_path) ? 'observ-nav__link--active' : ''}" %>
           </li>
-          <li class="observ-nav__item">
-            <%= link_to "Chats", chats_path, class: "observ-nav__link #{current_page?(chats_path) ? 'observ-nav__link--active' : ''}" %>
-          </li>
+          <% if Observ.config.chat_ui_enabled? && respond_to?(:chats_path) %>
+            <li class="observ-nav__item">
+              <%= link_to "Chats", chats_path, class: "observ-nav__link #{current_page?(chats_path) ? 'observ-nav__link--active' : ''}" %>
+            </li>
+          <% end %>
           <li class="observ-nav__item">
             <%= link_to "Sessions", sessions_path, class: "observ-nav__link #{current_page?(sessions_path) ? 'observ-nav__link--active' : ''}" %>
           </li>

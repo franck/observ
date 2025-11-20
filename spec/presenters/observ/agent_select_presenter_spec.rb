@@ -42,7 +42,7 @@ RSpec.describe Observ::AgentSelectPresenter do
     end
 
     it 'works with real agent classes' do
-      agents = AgentProvider.all_agents
+      agents = Observ::AgentProvider.all_agents
       presenter = described_class.new(agents: agents)
 
       options = presenter.options
