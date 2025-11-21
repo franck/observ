@@ -62,6 +62,11 @@ module Observ
       context[:agent_class] = agent_class
     end
 
+    # Include prompt version override if specified
+    if respond_to?(:prompt_version) && prompt_version.present?
+      context[:prompt_version_override] = prompt_version
+    end
+
     context
   end
 

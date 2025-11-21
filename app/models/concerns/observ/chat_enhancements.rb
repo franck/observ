@@ -20,26 +20,12 @@ module Observ
     included do
       include Observ::ObservabilityInstrumentation
 
+      # Set the model from agent BEFORE RubyLLM's resolve_model_from_strings runs
+      # This ensures the prompt version override is applied when determining the model
+      before_save :set_model_from_agent, if: -> { respond_to?(:agent_class_name) && agent_class_name.present? }
+
       # Initialize agent on creation (includes greeting message)
       after_create :initialize_agent_on_create, if: -> { respond_to?(:agent_class_name) && agent_class_name.present? }
-    end
-
-    # Override observability_context to include agent_class if available
-    # This allows the ChatInstrumenter to extract prompt metadata
-    def observability_context
-      context = super
-
-      # Include agent_class if available for prompt metadata extraction
-      if respond_to?(:agent_class)
-        context[:agent_class] = agent_class
-
-        # Include prompt version override if specified
-        if respond_to?(:prompt_version) && prompt_version.present?
-          context[:prompt_version_override] = prompt_version
-        end
-      end
-
-      context
     end
 
     # Setup tools for the chat session
@@ -76,6 +62,27 @@ module Observ
     end
 
     private
+
+    # Set the model from agent configuration before save
+    # This runs BEFORE RubyLLM's resolve_model_from_strings callback,
+    # ensuring the correct model is used when a specific prompt version is specified
+    def set_model_from_agent
+      return unless respond_to?(:agent_class)
+
+      # Set prompt version override if specified and agent supports prompt management
+      if respond_to?(:prompt_version) && prompt_version.present? &&
+         agent_class.included_modules.include?(Observ::PromptManagement)
+        Thread.current[:observ_prompt_version_override] = prompt_version
+      end
+
+      begin
+        # Set the model string so RubyLLM's resolve_model_from_strings uses the correct model
+        # This uses the agent's model method which respects the prompt version override
+        @model_string = agent_class.model
+      ensure
+        Thread.current[:observ_prompt_version_override] = nil
+      end
+    end
 
     def initialize_agent_on_create
       return unless respond_to?(:agent_class)
