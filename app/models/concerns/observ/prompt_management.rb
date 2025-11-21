@@ -178,7 +178,7 @@ module Observ
 
       # Fetch model from prompt metadata
       # @return [String, nil] The model from prompt config, or nil
-      def fetch_model_from_prompt
+      def fetch_model_from_prompt(version: nil)
         return nil unless prompt_management_enabled?
 
         config = prompt_config.presence || {}
@@ -186,11 +186,23 @@ module Observ
         prompt_name = config[:prompt_name] || default_prompt_name
 
         begin
-          prompt_template = Observ::PromptManager.fetch(
-            name: prompt_name,
-            state: :production,
-            fallback: fallback
-          )
+          # Check for version override from thread-local storage or parameter
+          version_to_use = Thread.current[:observ_prompt_version_override] || version
+
+          # Fetch prompt with version or state
+          if version_to_use.present?
+            prompt_template = Observ::PromptManager.fetch(
+              name: prompt_name,
+              version: version_to_use,
+              fallback: fallback
+            )
+          else
+            prompt_template = Observ::PromptManager.fetch(
+              name: prompt_name,
+              state: :production,
+              fallback: fallback
+            )
+          end
 
           # If we got a real Prompt object (not NullPrompt), check its config
           if prompt_template.respond_to?(:config) && prompt_template.config.is_a?(Hash)
@@ -222,7 +234,7 @@ module Observ
 
       # Fetch model parameters from prompt metadata
       # @return [Hash] The model parameters from prompt config
-      def fetch_model_parameters_from_prompt
+      def fetch_model_parameters_from_prompt(version: nil)
         return {} unless prompt_management_enabled?
 
         config = prompt_config.presence || {}
@@ -230,11 +242,23 @@ module Observ
         prompt_name = config[:prompt_name] || default_prompt_name
 
         begin
-          prompt_template = Observ::PromptManager.fetch(
-            name: prompt_name,
-            state: :production,
-            fallback: fallback
-          )
+          # Check for version override from thread-local storage or parameter
+          version_to_use = Thread.current[:observ_prompt_version_override] || version
+
+          # Fetch prompt with version or state
+          if version_to_use.present?
+            prompt_template = Observ::PromptManager.fetch(
+              name: prompt_name,
+              version: version_to_use,
+              fallback: fallback
+            )
+          else
+            prompt_template = Observ::PromptManager.fetch(
+              name: prompt_name,
+              state: :production,
+              fallback: fallback
+            )
+          end
 
           # If we got a real Prompt object (not NullPrompt), extract parameters
           if prompt_template.respond_to?(:config) && prompt_template.config.is_a?(Hash)
