@@ -1,4 +1,4 @@
-<%= form_with model: prompt, url: prompt.persisted? ? prompt_path(prompt.name) : prompts_path,
+<%= form_with model: prompt, scope: :observ_prompt, url: prompt.persisted? ? prompt_path(prompt.name) : prompts_path,
   method: prompt.persisted? ? :patch : :post do |f| %>
 
   <% if prompt.errors.any? %>
