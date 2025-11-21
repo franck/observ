@@ -41,17 +41,13 @@ module Observ
       js_result = syncer.sync_javascript_controllers(js_dest_path)
       log ""
 
-      # Generate index files if requested
-      index_result = nil
+      # Check controller registration if requested
+      # Note: index.js is already included in the gem's source files and gets synced,
+      # so we don't need to generate it - we just check if it's properly registered
       registration_status = nil
 
       if generate_index
         generator = IndexFileGenerator.new(app_root: app_root, logger: logger)
-
-        log "Generating index files..."
-        log "-" * 80
-        index_result = generator.generate_controllers_index(js_dest_path)
-        log ""
 
         log "Checking controller registration..."
         log "-" * 80
@@ -70,7 +66,6 @@ module Observ
       {
         styles: styles_result,
         javascript: js_result,
-        index: index_result,
         registration: registration_status,
         paths: {
           styles: styles_dest_path,

@@ -38,18 +38,18 @@ RSpec.describe Observ::AssetInstaller do
       expect(result[:paths][:javascript].to_s).to include("custom/controllers")
     end
 
-    it "generates index files by default" do
+    it "includes index.js from synced files" do
       result = installer.install
 
-      expect(result[:index]).to be_present
-      expect(result[:index][:created]).to be true
+      # index.js is synced from the gem's source files, not generated
+      js_dest = result[:paths][:javascript]
+      expect(js_dest.join("index.js")).to exist
       expect(result[:registration]).to be_present
     end
 
-    it "skips index generation when requested" do
+    it "skips registration check when requested" do
       result = installer.install(generate_index: false)
 
-      expect(result[:index]).to be_nil
       expect(result[:registration]).to be_nil
     end
 
@@ -90,12 +90,11 @@ RSpec.describe Observ::AssetInstaller do
   end
 
   describe "#sync" do
-    it "syncs assets without generating index files" do
+    it "syncs assets without checking registration" do
       result = installer.sync
 
       expect(result[:styles][:files_copied]).to be > 0
       expect(result[:javascript][:files_copied]).to be > 0
-      expect(result[:index]).to be_nil
       expect(result[:registration]).to be_nil
     end
 
