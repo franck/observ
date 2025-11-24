@@ -91,7 +91,7 @@
         <h2 class="observ-card__title">Input</h2>
       </header>
       <div class="observ-card__body">
-        <pre class="observ-code-block observ-code-block--compact"><%= @trace.input %></pre>
+        <%= render_input_output(@trace.input, compact: true) %>
       </div>
     </section>
   <% end %>
@@ -102,7 +102,7 @@
         <h2 class="observ-card__title">Output</h2>
       </header>
       <div class="observ-card__body">
-        <pre class="observ-code-block observ-code-block--compact"><%= @trace.output %></pre>
+        <%= render_input_output(@trace.output, compact: true) %>
       </div>
     </section>
   <% end %>

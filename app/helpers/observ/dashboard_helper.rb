@@ -130,5 +130,25 @@ module Observ
         }
       )
     end
+
+    def render_input_output(content, compact: false)
+      return "" if content.nil?
+
+      # Try to parse as JSON
+      begin
+        parsed_data = JSON.parse(content)
+        # If it's a Hash or Array, use the JSON viewer
+        if parsed_data.is_a?(Hash) || parsed_data.is_a?(Array)
+          return render_json_viewer(parsed_data, compact: compact)
+        end
+      rescue JSON::ParserError
+        # Not valid JSON, fall through to plain text display
+      end
+
+      # Display as plain text
+      css_classes = [ "observ-code-block" ]
+      css_classes << "observ-code-block--compact" if compact
+      content_tag(:pre, content, class: css_classes.join(" "))
+    end
   end
 end
