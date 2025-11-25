@@ -71,5 +71,30 @@ FactoryBot.define do
         }
       }
     end
+
+    # Mustache templating traits
+    trait :with_loop do
+      prompt { "Items in cart:\n{{#items}}\n- {{name}}: ${{price}}\n{{/items}}\nTotal: ${{total}}" }
+    end
+
+    trait :with_conditional do
+      prompt { "Hello {{name}}!{{#premium}} You have premium access.{{/premium}}{{^premium}} Upgrade to premium for more features.{{/premium}}" }
+    end
+
+    trait :with_nested_context do
+      prompt { "Order for {{customer.name}}:\n{{#items}}\n- {{name}} ({{quantity}}x)\n{{/items}}" }
+    end
+
+    trait :with_inverted_section do
+      prompt { "{{#items}}You have {{count}} items.{{/items}}{{^items}}Your cart is empty.{{/items}}" }
+    end
+
+    trait :with_html_content do
+      prompt { "Content: {{{html_content}}}" }
+    end
+
+    trait :with_comment do
+      prompt { "{{! This is a comment }}Hello {{name}}!" }
+    end
   end
 end

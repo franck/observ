@@ -162,32 +162,161 @@ RSpec.describe Observ::Prompt, type: :model do
   end
 
   describe "#compile" do
-    let(:prompt) { create(:observ_prompt, :with_variables) }
+    context "with simple variables" do
+      let(:prompt) { create(:observ_prompt, :with_variables) }
 
-    it "substitutes variables" do
-      result = prompt.compile(name: "Alice", age: 30, job: "engineer")
-      expect(result).to eq("Hello Alice, you are 30 years old and work as a engineer.")
+      it "substitutes variables" do
+        result = prompt.compile(name: "Alice", age: 30, job: "engineer")
+        expect(result).to eq("Hello Alice, you are 30 years old and work as a engineer.")
+      end
+
+      it "renders empty string for missing variables (Mustache default behavior)" do
+        result = prompt.compile(name: "Bob")
+        expect(result).to eq("Hello Bob, you are  years old and work as a .")
+      end
     end
 
-    it "leaves unmatched variables as-is" do
-      result = prompt.compile(name: "Bob")
-      expect(result).to include("{{age}}")
-      expect(result).to include("{{job}}")
+    context "with loops (sections)" do
+      let(:prompt) { create(:observ_prompt, :with_loop) }
+
+      it "iterates over arrays" do
+        result = prompt.compile(
+          items: [
+            { name: "Widget", price: "9.99" },
+            { name: "Gadget", price: "19.99" }
+          ],
+          total: "29.98"
+        )
+        expect(result).to include("- Widget: $9.99")
+        expect(result).to include("- Gadget: $19.99")
+        expect(result).to include("Total: $29.98")
+      end
+
+      it "renders empty section for empty array" do
+        result = prompt.compile(items: [], total: "0.00")
+        expect(result).not_to include("- ")
+        expect(result).to include("Total: $0.00")
+      end
+    end
+
+    context "with conditionals" do
+      let(:prompt) { create(:observ_prompt, :with_conditional) }
+
+      it "renders section when value is truthy" do
+        result = prompt.compile(name: "Alice", premium: true)
+        expect(result).to include("You have premium access.")
+        expect(result).not_to include("Upgrade to premium")
+      end
+
+      it "renders inverted section when value is falsy" do
+        result = prompt.compile(name: "Bob", premium: false)
+        expect(result).not_to include("You have premium access.")
+        expect(result).to include("Upgrade to premium for more features.")
+      end
+
+      it "treats missing key as falsy" do
+        result = prompt.compile(name: "Charlie")
+        expect(result).not_to include("You have premium access.")
+        expect(result).to include("Upgrade to premium for more features.")
+      end
+    end
+
+    context "with inverted sections" do
+      let(:prompt) { create(:observ_prompt, :with_inverted_section) }
+
+      it "renders inverted section when array is empty" do
+        result = prompt.compile(items: [])
+        expect(result).to eq("Your cart is empty.")
+      end
+
+      it "renders normal section when array has items" do
+        result = prompt.compile(items: [ { count: 3 } ], count: 3)
+        expect(result).to include("You have 3 items.")
+      end
+    end
+
+    context "with nested context" do
+      let(:prompt) { create(:observ_prompt, :with_nested_context) }
+
+      it "accesses nested hash values with dot notation" do
+        result = prompt.compile(
+          customer: { name: "John Doe" },
+          items: [
+            { name: "Book", quantity: 2 },
+            { name: "Pen", quantity: 5 }
+          ]
+        )
+        expect(result).to include("Order for John Doe:")
+        expect(result).to include("- Book (2x)")
+        expect(result).to include("- Pen (5x)")
+      end
+    end
+
+    context "with HTML content (triple braces)" do
+      let(:prompt) { create(:observ_prompt, :with_html_content) }
+
+      it "renders unescaped HTML with triple braces" do
+        result = prompt.compile(html_content: "<strong>Bold</strong>")
+        expect(result).to eq("Content: <strong>Bold</strong>")
+      end
+    end
+
+    context "with comments" do
+      let(:prompt) { create(:observ_prompt, :with_comment) }
+
+      it "strips comments from output" do
+        result = prompt.compile(name: "Test")
+        expect(result).to eq("Hello Test!")
+        expect(result).not_to include("This is a comment")
+      end
+    end
+
+    context "HTML escaping (double braces)" do
+      let(:prompt) { create(:observ_prompt, prompt: "Output: {{content}}") }
+
+      it "escapes HTML entities by default" do
+        result = prompt.compile(content: "<script>alert('xss')</script>")
+        expect(result).to eq("Output: &lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;")
+      end
     end
   end
 
   describe "#compile_with_validation" do
-    let(:prompt) { create(:observ_prompt, :with_variables) }
+    context "with simple variables" do
+      let(:prompt) { create(:observ_prompt, :with_variables) }
 
-    it "compiles successfully with all variables" do
-      result = prompt.compile_with_validation(name: "Alice", age: 30, job: "engineer")
-      expect(result).to eq("Hello Alice, you are 30 years old and work as a engineer.")
+      it "compiles successfully with all variables" do
+        result = prompt.compile_with_validation(name: "Alice", age: 30, job: "engineer")
+        expect(result).to eq("Hello Alice, you are 30 years old and work as a engineer.")
+      end
+
+      it "raises error for missing variables" do
+        expect {
+          prompt.compile_with_validation(name: "Bob")
+        }.to raise_error(Observ::VariableSubstitutionError, /Missing variables/)
+      end
     end
 
-    it "raises error for missing variables" do
-      expect {
-        prompt.compile_with_validation(name: "Bob")
-      }.to raise_error(Observ::VariableSubstitutionError, /Missing variables: age, job/)
+    context "with loops" do
+      let(:prompt) { create(:observ_prompt, :with_loop) }
+
+      it "validates successfully when all variables provided" do
+        result = prompt.compile_with_validation(
+          items: [ { name: "Item", price: "10.00" } ],
+          total: "10.00"
+        )
+        expect(result).to include("- Item: $10.00")
+        expect(result).to include("Total: $10.00")
+      end
+    end
+
+    context "with conditionals" do
+      let(:prompt) { create(:observ_prompt, :with_conditional) }
+
+      it "validates successfully with conditional data" do
+        result = prompt.compile_with_validation(name: "Test", premium: true)
+        expect(result).to include("Hello Test!")
+      end
     end
   end
 

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "mustache"
+
 module Observ
   class Prompt < ApplicationRecord
     include AASM
@@ -127,28 +129,42 @@ module Observ
     # INSTANCE METHODS
     # ============================================
 
-    # Compile prompt with variable substitution
+    # Compile prompt with Mustache templating
+    # Supports: variables {{name}}, loops {{#items}}...{{/items}},
+    # conditionals {{#flag}}...{{/flag}}, inverted sections {{^items}}...{{/items}}
     def compile(variables = {})
-      compiled = prompt.dup
-
-      variables.each do |key, value|
-        compiled.gsub!("{{#{key}}}", value.to_s)
-      end
-
-      compiled
+      Mustache.render(prompt, variables)
     end
 
-    # Compile with validation (raises if missing variables)
+    # Compile with validation (raises if missing top-level variables)
+    # Note: Variables inside sections (loops) are validated at render time by Mustache
     def compile_with_validation(variables = {})
-      compiled = compile(variables)
+      # Extract top-level variables (outside of sections)
+      # This is a simplified approach - we strip section content and check remaining vars
+      template_without_sections = strip_sections(prompt)
 
-      # Check for remaining unsubstituted variables
-      remaining_vars = compiled.scan(/\{\{(\w+)\}\}/).flatten
-      if remaining_vars.any?
-        raise VariableSubstitutionError, "Missing variables: #{remaining_vars.join(', ')}"
+      # Matches: {{name}}, {{user.name}} but not {{#section}}, {{/section}}, {{^section}}, {{!comment}}, {{>partial}}, {{{raw}}}
+      required_vars = template_without_sections.scan(/\{\{([^#\^\/!>\{\s][^}\s]*)\}\}/).flatten.uniq
+
+      # Check which variables are missing (convert all keys to strings for comparison)
+      provided_keys = variables.keys.map(&:to_s)
+      missing_vars = required_vars.reject do |var|
+        # Handle dot notation (e.g., "user.name" - check if "user" key exists)
+        root_key = var.split(".").first
+        provided_keys.include?(var) || provided_keys.include?(root_key)
       end
 
-      compiled
+      if missing_vars.any?
+        raise VariableSubstitutionError, "Missing variables: #{missing_vars.join(', ')}"
+      end
+
+      compile(variables)
+    end
+
+    # Extract top-level variables from template (for validation purposes)
+    def required_variables
+      template_without_sections = strip_sections(prompt)
+      template_without_sections.scan(/\{\{([^#\^\/!>\{\s][^}\s]*)\}\}/).flatten.uniq
     end
 
     # Immutability checks
@@ -273,6 +289,23 @@ module Observ
 
       # Ensure it's a Hash (could be other types in edge cases)
       self.config = {} unless config.is_a?(Hash)
+    end
+
+    # Strip section content from template for top-level variable extraction
+    # Removes content between {{#section}}...{{/section}} and {{^section}}...{{/section}}
+    def strip_sections(template)
+      # Recursively strip nested sections
+      result = template.dup
+
+      # Match sections: {{#name}}...{{/name}} or {{^name}}...{{/name}}
+      # Use non-greedy matching and handle nesting by repeating until stable
+      loop do
+        previous = result
+        result = result.gsub(/\{\{[#\^](\w+)\}\}.*?\{\{\/\1\}\}/m, "")
+        break if result == previous
+      end
+
+      result
     end
   end
 

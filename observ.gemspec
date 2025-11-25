@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "ruby_llm", ">= 1.0"
   spec.add_dependency "ruby_llm-schema", ">= 0.2"
   spec.add_dependency "csv", "~> 3.0"
+  spec.add_dependency "mustache", "~> 1.1"
 
   # Development and testing
   spec.add_development_dependency "rspec-rails", "~> 7.0"
