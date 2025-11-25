@@ -1,0 +1,28 @@
+<%= form_with(
+  model: annotation,
+  url: annotatable.is_a?(Observ::Session) ? session_annotations_path(annotatable) : trace_annotations_path(annotatable),
+  id: "annotation-form",
+  class: "observ-annotation-form"
+) do |form| %>
+  <% if annotation.errors.any? %>
+    <div class="observ-alert observ-alert--danger">
+      <ul class="observ-alert__list">
+        <% annotation.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="observ-form-field">
+    <%= form.label :content, "Add annotation", class: "observ-form-label" %>
+    <%= form.text_area :content,
+      class: "observ-form-textarea",
+      placeholder: "Enter your annotation...",
+      rows: 3 %>
+  </div>
+
+  <div class="observ-form-actions">
+    <%= form.submit "Add Annotation", class: "observ-button observ-button--primary" %>
+  </div>
+<% end %>

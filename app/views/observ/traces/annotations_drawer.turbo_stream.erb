@@ -4,7 +4,7 @@
 
 <%= turbo_stream.update "drawer-content" do %>
   <div class="observ-drawer__section">
-    <%= render "annotations/form", annotatable: @trace, annotation: @annotation %>
+    <%= render "observ/annotations/form", annotatable: @trace, annotation: @annotation %>
   </div>
 
   <div class="observ-drawer__section">
@@ -14,7 +14,7 @@
     
     <div id="annotations-list" class="observ-annotations-list">
       <% if @annotations.any? %>
-        <%= render partial: "annotations/annotation", collection: @annotations, locals: { annotatable: @trace } %>
+        <%= render partial: "observ/annotations/annotation", collection: @annotations, locals: { annotatable: @trace } %>
       <% else %>
         <div id="annotations-empty-state" class="observ-empty-state">
           <p class="observ-empty-state__text">No annotations yet</p>

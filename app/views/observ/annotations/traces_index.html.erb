@@ -32,9 +32,7 @@
                     class: "observ-annotation__delete",
                     data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
               </div>
-              <div class="observ-annotation__content">
-                <%= simple_format(annotation.content) %>
-              </div>
+              <div class="observ-annotation__content"><%= annotation.content %></div>
             </div>
           <% end %>
         </div>

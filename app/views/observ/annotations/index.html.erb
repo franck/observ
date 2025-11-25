@@ -12,11 +12,11 @@
     </div>
 
     <div class="observ-card__content">
-      <%= render partial: "annotations/form", locals: { annotatable: @annotatable, annotation: @annotatable.annotations.build } %>
+      <%= render partial: "observ/annotations/form", locals: { annotatable: @annotatable, annotation: @annotatable.annotations.build } %>
 
       <div id="annotations-list" class="observ-annotations-list">
         <% if @annotations.any? %>
-          <%= render partial: "annotations/annotation", collection: @annotations, locals: { annotatable: @annotatable } %>
+          <%= render partial: "observ/annotations/annotation", collection: @annotations, locals: { annotatable: @annotatable } %>
         <% else %>
           <div id="annotations-empty-state" class="observ-empty-state">
             <p>No annotations yet.</p>

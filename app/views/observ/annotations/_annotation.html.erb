@@ -1,0 +1,13 @@
+<div id="annotation_<%= annotation.id %>" class="observ-annotation">
+  <div class="observ-annotation__header">
+    <span class="observ-annotation__time">
+      <%= time_ago_in_words(annotation.created_at) %> ago
+    </span>
+    <%= button_to "Delete",
+      annotatable.is_a?(Observ::Session) ? session_annotation_path(annotatable, annotation) : trace_annotation_path(annotatable, annotation),
+      method: :delete,
+      class: "observ-annotation__delete",
+      data: { turbo_confirm: "Are you sure you want to delete this annotation?" } %>
+  </div>
+  <div class="observ-annotation__content"><%= annotation.content %></div>
+</div>

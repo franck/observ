@@ -64,12 +64,12 @@ module Observ
             streams = [
               turbo_stream.prepend(
                 "annotations-list",
-                partial: "annotations/annotation",
+                partial: "observ/annotations/annotation",
                 locals: { annotation: @annotation, annotatable: @annotatable }
               ),
               turbo_stream.replace(
                 "annotation-form",
-                partial: "annotations/form",
+                partial: "observ/annotations/form",
                 locals: { annotatable: @annotatable, annotation: @annotatable.annotations.build }
               ),
               turbo_stream.update("annotations-count", @annotatable.annotations.count)
@@ -87,7 +87,7 @@ module Observ
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
               "annotation-form",
-              partial: "annotations/form",
+              partial: "observ/annotations/form",
               locals: { annotatable: @annotatable, annotation: @annotation }
             )
           end
