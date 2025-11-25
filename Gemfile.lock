@@ -320,8 +320,8 @@ GEM
       zeitwerk (~> 2)
     ruby_llm-schema (0.2.5)
     securerandom (0.4.1)
-    shoulda-matchers (6.5.0)
-      activesupport (>= 5.2.0)
+    shoulda-matchers (7.0.1)
+      activesupport (>= 7.1)
     sqlite3 (2.7.4-aarch64-linux-gnu)
     sqlite3 (2.7.4-aarch64-linux-musl)
     sqlite3 (2.7.4-arm-linux-gnu)
@@ -371,7 +371,7 @@ DEPENDENCIES
   puma
   rspec-rails (~> 7.0)
   rubocop-rails-omakase
-  shoulda-matchers (~> 6.0)
+  shoulda-matchers (~> 7.0)
   sqlite3
   turbo-rails (~> 2.0)
 

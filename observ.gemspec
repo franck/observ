@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   # Development and testing
   spec.add_development_dependency "rspec-rails", "~> 7.0"
   spec.add_development_dependency "factory_bot_rails", "~> 6.0"
-  spec.add_development_dependency "shoulda-matchers", "~> 6.0"
+  spec.add_development_dependency "shoulda-matchers", "~> 7.0"
   spec.add_development_dependency "faker", "~> 3.0"
   spec.add_development_dependency "capybara", "~> 3.0"
   spec.add_development_dependency "sqlite3", "~> 1.4"
