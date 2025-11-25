@@ -38,5 +38,25 @@ module Observ
       text = data.is_a?(Hash) ? data.to_json : data.to_s
       text.length > max_length ? "#{text[0...max_length]}..." : text
     end
+
+    # Formats trace data for display in forms/previews
+    # Handles both JSON and string data
+    def format_trace_data(data)
+      return "" if data.blank?
+
+      if data.is_a?(Hash) || data.is_a?(Array)
+        JSON.pretty_generate(data)
+      elsif data.is_a?(String)
+        # Try to parse and pretty-print if it's JSON
+        begin
+          parsed = JSON.parse(data)
+          JSON.pretty_generate(parsed)
+        rescue JSON::ParserError
+          data
+        end
+      else
+        data.to_s
+      end
+    end
   end
 end

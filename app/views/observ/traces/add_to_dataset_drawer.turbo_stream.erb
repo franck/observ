@@ -1,0 +1,48 @@
+<%= turbo_stream.update "drawer-header-title" do %>
+  Add to Dataset
+<% end %>
+
+<%= turbo_stream.update "drawer-content" do %>
+  <div class="observ-drawer__section">
+    <% if @datasets.any? %>
+      <%= form_with url: add_to_dataset_trace_path(@trace), method: :post, class: "observ-form" do |f| %>
+        <div class="observ-form__group">
+          <%= f.label :dataset_id, "Select Dataset", class: "observ-form__label" %>
+          <%= f.select :dataset_id,
+            options_for_select(@datasets.map { |d| ["#{d.name} (#{d.agent_class})", d.id] }),
+            { prompt: "Choose a dataset..." },
+            class: "observ-form__select", required: true %>
+          <p class="observ-form__hint">The trace will be added as a new item in the selected dataset.</p>
+        </div>
+
+        <div class="observ-form__group">
+          <label class="observ-form__label">Input (from trace)</label>
+          <pre class="observ-code-block observ-code-block--compact observ-code-block--preview"><%= format_trace_data(@trace.input) %></pre>
+        </div>
+
+        <div class="observ-form__group">
+          <%= f.label :expected_output, "Expected Output", class: "observ-form__label" %>
+          <%= f.text_area :expected_output,
+            value: format_trace_data(@trace.output),
+            class: "observ-form__textarea observ-form__textarea--code",
+            rows: 6,
+            placeholder: "Leave empty to use trace output as expected output" %>
+          <p class="observ-form__hint">Optional. Pre-filled with trace output. Edit if needed.</p>
+        </div>
+
+        <div class="observ-form__actions">
+          <%= f.submit "Add to Dataset", class: "observ-button observ-button--primary" %>
+          <button type="button" class="observ-button" data-action="click->observ--drawer#close">
+            Cancel
+          </button>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="observ-card__empty">
+        <p class="observ-card__empty-text">No datasets available</p>
+        <p class="observ-card__empty-subtext">Create a dataset first to add traces to it.</p>
+        <%= link_to "Create Dataset", new_dataset_path, class: "observ-button observ-button--primary" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

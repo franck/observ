@@ -28,6 +28,8 @@ Observ::Engine.routes.draw do
     member do
       get :annotations_drawer
       get :text_output_drawer
+      get :add_to_dataset_drawer
+      post :add_to_dataset
     end
     resources :annotations, only: [ :index, :create, :destroy ]
   end

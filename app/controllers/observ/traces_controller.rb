@@ -38,6 +38,32 @@ module Observ
       @formatted_text = Observ::TraceTextFormatter.new(@trace).format
     end
 
+    def add_to_dataset_drawer
+      @trace = Observ::Trace.find(params[:id])
+      @datasets = Observ::Dataset.order(:name)
+    end
+
+    def add_to_dataset
+      @trace = Observ::Trace.find(params[:id])
+      @dataset = Observ::Dataset.find(params[:dataset_id])
+
+      @item = @dataset.items.build(
+        input: @trace.input,
+        expected_output: params[:expected_output].presence || @trace.output,
+        source_trace: @trace,
+        status: :active
+      )
+
+      if @item.save
+        redirect_to dataset_path(@dataset, tab: "items"),
+          notice: "Trace added to dataset '#{@dataset.name}' successfully."
+      else
+        @datasets = Observ::Dataset.order(:name)
+        flash.now[:alert] = "Failed to add trace to dataset: #{@item.errors.full_messages.join(', ')}"
+        render :add_to_dataset_drawer, status: :unprocessable_entity
+      end
+    end
+
     private
 
     def apply_filters

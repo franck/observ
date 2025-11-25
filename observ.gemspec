@@ -34,4 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "faker", "~> 3.0"
   spec.add_development_dependency "capybara", "~> 3.0"
   spec.add_development_dependency "sqlite3", "~> 1.4"
+  spec.add_development_dependency "turbo-rails", "~> 2.0"
 end
