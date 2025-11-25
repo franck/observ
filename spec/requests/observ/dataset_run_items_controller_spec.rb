@@ -68,4 +68,70 @@ RSpec.describe "Observ::DatasetRunItemsController", type: :request do
       end
     end
   end
+
+  describe "POST /observ/datasets/:dataset_id/runs/:run_id/run_items/:id/score" do
+    let(:session) { create(:observ_session) }
+    let(:trace) { create(:observ_trace, observ_session: session, output: { result: "actual output" }.to_json) }
+
+    before do
+      run_item.update!(trace: trace)
+    end
+
+    context "with review_mode parameter" do
+      it "redirects to review page after scoring" do
+        post score_observ_dataset_run_run_item_path(dataset, run, run_item),
+             params: { value: "1", review_mode: "1" }
+
+        expect(response).to redirect_to(review_observ_dataset_run_path(dataset, run))
+      end
+
+      it "creates a manual score" do
+        expect {
+          post score_observ_dataset_run_run_item_path(dataset, run, run_item),
+               params: { value: "1", review_mode: "1" }
+        }.to change(Observ::Score, :count).by(1)
+
+        score = Observ::Score.last
+        expect(score.name).to eq("manual")
+        expect(score.source).to eq("manual")
+        expect(score.value).to eq(1.0)
+      end
+
+      it "creates a failing score when value is 0" do
+        post score_observ_dataset_run_run_item_path(dataset, run, run_item),
+             params: { value: "0", review_mode: "1" }
+
+        score = Observ::Score.last
+        expect(score.value).to eq(0.0)
+      end
+
+      it "saves comment when provided" do
+        post score_observ_dataset_run_run_item_path(dataset, run, run_item),
+             params: { value: "1", comment: "Looks good!", review_mode: "1" }
+
+        score = Observ::Score.last
+        expect(score.comment).to eq("Looks good!")
+      end
+    end
+
+    context "without review_mode parameter" do
+      it "redirects to run page after scoring" do
+        post score_observ_dataset_run_run_item_path(dataset, run, run_item),
+             params: { value: "1" }
+
+        expect(response).to redirect_to(observ_dataset_run_path(dataset, run))
+      end
+    end
+
+    context "with turbo stream request" do
+      it "returns turbo stream response" do
+        post score_observ_dataset_run_run_item_path(dataset, run, run_item),
+             params: { value: "1" },
+             headers: turbo_stream_headers
+
+        expect(response).to have_http_status(:success)
+        expect(response.content_type).to include("text/vnd.turbo-stream.html")
+      end
+    end
+  end
 end

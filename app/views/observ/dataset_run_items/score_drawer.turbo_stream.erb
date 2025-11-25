@@ -1,0 +1,7 @@
+<%= turbo_stream.update "drawer-header-title" do %>
+  Score Item
+<% end %>
+
+<%= turbo_stream.update "drawer-content" do %>
+  <%= render "observ/dataset_run_items/score_drawer", run_item: @run_item %>
+<% end %>

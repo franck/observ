@@ -64,9 +64,15 @@ Observ::Engine.routes.draw do
   resources :datasets do
     resources :items, controller: "dataset_items", except: [ :show ]
     resources :runs, controller: "dataset_runs", only: [ :index, :show, :new, :create, :destroy ] do
+      member do
+        post :run_evaluators
+        get :review
+      end
       resources :run_items, controller: "dataset_run_items", only: [] do
         member do
           get :details_drawer
+          get :score_drawer
+          post :score
         end
       end
     end

@@ -12,6 +12,12 @@
     <% end %>
   </div>
   <div class="observ-page-header__actions">
+    <%= link_to "Review Items", review_dataset_run_path(@dataset, @run),
+      class: "observ-button observ-button--primary" %>
+    <%= button_to "Run Evaluators", run_evaluators_dataset_run_path(@dataset, @run),
+      method: :post,
+      class: "observ-button observ-button--secondary",
+      disabled: @run.in_progress? %>
     <%= button_to "Delete Run", dataset_run_path(@dataset, @run),
       method: :delete,
       class: "observ-button observ-button--danger",
@@ -63,6 +69,20 @@
           <dt class="observ-datasets__metadata-label">Created</dt>
           <dd class="observ-datasets__metadata-value"><%= @run.created_at.strftime("%b %d, %Y at %I:%M %p") %></dd>
         </div>
+        <% if @run.scores.any? %>
+          <div class="observ-datasets__metadata-item">
+            <dt class="observ-datasets__metadata-label">Score Summary</dt>
+            <dd class="observ-datasets__metadata-value">
+              <% @run.score_summary.each do |name, avg| %>
+                <span class="observ-badge observ-badge--sm"><%= name %>: <%= (avg * 100).round(1) %>%</span>
+              <% end %>
+            </dd>
+          </div>
+          <div class="observ-datasets__metadata-item">
+            <dt class="observ-datasets__metadata-label">Items Scored</dt>
+            <dd class="observ-datasets__metadata-value"><%= @run.items_with_scores_count %> / <%= @run.total_items %></dd>
+          </div>
+        <% end %>
       </dl>
     </div>
   </section>
@@ -80,7 +100,7 @@
               <th class="observ-table__cell">Input</th>
               <th class="observ-table__cell">Expected</th>
               <th class="observ-table__cell">Actual</th>
-              <th class="observ-table__cell">Status</th>
+              <th class="observ-table__cell">Scores</th>
               <th class="observ-table__cell observ-table__cell--actions"></th>
             </tr>
           </thead>
@@ -106,25 +126,18 @@
                     <span class="observ-text--muted">Pending</span>
                   <% end %>
                 </td>
-                <td class="observ-table__cell">
-                  <% if run_item.succeeded? %>
-                    <% if run_item.expected_output.present? %>
-                      <% if run_item.output_matches? %>
-                        <span class="observ-badge observ-badge--success">Match</span>
-                      <% else %>
-                        <span class="observ-badge observ-badge--danger">Mismatch</span>
-                      <% end %>
-                    <% else %>
-                      <span class="observ-badge observ-badge--success">Completed</span>
-                    <% end %>
-                  <% elsif run_item.failed? %>
-                    <span class="observ-badge observ-badge--danger">Failed</span>
-                  <% else %>
-                    <span class="observ-badge observ-badge--secondary">Pending</span>
-                  <% end %>
-                </td>
+                <%= render "observ/dataset_run_items/scores_cell", run_item: run_item %>
                 <td class="observ-table__cell observ-table__cell--actions">
                   <div class="observ-datasets-table__action-group">
+                    <% if run_item.succeeded? %>
+                      <%= link_to "Score",
+                        "#",
+                        class: "observ-button observ-button--sm",
+                        data: {
+                          action: "click->observ--drawer#open",
+                          drawer_url_param: score_drawer_dataset_run_run_item_path(@dataset, @run, run_item)
+                        } %>
+                    <% end %>
                     <%= link_to "Details",
                       "#",
                       class: "observ-button observ-button--sm",

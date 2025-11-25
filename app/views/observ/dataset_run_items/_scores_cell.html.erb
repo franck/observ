@@ -1,0 +1,19 @@
+<td class="observ-table__cell" id="run-item-<%= run_item.id %>-scores">
+  <% if run_item.scores.any? %>
+    <ul class="observ-scores-list observ-scores-list--compact">
+      <% run_item.scores.limit(3).each do |score| %>
+        <li class="observ-scores-list__item" title="<%= score.source %>">
+          <span class="observ-scores-list__indicator <%= score.passed? ? 'observ-scores-list__indicator--pass' : 'observ-scores-list__indicator--fail' %>">
+            <%= score.passed? ? '✓' : '✗' %>
+          </span>
+          <span class="observ-scores-list__name"><%= score.name %></span>
+        </li>
+      <% end %>
+      <% if run_item.scores.count > 3 %>
+        <li class="observ-scores-list__item observ-scores-list__more">+<%= run_item.scores.count - 3 %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <span class="observ-text--muted">-</span>
+  <% end %>
+</td>

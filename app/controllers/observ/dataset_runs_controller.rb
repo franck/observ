@@ -3,7 +3,7 @@
 module Observ
   class DatasetRunsController < ApplicationController
     before_action :set_dataset
-    before_action :set_run, only: [ :show, :destroy ]
+    before_action :set_run, only: [ :show, :destroy, :run_evaluators, :review ]
 
     def index
       @runs = @dataset.runs.order(created_at: :desc)
@@ -51,7 +51,48 @@ module Observ
         notice: "Run '#{name}' deleted successfully."
     end
 
+    def run_evaluators
+      evaluator_configs = @dataset.metadata&.dig("evaluators") || [ { "type" => "exact_match" } ]
+      Observ::EvaluatorRunnerService.new(@run, evaluator_configs: evaluator_configs).call
+
+      redirect_to dataset_run_path(@dataset, @run),
+        notice: "Evaluators completed. #{@run.items_with_scores_count} items scored."
+    end
+
+    def review
+      @run_item = next_item_to_review(@run)
+
+      if @run_item.nil?
+        redirect_to dataset_run_path(@dataset, @run),
+          notice: "All items have been reviewed!"
+        return
+      end
+
+      @progress = review_progress(@run)
+      @existing_manual = @run_item.score_for("manual", source: :manual)
+    end
+
     private
+
+    def next_item_to_review(run, after_item: nil)
+      items = run.run_items.succeeded.includes(:dataset_item, :scores).order(:id)
+
+      if after_item
+        items = items.where("id > ?", after_item.id)
+      end
+
+      # Find first item without a manual score
+      items.find { |item| item.score_for("manual", source: :manual).nil? } ||
+        # If all scored after current, wrap around to find any unscored
+        (after_item ? run.run_items.succeeded.includes(:dataset_item, :scores).order(:id).find { |item| item.score_for("manual", source: :manual).nil? } : nil)
+    end
+
+    def review_progress(run)
+      succeeded_items = run.run_items.succeeded
+      total = succeeded_items.count
+      scored = succeeded_items.joins(:scores).where(observ_scores: { name: "manual", source: :manual }).distinct.count
+      { scored: scored, total: total }
+    end
 
     def set_dataset
       @dataset = Observ::Dataset.find(params[:dataset_id])

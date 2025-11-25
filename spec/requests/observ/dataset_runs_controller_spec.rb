@@ -162,4 +162,69 @@ RSpec.describe "Observ::DatasetRunsController", type: :request do
       }.to change(Observ::DatasetRunItem, :count).by(-1)
     end
   end
+
+  describe "GET /observ/datasets/:dataset_id/runs/:id/review" do
+    let!(:run) { create(:observ_dataset_run, dataset: dataset, name: "test-run") }
+    let!(:session) { create(:observ_session) }
+    let!(:trace) { create(:observ_trace, observ_session: session, output: { result: "actual output" }.to_json) }
+
+    context "with unscored items" do
+      let!(:item1) { create(:observ_dataset_item, dataset: dataset, input: { text: "input 1" }) }
+      let!(:run_item1) { create(:observ_dataset_run_item, dataset_run: run, dataset_item: item1, trace: trace) }
+
+      it "displays the review page" do
+        get review_observ_dataset_run_path(dataset, run)
+
+        expect(response).to be_successful
+        expect(response.body).to include("Review Mode")
+        expect(response.body).to include("input 1")
+      end
+
+      it "shows progress indicator" do
+        get review_observ_dataset_run_path(dataset, run)
+
+        expect(response).to be_successful
+        expect(response.body).to include("Scoring Progress")
+        expect(response.body).to include("0")  # scored
+        expect(response.body).to include("1")  # total
+      end
+
+      it "shows scoring buttons" do
+        get review_observ_dataset_run_path(dataset, run)
+
+        expect(response).to be_successful
+        expect(response.body).to include("Correct")
+        expect(response.body).to include("Incorrect")
+      end
+    end
+
+    context "when all items are scored" do
+      let!(:item1) { create(:observ_dataset_item, dataset: dataset, input: { text: "input 1" }) }
+      let!(:run_item1) { create(:observ_dataset_run_item, dataset_run: run, dataset_item: item1, trace: trace) }
+
+      before do
+        create(:observ_score, dataset_run_item: run_item1, trace: trace, name: "manual", source: :manual, value: 1.0)
+      end
+
+      it "redirects to run page with completion message" do
+        get review_observ_dataset_run_path(dataset, run)
+
+        expect(response).to redirect_to(observ_dataset_run_path(dataset, run))
+        follow_redirect!
+        expect(response.body).to include("All items have been reviewed")
+      end
+    end
+
+    context "with no succeeded items" do
+      let!(:item1) { create(:observ_dataset_item, dataset: dataset, input: { text: "input 1" }) }
+      # No trace means item is pending
+      let!(:run_item1) { create(:observ_dataset_run_item, dataset_run: run, dataset_item: item1) }
+
+      it "redirects to run page" do
+        get review_observ_dataset_run_path(dataset, run)
+
+        expect(response).to redirect_to(observ_dataset_run_path(dataset, run))
+      end
+    end
+  end
 end
