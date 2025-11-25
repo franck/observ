@@ -1,0 +1,32 @@
+<% content_for :title, "Edit #{@dataset.name}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Dataset", dataset_path(@dataset), class: "observ-datasets__back-link" %>
+      <h1 class="observ-page-header__title">Edit Dataset</h1>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <%= render "form", dataset: @dataset, agents: @agents %>
+    </div>
+  </section>
+
+  <!-- Danger Zone -->
+  <section class="observ-card observ-card--danger">
+    <div class="observ-card__header">
+      <h2 class="observ-card__title">Danger Zone</h2>
+    </div>
+    <div class="observ-card__body">
+      <p class="observ-text--muted">Deleting this dataset will permanently remove all items and runs.</p>
+      <%= button_to "Delete Dataset", dataset_path(@dataset),
+        method: :delete,
+        class: "observ-button observ-button--danger",
+        data: { confirm: "Are you sure you want to delete this dataset? This action cannot be undone." } %>
+    </div>
+  </section>
+</div>

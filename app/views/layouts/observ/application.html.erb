@@ -44,6 +44,9 @@
           <li class="observ-nav__item">
             <%= link_to "Prompts", prompts_path, class: "observ-nav__link #{controller_name == 'prompts' || controller_name == 'prompt_versions' ? 'observ-nav__link--active' : ''}" %>
           </li>
+          <li class="observ-nav__item">
+            <%= link_to "Datasets", datasets_path, class: "observ-nav__link #{controller_name == 'datasets' || controller_name == 'dataset_items' || controller_name == 'dataset_runs' ? 'observ-nav__link--active' : ''}" %>
+          </li>
         </ul>
 
         <div class="observ-nav__actions">

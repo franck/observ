@@ -1,0 +1,95 @@
+<% content_for :title, "Items - #{@dataset.name}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Dataset", dataset_path(@dataset), class: "observ-datasets__back-link" %>
+      <h1 class="observ-page-header__title">Items: <%= @dataset.name %></h1>
+    </div>
+    <%= link_to "Add Item", new_dataset_item_path(@dataset), class: "observ-button observ-button--primary" %>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <!-- Filters -->
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <%= form_with url: dataset_items_path(@dataset), method: :get, class: "observ-datasets-filters__form" do |f| %>
+        <div class="observ-datasets-filters__field">
+          <%= f.label :status, "Filter by status", class: "observ-datasets-filters__label" %>
+          <%= f.select :status,
+            options_for_select([["All", ""], ["Active", "active"], ["Archived", "archived"]], params[:status]),
+            {},
+            class: "observ-datasets-filters__select" %>
+        </div>
+        <div class="observ-datasets-filters__actions">
+          <%= f.submit "Filter", class: "observ-button observ-button--secondary" %>
+          <%= link_to "Clear", dataset_items_path(@dataset), class: "observ-button" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Items Table -->
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <% if @items.any? %>
+        <table class="observ-table">
+          <thead class="observ-table__header">
+            <tr class="observ-table__row">
+              <th class="observ-table__cell">Input</th>
+              <th class="observ-table__cell">Expected Output</th>
+              <th class="observ-table__cell">Status</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Runs</th>
+              <th class="observ-table__cell">Created</th>
+              <th class="observ-table__cell observ-table__cell--actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @items.each do |item| %>
+              <tr class="observ-table__row">
+                <td class="observ-table__cell observ-datasets__cell--preview">
+                  <code class="observ-datasets__preview"><%= item.input_preview(max_length: 100) %></code>
+                </td>
+                <td class="observ-table__cell observ-datasets__cell--preview">
+                  <% if item.expected_output.present? %>
+                    <code class="observ-datasets__preview"><%= item.expected_output_preview(max_length: 100) %></code>
+                  <% else %>
+                    <span class="observ-text--muted">Not set</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <span class="observ-badge <%= item.active? ? 'observ-badge--success' : 'observ-badge--default' %>">
+                    <%= item.status %>
+                  </span>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= item.run_count %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= time_ago_in_words(item.created_at) %> ago
+                </td>
+                <td class="observ-table__cell observ-table__cell--actions">
+                  <div class="observ-datasets-table__action-group">
+                    <%= link_to "Edit", edit_dataset_item_path(@dataset, item), class: "observ-button observ-button--sm" %>
+                    <%= button_to "Delete", dataset_item_path(@dataset, item),
+                      method: :delete,
+                      class: "observ-button observ-button--sm observ-button--danger",
+                      data: { confirm: "Are you sure?" } %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="observ-card__empty">
+          <p class="observ-card__empty-text">No items found</p>
+          <%= link_to "Add an item", new_dataset_item_path(@dataset), class: "observ-button observ-button--primary" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%= observ_pagination(@items) %>
+</div>

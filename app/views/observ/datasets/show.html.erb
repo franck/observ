@@ -1,0 +1,67 @@
+<% content_for :title, @dataset.name %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Datasets", datasets_path, class: "observ-datasets__back-link" %>
+      <h1 class="observ-page-header__title"><%= @dataset.name %></h1>
+      <% if @dataset.description.present? %>
+        <p class="observ-page-header__subtitle"><%= @dataset.description %></p>
+      <% end %>
+    </div>
+    <div class="observ-page-header__actions">
+      <%= link_to "New Run", new_dataset_run_path(@dataset), class: "observ-button observ-button--primary" %>
+      <%= link_to "Add Item", new_dataset_item_path(@dataset), class: "observ-button observ-button--secondary" %>
+      <%= link_to "Edit", edit_dataset_path(@dataset), class: "observ-button" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <!-- Dataset Info Card -->
+  <section class="observ-card observ-datasets__info">
+    <div class="observ-card__body">
+      <dl class="observ-datasets__metadata">
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Agent</dt>
+          <dd class="observ-datasets__metadata-value">
+            <span class="observ-badge observ-badge--info"><%= @dataset.agent_class %></span>
+          </dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Total Items</dt>
+          <dd class="observ-datasets__metadata-value"><%= @dataset.items_count %></dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Active Items</dt>
+          <dd class="observ-datasets__metadata-value"><%= @dataset.active_items_count %></dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Total Runs</dt>
+          <dd class="observ-datasets__metadata-value"><%= @dataset.runs_count %></dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Created</dt>
+          <dd class="observ-datasets__metadata-value"><%= @dataset.created_at.strftime("%b %d, %Y") %></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <div class="observ-tabs">
+    <%= link_to "Items (#{@dataset.items_count})",
+      dataset_path(@dataset, tab: "items"),
+      class: "observ-tabs__tab #{@active_tab == 'items' ? 'observ-tabs__tab--active' : ''}" %>
+    <%= link_to "Runs (#{@dataset.runs_count})",
+      dataset_path(@dataset, tab: "runs"),
+      class: "observ-tabs__tab #{@active_tab == 'runs' ? 'observ-tabs__tab--active' : ''}" %>
+  </div>
+
+  <!-- Tab Content -->
+  <% if @active_tab == "items" %>
+    <%= render "items_tab" %>
+  <% else %>
+    <%= render "runs_tab" %>
+  <% end %>
+</div>

@@ -1,0 +1,18 @@
+<% content_for :title, "New Dataset" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Datasets", datasets_path, class: "observ-datasets__back-link" %>
+      <h1 class="observ-page-header__title">New Dataset</h1>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <%= render "form", dataset: @dataset, agents: @agents %>
+    </div>
+  </section>
+</div>

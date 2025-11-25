@@ -1,0 +1,82 @@
+<section class="observ-card">
+  <div class="observ-card__header">
+    <h2 class="observ-card__title">Dataset Runs</h2>
+    <%= link_to "New Run", new_dataset_run_path(@dataset), class: "observ-button observ-button--sm observ-button--primary" %>
+  </div>
+  <div class="observ-card__body">
+    <% if @runs.any? %>
+      <table class="observ-table">
+        <thead class="observ-table__header">
+          <tr class="observ-table__row">
+            <th class="observ-table__cell">Name</th>
+            <th class="observ-table__cell">Status</th>
+            <th class="observ-table__cell">Progress</th>
+            <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+            <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
+            <th class="observ-table__cell">Created</th>
+            <th class="observ-table__cell observ-table__cell--actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @runs.each do |run| %>
+            <tr class="observ-table__row">
+              <td class="observ-table__cell">
+                <%= link_to run.name, dataset_run_path(@dataset, run), class: "observ-datasets-table__link" %>
+                <% if run.description.present? %>
+                  <p class="observ-datasets-table__description"><%= truncate(run.description, length: 50) %></p>
+                <% end %>
+              </td>
+              <td class="observ-table__cell">
+                <span class="observ-badge <%= run_status_badge_class(run.status) %>">
+                  <%= run.status %>
+                </span>
+              </td>
+              <td class="observ-table__cell">
+                <div class="observ-datasets__progress">
+                  <div class="observ-datasets__progress-bar">
+                    <div class="observ-datasets__progress-fill observ-datasets__progress-fill--success"
+                         style="width: <%= run.success_rate %>%"></div>
+                    <div class="observ-datasets__progress-fill observ-datasets__progress-fill--danger"
+                         style="width: <%= run.failure_rate %>%"></div>
+                  </div>
+                  <span class="observ-datasets__progress-text">
+                    <%= run.completed_items %>/<%= run.total_items %> completed
+                    <% if run.failed_items > 0 %>
+                      (<%= run.failed_items %> failed)
+                    <% end %>
+                  </span>
+                </div>
+              </td>
+              <td class="observ-table__cell observ-table__cell--numeric">
+                $<%= number_with_precision(run.total_cost, precision: 4) %>
+              </td>
+              <td class="observ-table__cell observ-table__cell--numeric">
+                <%= number_with_delimiter(run.total_tokens) %>
+              </td>
+              <td class="observ-table__cell">
+                <%= time_ago_in_words(run.created_at) %> ago
+              </td>
+              <td class="observ-table__cell observ-table__cell--actions">
+                <div class="observ-datasets-table__action-group">
+                  <%= link_to "View", dataset_run_path(@dataset, run), class: "observ-button observ-button--sm" %>
+                  <%= button_to "Delete", dataset_run_path(@dataset, run),
+                    method: :delete,
+                    class: "observ-button observ-button--sm observ-button--danger",
+                    data: { confirm: "Are you sure you want to delete this run?" } %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= observ_pagination(@runs) %>
+    <% else %>
+      <div class="observ-card__empty">
+        <p class="observ-card__empty-text">No runs yet</p>
+        <p class="observ-card__empty-subtext">Run your dataset to evaluate the agent's performance</p>
+        <%= link_to "Start a new run", new_dataset_run_path(@dataset), class: "observ-button observ-button--primary" %>
+      </div>
+    <% end %>
+  </div>
+</section>

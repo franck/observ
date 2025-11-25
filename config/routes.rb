@@ -58,4 +58,9 @@ Observ::Engine.routes.draw do
       end
     end
   end
+
+  resources :datasets do
+    resources :items, controller: "dataset_items", except: [ :show ]
+    resources :runs, controller: "dataset_runs", only: [ :index, :show, :new, :create, :destroy ]
+  end
 end

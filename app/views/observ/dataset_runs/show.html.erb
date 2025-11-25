@@ -1,0 +1,163 @@
+<% content_for :title, "#{@run.name} - #{@dataset.name}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Dataset", dataset_path(@dataset, tab: "runs"), class: "observ-datasets__back-link" %>
+      <h1 class="observ-page-header__title"><%= @run.name %></h1>
+      <% if @run.description.present? %>
+        <p class="observ-page-header__subtitle"><%= @run.description %></p>
+      <% end %>
+    </div>
+    <div class="observ-page-header__actions">
+      <%= button_to "Delete Run", dataset_run_path(@dataset, @run),
+        method: :delete,
+        class: "observ-button observ-button--danger",
+        data: { confirm: "Are you sure you want to delete this run?" } %>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <!-- Run Summary -->
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <dl class="observ-datasets__metadata observ-datasets__metadata--horizontal">
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Status</dt>
+          <dd class="observ-datasets__metadata-value">
+            <span class="observ-badge <%= run_status_badge_class(@run.status) %>">
+              <%= @run.status %>
+            </span>
+          </dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Progress</dt>
+          <dd class="observ-datasets__metadata-value">
+            <div class="observ-datasets__progress observ-datasets__progress--large">
+              <div class="observ-datasets__progress-bar">
+                <div class="observ-datasets__progress-fill observ-datasets__progress-fill--success"
+                     style="width: <%= @run.success_rate %>%"></div>
+                <div class="observ-datasets__progress-fill observ-datasets__progress-fill--danger"
+                     style="width: <%= @run.failure_rate %>%"></div>
+              </div>
+              <span class="observ-datasets__progress-text">
+                <%= @run.progress_percentage %>%
+              </span>
+            </div>
+          </dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Completed</dt>
+          <dd class="observ-datasets__metadata-value"><%= @run.completed_items %> / <%= @run.total_items %></dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Failed</dt>
+          <dd class="observ-datasets__metadata-value">
+            <% if @run.failed_items > 0 %>
+              <span class="observ-text--danger"><%= @run.failed_items %></span>
+            <% else %>
+              0
+            <% end %>
+          </dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Total Cost</dt>
+          <dd class="observ-datasets__metadata-value">$<%= number_with_precision(@run.total_cost, precision: 4) %></dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Total Tokens</dt>
+          <dd class="observ-datasets__metadata-value"><%= number_with_delimiter(@run.total_tokens) %></dd>
+        </div>
+        <div class="observ-datasets__metadata-item">
+          <dt class="observ-datasets__metadata-label">Created</dt>
+          <dd class="observ-datasets__metadata-value"><%= @run.created_at.strftime("%b %d, %Y at %I:%M %p") %></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Run Items -->
+  <section class="observ-card">
+    <div class="observ-card__header">
+      <h2 class="observ-card__title">Run Items</h2>
+    </div>
+    <div class="observ-card__body">
+      <% if @run_items.any? %>
+        <table class="observ-table">
+          <thead class="observ-table__header">
+            <tr class="observ-table__row">
+              <th class="observ-table__cell">Input</th>
+              <th class="observ-table__cell">Expected</th>
+              <th class="observ-table__cell">Actual</th>
+              <th class="observ-table__cell">Status</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
+              <th class="observ-table__cell observ-table__cell--actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @run_items.each do |run_item| %>
+              <tr class="observ-table__row">
+                <td class="observ-table__cell observ-datasets__cell--preview">
+                  <code class="observ-datasets__preview"><%= run_item.dataset_item.input_preview(max_length: 60) %></code>
+                </td>
+                <td class="observ-table__cell observ-datasets__cell--preview">
+                  <% if run_item.expected_output.present? %>
+                    <code class="observ-datasets__preview"><%= run_item.dataset_item.expected_output_preview(max_length: 60) %></code>
+                  <% else %>
+                    <span class="observ-text--muted">-</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-datasets__cell--preview">
+                  <% if run_item.actual_output.present? %>
+                    <code class="observ-datasets__preview"><%= truncate(run_item.actual_output.to_s, length: 60) %></code>
+                    <% if run_item.output_matches? == true %>
+                      <span class="observ-badge observ-badge--success observ-badge--sm">Match</span>
+                    <% elsif run_item.output_matches? == false %>
+                      <span class="observ-badge observ-badge--danger observ-badge--sm">Mismatch</span>
+                    <% end %>
+                  <% elsif run_item.failed? %>
+                    <span class="observ-text--danger" title="<%= run_item.error %>">Error: <%= truncate(run_item.error, length: 40) %></span>
+                  <% else %>
+                    <span class="observ-text--muted">Pending</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <span class="observ-badge <%= run_item_status_badge_class(run_item.status) %>">
+                    <%= run_item.status %>
+                  </span>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <% if run_item.cost %>
+                    $<%= number_with_precision(run_item.cost, precision: 4) %>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <% if run_item.tokens %>
+                    <%= number_with_delimiter(run_item.tokens) %>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--actions">
+                  <% if run_item.trace %>
+                    <%= link_to "View Trace", trace_path(run_item.trace), class: "observ-button observ-button--sm" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <%= observ_pagination(@run_items) %>
+      <% else %>
+        <div class="observ-card__empty">
+          <p class="observ-card__empty-text">No items in this run</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

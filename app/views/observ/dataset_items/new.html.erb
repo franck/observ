@@ -1,0 +1,18 @@
+<% content_for :title, "Add Item - #{@dataset.name}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Dataset", dataset_path(@dataset, tab: "items"), class: "observ-datasets__back-link" %>
+      <h1 class="observ-page-header__title">Add Item to <%= @dataset.name %></h1>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <%= render "form", item: @item, dataset: @dataset %>
+    </div>
+  </section>
+</div>

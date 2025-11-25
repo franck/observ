@@ -264,6 +264,87 @@ select.observ-input,
   margin-bottom: $observ-spacing-md;
 }
 
+// BEM-style form components
+.observ-form {
+  &__group {
+    margin-bottom: $observ-spacing-lg;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: $observ-spacing-xs;
+    font-size: $observ-font-size-sm;
+    font-weight: 500;
+    color: $observ-gray-700;
+  }
+
+  &__input,
+  &__select,
+  &__textarea {
+    width: 100%;
+    padding: $observ-spacing-sm $observ-spacing-md;
+    font-size: $observ-font-size-base;
+    color: $observ-gray-900;
+    background-color: #fff;
+    border: 1px solid $observ-gray-300;
+    border-radius: $observ-border-radius-sm;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $observ-primary;
+      box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
+    }
+
+    &::placeholder {
+      color: $observ-gray-400;
+    }
+
+    &:disabled {
+      background-color: $observ-gray-100;
+      cursor: not-allowed;
+    }
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+
+    &--code {
+      font-family: $observ-font-family-mono;
+      font-size: $observ-font-size-sm;
+    }
+  }
+
+  &__select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $observ-spacing-md center;
+    padding-right: calc($observ-spacing-md + 1.5rem);
+  }
+
+  &__hint {
+    margin-top: $observ-spacing-xs;
+    font-size: $observ-font-size-sm;
+    color: $observ-gray-500;
+
+    &--warning {
+      color: $observ-warning;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $observ-spacing-md;
+    padding-top: $observ-spacing-lg;
+    border-top: 1px solid $observ-gray-200;
+    margin-top: $observ-spacing-lg;
+  }
+}
+
 .observ-alert__title {
   margin: 0 0 $observ-spacing-sm 0;
   font-size: $observ-font-size-base;

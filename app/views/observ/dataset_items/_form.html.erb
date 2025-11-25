@@ -1,0 +1,49 @@
+<%= form_with model: item, scope: :observ_dataset_item, url: item.persisted? ? dataset_item_path(dataset, item) : dataset_items_path(dataset),
+  method: item.persisted? ? :patch : :post, class: "observ-form" do |f| %>
+  <% if item.errors.any? %>
+    <div class="observ-alert observ-alert--danger">
+      <h3 class="observ-alert__title">Please fix the following errors:</h3>
+      <ul class="observ-alert__list">
+        <% item.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="observ-form__group">
+    <%= f.label :input_text, "Input", class: "observ-form__label" %>
+    <%= f.text_area :input_text,
+      value: item.input.is_a?(Hash) ? JSON.pretty_generate(item.input) : item.input,
+      class: "observ-form__textarea observ-form__textarea--code",
+      rows: 6,
+      placeholder: '{"text": "What is the capital of France?"}',
+      required: true %>
+    <p class="observ-form__hint">The input data for this test case. Can be JSON or plain text.</p>
+  </div>
+
+  <div class="observ-form__group">
+    <%= f.label :expected_output_text, "Expected Output", class: "observ-form__label" %>
+    <%= f.text_area :expected_output_text,
+      value: item.expected_output.is_a?(Hash) ? JSON.pretty_generate(item.expected_output) : item.expected_output,
+      class: "observ-form__textarea observ-form__textarea--code",
+      rows: 6,
+      placeholder: '{"answer": "Paris"}' %>
+    <p class="observ-form__hint">Optional. The expected output for comparison. Can be JSON or plain text.</p>
+  </div>
+
+  <div class="observ-form__group">
+    <%= f.label :status, class: "observ-form__label" %>
+    <%= f.select :status,
+      options_for_select([["Active", "active"], ["Archived", "archived"]], item.status),
+      {},
+      class: "observ-form__select" %>
+    <p class="observ-form__hint">Archived items are excluded from new runs</p>
+  </div>
+
+  <div class="observ-form__actions">
+    <%= f.submit item.persisted? ? "Update Item" : "Add Item",
+      class: "observ-button observ-button--primary" %>
+    <%= link_to "Cancel", dataset_path(dataset, tab: "items"), class: "observ-button" %>
+  </div>
+<% end %>

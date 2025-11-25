@@ -1,0 +1,57 @@
+<% content_for :title, "New Run - #{@dataset.name}" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <div>
+      <%= link_to "← Back to Dataset", dataset_path(@dataset, tab: "runs"), class: "observ-datasets__back-link" %>
+      <h1 class="observ-page-header__title">New Run: <%= @dataset.name %></h1>
+    </div>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <!-- Run Info -->
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <div class="observ-alert observ-alert--info">
+        <p>This run will evaluate <strong><%= @dataset.active_items_count %> active items</strong> using the <strong><%= @dataset.agent_class %></strong> agent.</p>
+      </div>
+
+      <%= form_with model: [@dataset, @run], url: dataset_runs_path(@dataset), class: "observ-form" do |f| %>
+        <% if @run.errors.any? %>
+          <div class="observ-alert observ-alert--danger">
+            <h3 class="observ-alert__title">Please fix the following errors:</h3>
+            <ul class="observ-alert__list">
+              <% @run.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="observ-form__group">
+          <%= f.label :name, class: "observ-form__label" %>
+          <%= f.text_field :name,
+            class: "observ-form__input",
+            placeholder: "e.g., v1.0-gpt4, baseline, experiment-1",
+            required: true %>
+          <p class="observ-form__hint">A unique name for this run (used for comparison)</p>
+        </div>
+
+        <div class="observ-form__group">
+          <%= f.label :description, class: "observ-form__label" %>
+          <%= f.text_area :description,
+            class: "observ-form__textarea",
+            rows: 3,
+            placeholder: "Describe the purpose of this run..." %>
+          <p class="observ-form__hint">Optional description of what you're testing</p>
+        </div>
+
+        <div class="observ-form__actions">
+          <%= f.submit "Start Run", class: "observ-button observ-button--primary" %>
+          <%= link_to "Cancel", dataset_path(@dataset, tab: "runs"), class: "observ-button" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

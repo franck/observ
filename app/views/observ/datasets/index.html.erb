@@ -1,0 +1,103 @@
+<% content_for :title, "Datasets" %>
+
+<% content_for :page_header do %>
+  <div class="observ-page-header__content">
+    <h1 class="observ-page-header__title">Datasets</h1>
+    <%= link_to "New Dataset", new_dataset_path, class: "observ-button observ-button--primary" %>
+  </div>
+<% end %>
+
+<div class="observ-container">
+  <!-- Search -->
+  <section class="observ-card observ-datasets-filters">
+    <div class="observ-card__body">
+      <%= form_with url: datasets_path, method: :get, class: "observ-datasets-filters__form" do |f| %>
+        <div class="observ-datasets-filters__field observ-datasets-filters__field--search">
+          <%= f.label :search, "Search datasets", class: "observ-datasets-filters__label" %>
+          <%= f.text_field :search,
+            value: params[:search],
+            placeholder: "Search by name...",
+            class: "observ-datasets-filters__input" %>
+        </div>
+
+        <div class="observ-datasets-filters__actions">
+          <%= f.submit "Search", class: "observ-button observ-button--secondary" %>
+          <%= link_to "Clear", datasets_path, class: "observ-button" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Datasets Table -->
+  <section class="observ-card">
+    <div class="observ-card__body">
+      <% if @datasets.any? %>
+        <table class="observ-table">
+          <thead class="observ-table__header">
+            <tr class="observ-table__row">
+              <th class="observ-table__cell">Name</th>
+              <th class="observ-table__cell">Agent</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Items</th>
+              <th class="observ-table__cell observ-table__cell--numeric">Runs</th>
+              <th class="observ-table__cell">Last Run</th>
+              <th class="observ-table__cell">Updated</th>
+              <th class="observ-table__cell observ-table__cell--actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @datasets.each do |dataset| %>
+              <tr class="observ-table__row">
+                <td class="observ-table__cell">
+                  <%= link_to dataset.name, dataset_path(dataset), class: "observ-datasets-table__link" %>
+                  <% if dataset.description.present? %>
+                    <p class="observ-datasets-table__description"><%= truncate(dataset.description, length: 60) %></p>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <span class="observ-badge observ-badge--info"><%= dataset.agent_class %></span>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= dataset.items_count %>
+                  <% if dataset.active_items_count != dataset.items_count %>
+                    <span class="observ-text--muted">(<%= dataset.active_items_count %> active)</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell observ-table__cell--numeric">
+                  <%= dataset.runs_count %>
+                </td>
+                <td class="observ-table__cell">
+                  <% if dataset.last_run %>
+                    <span class="observ-badge <%= run_status_badge_class(dataset.last_run.status) %>">
+                      <%= dataset.last_run.status %>
+                    </span>
+                    <span class="observ-text--muted"><%= time_ago_in_words(dataset.last_run.created_at) %> ago</span>
+                  <% else %>
+                    <span class="observ-text--muted">Never</span>
+                  <% end %>
+                </td>
+                <td class="observ-table__cell">
+                  <%= time_ago_in_words(dataset.updated_at) %> ago
+                </td>
+                <td class="observ-table__cell observ-table__cell--actions">
+                  <div class="observ-datasets-table__action-group">
+                    <%= link_to "View", dataset_path(dataset), class: "observ-button observ-button--sm" %>
+                    <%= link_to "Edit", edit_dataset_path(dataset), class: "observ-button observ-button--sm" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="observ-card__empty">
+          <p class="observ-card__empty-text">No datasets found</p>
+          <p class="observ-card__empty-subtext">Create a dataset to start evaluating your LLM applications</p>
+          <%= link_to "Create your first dataset", new_dataset_path, class: "observ-button observ-button--primary" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Pagination -->
+  <%= observ_pagination(@datasets) %>
+</div>
