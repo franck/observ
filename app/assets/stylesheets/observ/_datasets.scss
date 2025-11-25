@@ -153,19 +153,35 @@
     white-space: nowrap;
   }
 
+  // Run progress section
+  &__run-progress {
+    margin-bottom: $observ-spacing-lg;
+    padding-bottom: $observ-spacing-lg;
+    border-bottom: 1px solid $observ-gray-200;
+  }
+
+  &__run-progress-header {
+    display: flex;
+    align-items: center;
+    gap: $observ-spacing-md;
+    margin-bottom: $observ-spacing-sm;
+  }
+
+  &__run-progress-stats {
+    font-size: $observ-font-size-sm;
+    color: $observ-gray-600;
+  }
+
   // Progress bar
   &__progress {
     display: flex;
-    flex-direction: column;
-    gap: $observ-spacing-xs;
-
-    &--large {
-      min-width: 200px;
-    }
+    align-items: center;
+    gap: $observ-spacing-md;
   }
 
   &__progress-bar {
     display: flex;
+    flex: 1;
     height: 8px;
     background-color: $observ-gray-200;
     border-radius: 4px;

@@ -211,6 +211,52 @@ RSpec.describe Observ::DatasetRunItem, type: :model do
 
       expect(run_item.output_matches?).to be false
     end
+
+    it "returns true when JSON outputs are semantically equal but formatted differently" do
+      expected_json = "{\n  \"language_code\": \"fr\",\n  \"confidence\": \"high\"\n}"
+      actual_json = '{"language_code":"fr","confidence":"high"}'
+
+      item = create(:observ_dataset_item, expected_output: expected_json)
+      run = create(:observ_dataset_run, dataset: item.dataset)
+      session = create(:observ_session)
+      trace = create(:observ_trace, observ_session: session, output: actual_json)
+      run_item = create(:observ_dataset_run_item, dataset_run: run, dataset_item: item, trace: trace)
+
+      expect(run_item.output_matches?).to be true
+    end
+
+    it "returns true when expected is hash and actual is equivalent JSON string" do
+      item = create(:observ_dataset_item, expected_output: { language_code: "fr", confidence: "high" })
+      run = create(:observ_dataset_run, dataset: item.dataset)
+      session = create(:observ_session)
+      trace = create(:observ_trace, observ_session: session, output: '{"language_code":"fr","confidence":"high"}')
+      run_item = create(:observ_dataset_run_item, dataset_run: run, dataset_item: item, trace: trace)
+
+      expect(run_item.output_matches?).to be true
+    end
+
+    it "returns false when JSON values differ" do
+      expected_json = '{"language_code":"fr"}'
+      actual_json = '{"language_code":"en"}'
+
+      item = create(:observ_dataset_item, expected_output: expected_json)
+      run = create(:observ_dataset_run, dataset: item.dataset)
+      session = create(:observ_session)
+      trace = create(:observ_trace, observ_session: session, output: actual_json)
+      run_item = create(:observ_dataset_run_item, dataset_run: run, dataset_item: item, trace: trace)
+
+      expect(run_item.output_matches?).to be false
+    end
+
+    it "compares plain strings after stripping whitespace" do
+      item = create(:observ_dataset_item, expected_output: "  hello world  ")
+      run = create(:observ_dataset_run, dataset: item.dataset)
+      session = create(:observ_session)
+      trace = create(:observ_trace, observ_session: session, output: "hello world")
+      run_item = create(:observ_dataset_run_item, dataset_run: run, dataset_item: item, trace: trace)
+
+      expect(run_item.output_matches?).to be true
+    end
   end
 
   describe "metrics from trace" do

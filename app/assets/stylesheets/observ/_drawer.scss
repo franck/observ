@@ -206,3 +206,68 @@
     }
   }
 }
+
+// Field styles for structured content display
+.observ-drawer__field {
+  margin-bottom: $observ-spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.observ-drawer__field-label {
+  display: block;
+  margin-bottom: $observ-spacing-xs;
+  font-size: $observ-font-size-sm;
+  font-weight: 600;
+  color: $observ-gray-700;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.observ-drawer__field-value {
+  display: flex;
+  align-items: center;
+  gap: $observ-spacing-sm;
+}
+
+// Metrics grid for displaying stats
+.observ-drawer__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $observ-spacing-md;
+  margin-bottom: $observ-spacing-lg;
+  padding: $observ-spacing-md;
+  background-color: $observ-gray-50;
+  border-radius: $observ-border-radius;
+}
+
+.observ-drawer__metric {
+  text-align: center;
+}
+
+.observ-drawer__metric-label {
+  display: block;
+  font-size: $observ-font-size-xs;
+  color: $observ-gray-500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: $observ-spacing-xs;
+}
+
+.observ-drawer__metric-value {
+  display: block;
+  font-size: $observ-font-size-lg;
+  font-weight: 600;
+  color: $observ-gray-900;
+}
+
+// Actions footer
+.observ-drawer__actions {
+  display: flex;
+  gap: $observ-spacing-sm;
+  margin-top: $observ-spacing-lg;
+  padding-top: $observ-spacing-lg;
+  border-top: 1px solid $observ-gray-200;
+}

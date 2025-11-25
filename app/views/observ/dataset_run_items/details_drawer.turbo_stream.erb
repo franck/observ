@@ -1,0 +1,80 @@
+<%= turbo_stream.update "drawer-header-title" do %>
+  Run Item Details
+<% end %>
+
+<%= turbo_stream.update "drawer-content" do %>
+  <div class="observ-drawer__section">
+    <!-- Status -->
+    <div class="observ-drawer__field">
+      <label class="observ-drawer__field-label">Status</label>
+      <div class="observ-drawer__field-value">
+        <span class="observ-badge <%= run_item_status_badge_class(@run_item.status) %>">
+          <%= @run_item.status %>
+        </span>
+        <% if @run_item.output_matches? == true %>
+          <span class="observ-badge observ-badge--success">Match</span>
+        <% elsif @run_item.output_matches? == false %>
+          <span class="observ-badge observ-badge--danger">Mismatch</span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <% if @run_item.succeeded? %>
+      <div class="observ-drawer__metrics">
+        <div class="observ-drawer__metric">
+          <span class="observ-drawer__metric-label">Cost</span>
+          <span class="observ-drawer__metric-value">$<%= number_with_precision(@run_item.cost || 0, precision: 4) %></span>
+        </div>
+        <div class="observ-drawer__metric">
+          <span class="observ-drawer__metric-label">Tokens</span>
+          <span class="observ-drawer__metric-value"><%= number_with_delimiter(@run_item.tokens || 0) %></span>
+        </div>
+        <div class="observ-drawer__metric">
+          <span class="observ-drawer__metric-label">Duration</span>
+          <span class="observ-drawer__metric-value"><%= @run_item.duration_ms ? "#{@run_item.duration_ms}ms" : "-" %></span>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Input -->
+    <div class="observ-drawer__field">
+      <label class="observ-drawer__field-label">Input</label>
+      <pre class="observ-code-block"><%= format_trace_data(@run_item.input) %></pre>
+    </div>
+
+    <!-- Expected Output -->
+    <div class="observ-drawer__field">
+      <label class="observ-drawer__field-label">Expected Output</label>
+      <% if @run_item.expected_output.present? %>
+        <pre class="observ-code-block"><%= format_trace_data(@run_item.expected_output) %></pre>
+      <% else %>
+        <p class="observ-text--muted">No expected output defined</p>
+      <% end %>
+    </div>
+
+    <!-- Actual Output -->
+    <div class="observ-drawer__field">
+      <label class="observ-drawer__field-label">Actual Output</label>
+      <% if @run_item.failed? %>
+        <div class="observ-alert observ-alert--danger">
+          <strong>Error:</strong> <%= @run_item.error %>
+        </div>
+      <% elsif @run_item.actual_output.present? %>
+        <pre class="observ-code-block"><%= format_trace_data(@run_item.actual_output) %></pre>
+      <% else %>
+        <p class="observ-text--muted">Pending execution</p>
+      <% end %>
+    </div>
+
+    <!-- Actions -->
+    <div class="observ-drawer__actions">
+      <% if @run_item.trace %>
+        <%= link_to "View Full Trace", trace_path(@run_item.trace), class: "observ-button observ-button--primary" %>
+      <% end %>
+      <button type="button" class="observ-button" data-action="click->observ--drawer#close">
+        Close
+      </button>
+    </div>
+  </div>
+<% end %>

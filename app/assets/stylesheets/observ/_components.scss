@@ -52,6 +52,7 @@
 .observ-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: $observ-spacing-xs;
   padding: $observ-spacing-sm $observ-spacing-md;
   border: 1px solid $observ-gray-300;
@@ -60,6 +61,8 @@
   color: $observ-gray-700;
   font-size: $observ-font-size-sm;
   font-weight: 500;
+  font-family: inherit;
+  line-height: 1.25;
   text-decoration: none;
   cursor: pointer;
   transition: $observ-transition;
@@ -100,6 +103,35 @@
       }
     }
   }
+
+  &--secondary {
+    background-color: $observ-gray-100;
+    border-color: $observ-gray-300;
+    color: $observ-gray-700;
+
+    &:hover {
+      background-color: $observ-gray-200;
+      border-color: $observ-gray-400;
+    }
+  }
+
+  &--danger {
+    background-color: $observ-white;
+    border-color: $observ-danger;
+    color: $observ-danger;
+
+    &:hover {
+      background-color: $observ-danger;
+      border-color: $observ-danger;
+      color: $observ-white;
+    }
+  }
+}
+
+// Ensure button elements inside forms (from button_to) match link styles
+button.observ-button {
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .observ-link {

@@ -63,7 +63,7 @@ RSpec.describe "Observ::DatasetRunsController", type: :request do
     it "creates new run and initializes run items" do
       expect {
         post observ_dataset_runs_path(dataset), params: {
-          observ_dataset_run: {
+          dataset_run: {
             name: "new-run",
             description: "Test run"
           }
@@ -79,7 +79,7 @@ RSpec.describe "Observ::DatasetRunsController", type: :request do
 
     it "only includes active items" do
       post observ_dataset_runs_path(dataset), params: {
-        observ_dataset_run: {
+        dataset_run: {
           name: "new-run"
         }
       }
@@ -92,7 +92,7 @@ RSpec.describe "Observ::DatasetRunsController", type: :request do
       create(:observ_dataset_run, dataset: dataset, name: "existing-run")
 
       post observ_dataset_runs_path(dataset), params: {
-        observ_dataset_run: {
+        dataset_run: {
           name: "existing-run"
         }
       }
@@ -102,7 +102,7 @@ RSpec.describe "Observ::DatasetRunsController", type: :request do
 
     it "handles validation errors for blank name" do
       post observ_dataset_runs_path(dataset), params: {
-        observ_dataset_run: {
+        dataset_run: {
           name: ""
         }
       }

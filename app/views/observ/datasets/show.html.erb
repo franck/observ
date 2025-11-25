@@ -2,18 +2,18 @@
 
 <% content_for :page_header do %>
   <div class="observ-page-header__content">
-    <div>
-      <%= link_to "← Back to Datasets", datasets_path, class: "observ-datasets__back-link" %>
-      <h1 class="observ-page-header__title"><%= @dataset.name %></h1>
-      <% if @dataset.description.present? %>
-        <p class="observ-page-header__subtitle"><%= @dataset.description %></p>
-      <% end %>
+    <div class="observ-page-header__breadcrumb">
+      <%= link_to "Datasets", datasets_path, class: "observ-link" %> /
     </div>
-    <div class="observ-page-header__actions">
-      <%= link_to "New Run", new_dataset_run_path(@dataset), class: "observ-button observ-button--primary" %>
-      <%= link_to "Add Item", new_dataset_item_path(@dataset), class: "observ-button observ-button--secondary" %>
-      <%= link_to "Edit", edit_dataset_path(@dataset), class: "observ-button" %>
-    </div>
+    <h1 class="observ-page-header__title"><%= @dataset.name %></h1>
+    <% if @dataset.description.present? %>
+      <p class="observ-page-header__subtitle"><%= @dataset.description %></p>
+    <% end %>
+  </div>
+  <div class="observ-page-header__actions">
+    <%= link_to "New Run", new_dataset_run_path(@dataset), class: "observ-button observ-button--primary" %>
+    <%= link_to "Add Item", new_dataset_item_path(@dataset), class: "observ-button observ-button--secondary" %>
+    <%= link_to "Edit", edit_dataset_path(@dataset), class: "observ-button" %>
   </div>
 <% end %>
 

@@ -2,19 +2,20 @@
 
 <% content_for :page_header do %>
   <div class="observ-page-header__content">
-    <div>
-      <%= link_to "← Back to Dataset", dataset_path(@dataset, tab: "runs"), class: "observ-datasets__back-link" %>
-      <h1 class="observ-page-header__title"><%= @run.name %></h1>
-      <% if @run.description.present? %>
-        <p class="observ-page-header__subtitle"><%= @run.description %></p>
-      <% end %>
+    <div class="observ-page-header__breadcrumb">
+      <%= link_to "Datasets", datasets_path, class: "observ-link" %> /
+      <%= link_to @dataset.name, dataset_path(@dataset, tab: "runs"), class: "observ-link" %> /
     </div>
-    <div class="observ-page-header__actions">
-      <%= button_to "Delete Run", dataset_run_path(@dataset, @run),
-        method: :delete,
-        class: "observ-button observ-button--danger",
-        data: { confirm: "Are you sure you want to delete this run?" } %>
-    </div>
+    <h1 class="observ-page-header__title"><%= @run.name %></h1>
+    <% if @run.description.present? %>
+      <p class="observ-page-header__subtitle"><%= @run.description %></p>
+    <% end %>
+  </div>
+  <div class="observ-page-header__actions">
+    <%= button_to "Delete Run", dataset_run_path(@dataset, @run),
+      method: :delete,
+      class: "observ-button observ-button--danger",
+      data: { confirm: "Are you sure you want to delete this run?" } %>
   </div>
 <% end %>
 
@@ -22,45 +23,34 @@
   <!-- Run Summary -->
   <section class="observ-card">
     <div class="observ-card__body">
-      <dl class="observ-datasets__metadata observ-datasets__metadata--horizontal">
-        <div class="observ-datasets__metadata-item">
-          <dt class="observ-datasets__metadata-label">Status</dt>
-          <dd class="observ-datasets__metadata-value">
-            <span class="observ-badge <%= run_status_badge_class(@run.status) %>">
-              <%= @run.status %>
-            </span>
-          </dd>
-        </div>
-        <div class="observ-datasets__metadata-item">
-          <dt class="observ-datasets__metadata-label">Progress</dt>
-          <dd class="observ-datasets__metadata-value">
-            <div class="observ-datasets__progress observ-datasets__progress--large">
-              <div class="observ-datasets__progress-bar">
-                <div class="observ-datasets__progress-fill observ-datasets__progress-fill--success"
-                     style="width: <%= @run.success_rate %>%"></div>
-                <div class="observ-datasets__progress-fill observ-datasets__progress-fill--danger"
-                     style="width: <%= @run.failure_rate %>%"></div>
-              </div>
-              <span class="observ-datasets__progress-text">
-                <%= @run.progress_percentage %>%
-              </span>
-            </div>
-          </dd>
-        </div>
-        <div class="observ-datasets__metadata-item">
-          <dt class="observ-datasets__metadata-label">Completed</dt>
-          <dd class="observ-datasets__metadata-value"><%= @run.completed_items %> / <%= @run.total_items %></dd>
-        </div>
-        <div class="observ-datasets__metadata-item">
-          <dt class="observ-datasets__metadata-label">Failed</dt>
-          <dd class="observ-datasets__metadata-value">
+      <!-- Progress Section -->
+      <div class="observ-datasets__run-progress">
+        <div class="observ-datasets__run-progress-header">
+          <span class="observ-badge <%= run_status_badge_class(@run.status) %>">
+            <%= @run.status %>
+          </span>
+          <span class="observ-datasets__run-progress-stats">
+            <%= @run.completed_items %> / <%= @run.total_items %> completed
             <% if @run.failed_items > 0 %>
-              <span class="observ-text--danger"><%= @run.failed_items %></span>
-            <% else %>
-              0
+              <span class="observ-text--danger">(<%= @run.failed_items %> failed)</span>
             <% end %>
-          </dd>
+          </span>
         </div>
+        <div class="observ-datasets__progress">
+          <div class="observ-datasets__progress-bar">
+            <div class="observ-datasets__progress-fill observ-datasets__progress-fill--success"
+                 style="width: <%= @run.success_rate %>%"></div>
+            <div class="observ-datasets__progress-fill observ-datasets__progress-fill--danger"
+                 style="width: <%= @run.failure_rate %>%"></div>
+          </div>
+          <span class="observ-datasets__progress-text">
+            <%= @run.progress_percentage %>%
+          </span>
+        </div>
+      </div>
+
+      <!-- Metadata Grid -->
+      <dl class="observ-datasets__metadata observ-datasets__metadata--horizontal">
         <div class="observ-datasets__metadata-item">
           <dt class="observ-datasets__metadata-label">Total Cost</dt>
           <dd class="observ-datasets__metadata-value">$<%= number_with_precision(@run.total_cost, precision: 4) %></dd>
@@ -91,8 +81,6 @@
               <th class="observ-table__cell">Expected</th>
               <th class="observ-table__cell">Actual</th>
               <th class="observ-table__cell">Status</th>
-              <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
-              <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
               <th class="observ-table__cell observ-table__cell--actions"></th>
             </tr>
           </thead>
@@ -112,11 +100,6 @@
                 <td class="observ-table__cell observ-datasets__cell--preview">
                   <% if run_item.actual_output.present? %>
                     <code class="observ-datasets__preview"><%= truncate(run_item.actual_output.to_s, length: 60) %></code>
-                    <% if run_item.output_matches? == true %>
-                      <span class="observ-badge observ-badge--success observ-badge--sm">Match</span>
-                    <% elsif run_item.output_matches? == false %>
-                      <span class="observ-badge observ-badge--danger observ-badge--sm">Mismatch</span>
-                    <% end %>
                   <% elsif run_item.failed? %>
                     <span class="observ-text--danger" title="<%= run_item.error %>">Error: <%= truncate(run_item.error, length: 40) %></span>
                   <% else %>
@@ -124,28 +107,35 @@
                   <% end %>
                 </td>
                 <td class="observ-table__cell">
-                  <span class="observ-badge <%= run_item_status_badge_class(run_item.status) %>">
-                    <%= run_item.status %>
-                  </span>
-                </td>
-                <td class="observ-table__cell observ-table__cell--numeric">
-                  <% if run_item.cost %>
-                    $<%= number_with_precision(run_item.cost, precision: 4) %>
+                  <% if run_item.succeeded? %>
+                    <% if run_item.expected_output.present? %>
+                      <% if run_item.output_matches? %>
+                        <span class="observ-badge observ-badge--success">Match</span>
+                      <% else %>
+                        <span class="observ-badge observ-badge--danger">Mismatch</span>
+                      <% end %>
+                    <% else %>
+                      <span class="observ-badge observ-badge--success">Completed</span>
+                    <% end %>
+                  <% elsif run_item.failed? %>
+                    <span class="observ-badge observ-badge--danger">Failed</span>
                   <% else %>
-                    -
-                  <% end %>
-                </td>
-                <td class="observ-table__cell observ-table__cell--numeric">
-                  <% if run_item.tokens %>
-                    <%= number_with_delimiter(run_item.tokens) %>
-                  <% else %>
-                    -
+                    <span class="observ-badge observ-badge--secondary">Pending</span>
                   <% end %>
                 </td>
                 <td class="observ-table__cell observ-table__cell--actions">
-                  <% if run_item.trace %>
-                    <%= link_to "View Trace", trace_path(run_item.trace), class: "observ-button observ-button--sm" %>
-                  <% end %>
+                  <div class="observ-datasets-table__action-group">
+                    <%= link_to "Details",
+                      "#",
+                      class: "observ-button observ-button--sm",
+                      data: {
+                        action: "click->observ--drawer#open",
+                        drawer_url_param: details_drawer_dataset_run_run_item_path(@dataset, @run, run_item)
+                      } %>
+                    <% if run_item.trace %>
+                      <%= link_to "Trace", trace_path(run_item.trace), class: "observ-button observ-button--sm" %>
+                    <% end %>
+                  </div>
                 </td>
               </tr>
             <% end %>

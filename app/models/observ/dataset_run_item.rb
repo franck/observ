@@ -46,7 +46,8 @@ module Observ
     # Comparison helpers
     def output_matches?
       return nil if expected_output.blank? || actual_output.blank?
-      expected_output == actual_output
+
+      normalize_for_comparison(expected_output) == normalize_for_comparison(actual_output)
     end
 
     # Metrics from trace
@@ -60,6 +61,25 @@ module Observ
 
     def duration_ms
       trace&.duration_ms
+    end
+
+    private
+
+    # Normalize output for comparison by parsing JSON strings into comparable structures
+    def normalize_for_comparison(output)
+      case output
+      when Hash
+        output.deep_symbolize_keys
+      when String
+        begin
+          parsed = JSON.parse(output)
+          parsed.is_a?(Hash) ? parsed.deep_symbolize_keys : parsed
+        rescue JSON::ParserError
+          output.strip
+        end
+      else
+        output
+      end
     end
   end
 end

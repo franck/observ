@@ -34,8 +34,8 @@ module Observ
         # Initialize run items for all active dataset items
         @run.initialize_run_items!
 
-        # Queue the run for async execution (Phase 3)
-        # Observ::DatasetRunnerJob.perform_later(@run.id)
+        # Queue the run for async execution
+        Observ::DatasetRunnerJob.perform_later(@run.id)
 
         redirect_to dataset_run_path(@dataset, @run),
           notice: "Run '#{@run.name}' created with #{@run.total_items} items. Execution will begin shortly."
@@ -62,7 +62,8 @@ module Observ
     end
 
     def run_params
-      params.require(:observ_dataset_run).permit(:name, :description)
+      # form_with generates param key based on model class name without module prefix
+      params.require(:dataset_run).permit(:name, :description)
     end
   end
 end
