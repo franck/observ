@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-11-25
+
+### Added
+
+- **Datasets Feature for LLM Evaluation**: Complete dataset management system for systematic LLM testing
+  - `Observ::Dataset` model for organizing test cases
+  - `Observ::DatasetItem` model for individual test inputs with expected outputs
+  - `Observ::DatasetRun` model for tracking evaluation runs
+  - `Observ::DatasetRunItem` model for individual run results
+  - `Observ::Score` model for evaluation scores (automated and manual)
+  - Full CRUD UI for datasets and dataset items
+  - Dataset runs with progress tracking
+
+- **Evaluator System**: Automated evaluation of LLM outputs
+  - `Observ::Evaluators::Base` - Base class for custom evaluators
+  - `Observ::Evaluators::ExactMatch` - Exact string matching evaluator
+  - `Observ::Evaluators::Contains` - Substring matching evaluator
+  - `Observ::Evaluators::LlmJudge` - LLM-as-a-judge evaluator for semantic evaluation
+  - Async evaluation execution via `DatasetRunnerJob`
+  - Configurable evaluators per dataset
+
+- **Review Mode**: Manual scoring interface for human evaluation
+  - Simplified score display for manual review
+  - Score success partial for review feedback
+
+- **Mustache Templating**: Added Mustache template support to Prompt model
+  - Variable interpolation in prompts using `{{variable}}` syntax
+
+- **Interactive JSON Viewer**: Collapsible JSON viewer for trace input/output fields
+  - Better visualization of complex nested data
+
+- **Language Detection Agent Example**: Reference implementation for agent development
+
+### Fixed
+
+- Annotations drawer: Added missing partials and fixed namespaced paths
+- Asset installer now uses synced index.js correctly
+- Prompt version override for model and parameters
+- Form namespace issue in prompts form
+
+### Changed
+
+- Removed model select from chat UI
+- Comprehensive pagination added across all index pages
+- Prompt configuration validation improvements
+
+### Documentation
+
+- Added dataset and evaluator system design documentation
+- Added evaluator feature implementation plan
+- Added documentation for creating agents and services
+
 ## [0.4.0] - 2024-11-17
 
 ### Changed
@@ -377,7 +429,9 @@ Chat feature adds (optional):
 
 ---
 
-[0.3.0]: https://github.com/yourusername/observ/releases/tag/v0.3.0
-[0.1.2]: https://github.com/yourusername/observ/releases/tag/v0.1.2
-[0.1.0]: https://github.com/yourusername/observ/releases/tag/v0.1.0
-[Unreleased]: https://github.com/yourusername/observ/compare/v0.3.0...HEAD
+[0.5.0]: https://github.com/franck/observ/releases/tag/v0.5.0
+[0.4.0]: https://github.com/franck/observ/releases/tag/v0.4.0
+[0.3.0]: https://github.com/franck/observ/releases/tag/v0.3.0
+[0.1.2]: https://github.com/franck/observ/releases/tag/v0.1.2
+[0.1.0]: https://github.com/franck/observ/releases/tag/v0.1.0
+[Unreleased]: https://github.com/franck/observ/compare/v0.5.0...HEAD
