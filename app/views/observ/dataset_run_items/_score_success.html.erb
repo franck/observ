@@ -1,0 +1,29 @@
+<div class="observ-drawer__body">
+  <div class="observ-alert observ-alert--success">
+    <strong>Score saved successfully!</strong>
+    <p>The item has been marked as <%= score.passed? ? "correct" : "incorrect" %>.</p>
+  </div>
+
+  <div class="observ-datasets__score-result">
+    <div class="observ-drawer__field">
+      <label class="observ-drawer__field-label">Score</label>
+      <span class="observ-badge <%= score.badge_class %>"><%= score.display_value %></span>
+    </div>
+
+    <% if score.comment.present? %>
+      <div class="observ-drawer__field">
+        <label class="observ-drawer__field-label">Comment</label>
+        <p><%= score.comment %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="observ-drawer__actions">
+    <%= link_to "Score Another Item",
+      "#",
+      class: "observ-button observ-button--primary",
+      data: {
+        action: "click->observ--drawer#close"
+      } %>
+  </div>
+</div>
