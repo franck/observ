@@ -1,7 +1,7 @@
 require_relative "lib/observ/version"
 
 Gem::Specification.new do |spec|
-  spec.name        = "observ"
+  spec.name        = "rubyllm-observ"
   spec.version     = Observ::VERSION
   spec.authors     = [ "Franck D'agostini" ]
   spec.email       = [ "franck.dagostini@gmail.com" ]
