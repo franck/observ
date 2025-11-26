@@ -2,6 +2,7 @@ module Observ
   class SessionsController < ApplicationController
     def index
       @sessions = Observ::Session.order(start_time: :desc)
+      @agent_types = distinct_agent_types
       apply_filters if params[:filter].present?
       @sessions = @sessions.page(params[:page]).per(Observ.config.pagination_per_page)
     end
@@ -30,6 +31,15 @@ module Observ
 
     private
 
+    def distinct_agent_types
+      Observ::Session
+        .where.not(metadata: nil)
+        .pluck(:metadata)
+        .filter_map { |m| m&.dig("agent_type") }
+        .uniq
+        .sort
+    end
+
     def apply_filters
       @sessions = @sessions.where(user_id: params[:filter][:user_id]) if params[:filter][:user_id].present?
 
@@ -39,6 +49,19 @@ module Observ
 
       if params[:filter][:end_date].present?
         @sessions = @sessions.where("start_time <= ?", params[:filter][:end_date])
+      end
+
+      if params[:filter][:status].present?
+        case params[:filter][:status]
+        when "completed"
+          @sessions = @sessions.where.not(end_time: nil)
+        when "in_progress"
+          @sessions = @sessions.where(end_time: nil)
+        end
+      end
+
+      if params[:filter][:agent_type].present?
+        @sessions = @sessions.where_json(:metadata, :agent_type, params[:filter][:agent_type])
       end
     end
   end
