@@ -7,6 +7,12 @@
     border-radius: $observ-border-radius;
     box-shadow: $observ-shadow;
     overflow: hidden;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      box-shadow: $observ-shadow-md;
+      transform: translateY(-2px);
+    }
 
     &__header {
       padding: $observ-spacing-lg;
@@ -21,6 +27,7 @@
       font-weight: 600;
       margin: 0;
       color: $observ-gray-900;
+      letter-spacing: -0.01em;
     }
 
     &__actions {

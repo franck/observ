@@ -130,6 +130,7 @@
       border-radius: $observ-border-radius-sm;
       transition: $observ-transition;
       font-weight: 500;
+      position: relative;
 
       &:hover {
         background-color: $observ-gray-100;
@@ -140,6 +141,19 @@
       &--active {
         background-color: $observ-primary;
         color: $observ-white;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60%;
+          height: 2px;
+          background-color: rgba(255, 255, 255, 0.5);
+          border-radius: 2px 2px 0 0;
+        }
 
         &:hover {
           background-color: darken($observ-primary, 5%);
@@ -258,6 +272,8 @@
       font-weight: 700;
       margin: 0;
       color: $observ-gray-900;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
     }
 
     &__meta {
@@ -434,6 +450,7 @@
       margin-bottom: $observ-spacing-xs;
       font-weight: 500;
       color: $observ-gray-700;
+      font-size: $observ-font-size-sm;
     }
 
     .observ-form-textarea {

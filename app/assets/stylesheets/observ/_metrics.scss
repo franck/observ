@@ -25,10 +25,11 @@
     border-radius: $observ-border-radius;
     box-shadow: $observ-shadow;
     padding: $observ-spacing-lg;
-    transition: $observ-transition;
+    transition: all 0.2s ease-in-out;
 
     &:hover {
       box-shadow: $observ-shadow-md;
+      transform: translateY(-2px);
     }
 
     &__header {
@@ -40,11 +41,9 @@
 
     &__label {
       font-size: $observ-font-size-sm;
-      font-weight: 500;
-      color: $observ-gray-600;
+      font-weight: 600;
+      color: $observ-gray-500;
       margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     &__body {
@@ -58,7 +57,9 @@
       font-weight: 700;
       color: $observ-gray-900;
       margin: 0;
-      line-height: 1;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
 
       &--small {
         font-size: $observ-font-size-xl;

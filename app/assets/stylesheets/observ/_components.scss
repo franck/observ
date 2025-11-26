@@ -88,7 +88,8 @@
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
+      box-shadow: 0 0 0 3px rgba($observ-primary, 0.2);
+      border-color: $observ-primary;
     }
 
     &:active {
@@ -122,11 +123,14 @@
       background-color: $observ-primary;
       border-color: $observ-primary;
       color: $observ-white;
+      box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
 
       &:hover {
         background-color: darken($observ-primary, 5%);
         border-color: darken($observ-primary, 5%);
         color: $observ-white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.4);
       }
 
       &:disabled {
@@ -268,11 +272,9 @@
     }
 
     &__term {
-      font-size: $observ-font-size-xs;
+      font-size: $observ-font-size-sm;
       font-weight: 600;
       color: $observ-gray-500;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
       margin: 0;
     }
 
