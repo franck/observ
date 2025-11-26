@@ -203,7 +203,7 @@ RSpec.describe "Observ::DatasetRunsController", type: :request do
       let!(:run_item1) { create(:observ_dataset_run_item, dataset_run: run, dataset_item: item1, trace: trace) }
 
       before do
-        create(:observ_score, dataset_run_item: run_item1, trace: trace, name: "manual", source: :manual, value: 1.0)
+        create(:observ_score, scoreable: run_item1, name: "manual", source: :manual, value: 1.0)
       end
 
       it "redirects to run page with completion message" do

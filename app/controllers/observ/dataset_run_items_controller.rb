@@ -19,7 +19,6 @@ module Observ
 
       score = @run_item.scores.find_or_initialize_by(name: "manual", source: :manual)
       score.assign_attributes(
-        trace: @run_item.trace,
         value: value,
         data_type: :boolean,
         comment: params[:comment],

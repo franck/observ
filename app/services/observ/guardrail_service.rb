@@ -99,12 +99,12 @@ module Observ
             condition: ->(s) { s.total_cost.present? && s.total_cost > thresholds[:session_cost] },
             details: ->(s) { { cost: s.total_cost.to_f, threshold: thresholds[:session_cost] } }
           },
-          {
-            name: :short_session,
-            priority: :normal,
-            condition: ->(s) { s.total_traces_count == 1 && s.end_time.present? },
-            details: ->(s) { { trace_count: s.total_traces_count } }
-          },
+          # {
+          #   name: :short_session,
+          #   priority: :normal,
+          #   condition: ->(s) { s.total_traces_count == 1 && s.end_time.present? },
+          #   details: ->(s) { { trace_count: s.total_traces_count } }
+          # },
           {
             name: :many_traces,
             priority: :normal,

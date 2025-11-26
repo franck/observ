@@ -38,7 +38,6 @@ module Observ
       def create_or_update_score(run_item, value)
         score = run_item.scores.find_or_initialize_by(name: name, source: :programmatic)
         score.assign_attributes(
-          trace: run_item.trace,
           value: value,
           data_type: data_type,
           comment: options[:comment]

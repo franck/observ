@@ -2,14 +2,14 @@
 
 module Observ
   class DatasetRunItem < ApplicationRecord
+    include Observ::Scoreable
+
     self.table_name = "observ_dataset_run_items"
 
     belongs_to :dataset_run, class_name: "Observ::DatasetRun", inverse_of: :run_items
     belongs_to :dataset_item, class_name: "Observ::DatasetItem", inverse_of: :run_items
     belongs_to :trace, class_name: "Observ::Trace", optional: true
     belongs_to :observation, class_name: "Observ::Observation", optional: true
-    has_many :scores, class_name: "Observ::Score",
-             foreign_key: :dataset_run_item_id, dependent: :destroy, inverse_of: :dataset_run_item
 
     validates :dataset_run_id, uniqueness: { scope: :dataset_item_id }
 
@@ -70,17 +70,7 @@ module Observ
       trace&.duration_ms
     end
 
-    # Score helpers
-    def score_for(name, source: nil)
-      scope = scores.where(name: name)
-      scope = scope.where(source: source) if source
-      scope.order(created_at: :desc).first
-    end
-
-    def scored?
-      scores.any?
-    end
-
+    # DatasetRunItem-specific score helpers
     def passing_scores_count
       scores.where("value >= 0.5").count
     end
