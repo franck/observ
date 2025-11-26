@@ -1,5 +1,6 @@
 @import 'variables';
 
+// The root layout class - this one stays at the top level
 .observ-layout {
   min-height: 100vh;
   display: flex;
@@ -9,248 +10,506 @@
   color: $observ-gray-900;
   font-size: $observ-font-size-base;
   line-height: 1.5;
-}
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-.observ-nav {
-  background-color: $observ-white;
-  border-bottom: 1px solid $observ-gray-200;
-  box-shadow: $observ-shadow-sm;
-
-  &__container {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 0 $observ-spacing-lg;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-  }
-
-  &__brand {
-    font-size: $observ-font-size-xl;
-    font-weight: 600;
-  }
-
-  &__brand-link {
-    color: $observ-gray-900;
-    text-decoration: none;
-    transition: $observ-transition;
-
-    &:hover {
-      color: $observ-primary;
-    }
-  }
-
-  &__menu {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: $observ-spacing-md;
-  }
-
-  &__item {
-    margin: 0;
-
-    &--dropdown {
-      position: relative;
-    }
-  }
-
-  &__dropdown-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-  }
-
-  &__dropdown-arrow {
-    margin-left: 4px;
-    font-size: 0.75em;
-    transition: transform 0.2s;
-  }
-
-  &__dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin-top: 8px;
+  // All nested components are scoped within .observ-layout
+  .observ-nav {
     background-color: $observ-white;
-    border: 1px solid $observ-gray-200;
-    border-radius: $observ-border-radius;
-    box-shadow: $observ-shadow-md;
-    list-style: none;
-    padding: $observ-spacing-xs 0;
-    min-width: 160px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-8px);
-    transition: all 0.2s ease;
-    z-index: 1000;
+    border-bottom: 1px solid $observ-gray-200;
+    box-shadow: $observ-shadow-sm;
 
-    &--open {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
+    &__container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 $observ-spacing-lg;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
     }
 
-    li {
+    &__brand {
+      font-size: $observ-font-size-xl;
+      font-weight: 600;
+    }
+
+    &__brand-link {
+      color: $observ-gray-900;
+      text-decoration: none;
+      transition: $observ-transition;
+
+      &:hover {
+        color: $observ-primary;
+        text-decoration: none;
+      }
+    }
+
+    &__menu {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: $observ-spacing-md;
+    }
+
+    &__item {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      &--dropdown {
+        position: relative;
+      }
+    }
+
+    &__dropdown-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    &__dropdown-arrow {
+      margin-left: 4px;
+      font-size: 0.75em;
+      transition: transform 0.2s;
+    }
+
+    &__dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 8px;
+      background-color: $observ-white;
+      border: 1px solid $observ-gray-200;
+      border-radius: $observ-border-radius;
+      box-shadow: $observ-shadow-md;
+      list-style: none;
+      padding: $observ-spacing-xs 0;
+      min-width: 160px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: all 0.2s ease;
+      z-index: 1000;
+
+      &--open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      li {
+        margin: 0;
+      }
+    }
+
+    &__dropdown-link {
+      display: block;
+      padding: $observ-spacing-sm $observ-spacing-md;
+      color: $observ-gray-700;
+      text-decoration: none;
+      transition: $observ-transition;
+      font-weight: 500;
+      white-space: nowrap;
+
+      &:hover {
+        background-color: $observ-gray-100;
+        color: $observ-gray-900;
+        text-decoration: none;
+      }
+    }
+
+    &__link {
+      display: block;
+      padding: $observ-spacing-sm $observ-spacing-md;
+      color: $observ-gray-600;
+      text-decoration: none;
+      border-radius: $observ-border-radius-sm;
+      transition: $observ-transition;
+      font-weight: 500;
+
+      &:hover {
+        background-color: $observ-gray-100;
+        color: $observ-gray-900;
+        text-decoration: none;
+      }
+
+      &--active {
+        background-color: $observ-primary;
+        color: $observ-white;
+
+        &:hover {
+          background-color: darken($observ-primary, 5%);
+          color: $observ-white;
+          text-decoration: none;
+        }
+      }
+
+      &--secondary {
+        color: $observ-gray-500;
+        font-size: $observ-font-size-sm;
+
+        &:hover {
+          color: $observ-gray-700;
+        }
+      }
+    }
+
+    &__actions {
+      display: flex;
+      gap: $observ-spacing-sm;
+    }
+  }
+
+  .observ-main {
+    flex: 1;
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    padding: $observ-spacing-xl $observ-spacing-lg;
+  }
+
+  .observ-container {
+    display: flex;
+    flex-direction: column;
+    gap: $observ-spacing-xl;
+  }
+
+  .observ-footer {
+    background-color: $observ-white;
+    border-top: 1px solid $observ-gray-200;
+    margin-top: auto;
+
+    &__container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: $observ-spacing-lg;
+      text-align: center;
+    }
+
+    &__text {
+      color: $observ-gray-500;
+      font-size: $observ-font-size-sm;
       margin: 0;
     }
   }
 
-  &__dropdown-link {
-    display: block;
-    padding: $observ-spacing-sm $observ-spacing-md;
-    color: $observ-gray-700;
-    text-decoration: none;
-    transition: $observ-transition;
-    font-weight: 500;
-    white-space: nowrap;
-
-    &:hover {
-      background-color: $observ-gray-100;
-      color: $observ-gray-900;
+  .observ-page {
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $observ-spacing-lg;
     }
-  }
 
-  &__link {
-    display: block;
-    padding: $observ-spacing-sm $observ-spacing-md;
-    color: $observ-gray-600;
-    text-decoration: none;
-    border-radius: $observ-border-radius-sm;
-    transition: $observ-transition;
-    font-weight: 500;
-
-    &:hover {
-      background-color: $observ-gray-100;
+    &__title {
+      font-size: $observ-font-size-2xl;
+      font-weight: 700;
+      margin: 0;
       color: $observ-gray-900;
     }
 
-    &--active {
-      background-color: $observ-primary;
-      color: $observ-white;
+    &__breadcrumb {
+      font-size: $observ-font-size-sm;
+      color: $observ-gray-500;
+      margin-bottom: $observ-spacing-xs;
 
-      &:hover {
-        background-color: darken($observ-primary, 5%);
-        color: $observ-white;
+      a {
+        color: $observ-primary;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 
-    &--secondary {
-      color: $observ-gray-500;
-      font-size: $observ-font-size-sm;
+    &__actions {
+      display: flex;
+      gap: $observ-spacing-sm;
     }
   }
 
-  &__actions {
+  .observ-page-header {
+    margin-bottom: $observ-spacing-xl;
     display: flex;
+    align-items: center;
+    gap: $observ-spacing-md;
+
+    &__content {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: $observ-spacing-md;
+      flex: 1;
+    }
+
+    &__breadcrumb {
+      color: $observ-gray-500;
+      font-size: $observ-font-size-sm;
+      margin-bottom: $observ-spacing-xs;
+    }
+
+    &__title {
+      font-size: $observ-font-size-3xl;
+      font-weight: 700;
+      margin: 0;
+      color: $observ-gray-900;
+    }
+
+    &__meta {
+      display: flex;
+      align-items: center;
+      gap: $observ-spacing-sm;
+    }
+
+    &__actions {
+      display: flex;
+      gap: $observ-spacing-sm;
+      align-items: center;
+    }
+  }
+
+  .observ-alert {
+    padding: $observ-spacing-md;
+    border-radius: $observ-border-radius;
+    margin-bottom: $observ-spacing-lg;
+    font-size: $observ-font-size-sm;
+
+    &--success {
+      background-color: lighten($observ-success, 45%);
+      color: darken($observ-success, 20%);
+      border: 1px solid lighten($observ-success, 30%);
+    }
+
+    &--danger {
+      background-color: lighten($observ-danger, 45%);
+      color: darken($observ-danger, 20%);
+      border: 1px solid lighten($observ-danger, 30%);
+    }
+
+    &--warning {
+      background-color: lighten($observ-warning, 45%);
+      color: darken($observ-warning, 30%);
+      border: 1px solid lighten($observ-warning, 30%);
+    }
+
+    &--info {
+      background-color: lighten($observ-info, 45%);
+      color: darken($observ-info, 20%);
+      border: 1px solid lighten($observ-info, 30%);
+    }
+  }
+
+  .observ-grid {
+    display: grid;
+    gap: $observ-spacing-lg;
+
+    &--2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &--4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .observ-empty-state {
+    text-align: center;
+    padding: $observ-spacing-2xl;
+
+    &__text {
+      font-size: $observ-font-size-lg;
+      color: $observ-gray-600;
+      margin: 0 0 $observ-spacing-sm;
+    }
+
+    &__subtext {
+      font-size: $observ-font-size-sm;
+      color: $observ-gray-500;
+      margin: 0;
+    }
+  }
+
+  .observ-stats-bar {
+    display: flex;
+    gap: $observ-spacing-lg;
+    padding: $observ-spacing-md;
+    background-color: $observ-gray-50;
+    border-radius: $observ-border-radius;
+    margin-bottom: $observ-spacing-lg;
+  }
+
+  .observ-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $observ-spacing-xs;
+
+    &__value {
+      font-size: $observ-font-size-xl;
+      font-weight: 600;
+      color: $observ-gray-900;
+
+      &--large {
+        font-size: $observ-font-size-3xl;
+      }
+    }
+
+    &__label {
+      font-size: $observ-font-size-sm;
+      color: $observ-gray-500;
+    }
+  }
+
+  .observ-details-list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: $observ-spacing-xs $observ-spacing-md;
+
+    dt {
+      font-weight: 500;
+      color: $observ-gray-500;
+    }
+
+    dd {
+      margin: 0;
+      color: $observ-gray-900;
+    }
+  }
+
+  .observ-review-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: $observ-spacing-lg;
+  }
+
+  .observ-review-main {
+    display: flex;
+    flex-direction: column;
+    gap: $observ-spacing-lg;
+  }
+
+  .observ-review-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: $observ-spacing-lg;
+    position: sticky;
+    top: $observ-spacing-lg;
+    align-self: flex-start;
+    max-height: calc(100vh - 2 * #{$observ-spacing-lg});
+    overflow-y: auto;
+  }
+
+  .observ-review-actions {
+    display: flex;
+    flex-direction: column;
     gap: $observ-spacing-sm;
   }
-}
 
-.observ-main {
-  flex: 1;
-  max-width: 1440px;
-  width: 100%;
-  margin: 0 auto;
-  padding: $observ-spacing-xl $observ-spacing-lg;
-}
+  .observ-review-preview {
+    max-height: 400px;
+    overflow-y: auto;
+  }
 
-.observ-container {
-  display: flex;
-  flex-direction: column;
-  gap: $observ-spacing-xl;
-}
-
-.observ-footer {
-  background-color: $observ-white;
-  border-top: 1px solid $observ-gray-200;
-  margin-top: auto;
-
-  &__container {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: $observ-spacing-lg;
+  .observ-review-preview-notice {
+    margin-top: $observ-spacing-md;
     text-align: center;
   }
 
-  &__text {
-    color: $observ-gray-500;
-    font-size: $observ-font-size-sm;
-    margin: 0;
-  }
-}
+  .observ-score-form {
+    .observ-form-field {
+      margin-bottom: $observ-spacing-md;
+    }
 
-.observ-page-header {
-  margin-bottom: $observ-spacing-xl;
-  display: flex;
-  align-items: center;
-  gap: $observ-spacing-md;
+    .observ-form-label {
+      display: block;
+      margin-bottom: $observ-spacing-xs;
+      font-weight: 500;
+      color: $observ-gray-700;
+    }
 
-  &__content {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: $observ-spacing-md;
-    flex: 1;
-  }
+    .observ-form-textarea {
+      width: 100%;
+      padding: $observ-spacing-sm;
+      border: 1px solid $observ-gray-300;
+      border-radius: $observ-border-radius-sm;
+      font-family: inherit;
+      font-size: $observ-font-size-sm;
+      resize: vertical;
+      background-color: $observ-white;
+      color: $observ-gray-900;
 
-  &__breadcrumb {
-    color: $observ-gray-500;
-    font-size: $observ-font-size-sm;
-    margin-bottom: $observ-spacing-xs;
-  }
+      &:focus {
+        outline: none;
+        border-color: $observ-primary;
+        box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
+      }
+    }
 
-  &__title {
-    font-size: $observ-font-size-3xl;
-    font-weight: 700;
-    margin: 0;
-    color: $observ-gray-900;
-  }
-
-  &__meta {
-    display: flex;
-    align-items: center;
-    gap: $observ-spacing-sm;
+    .observ-form-actions {
+      display: flex;
+      gap: $observ-spacing-sm;
+    }
   }
 
-  &__actions {
+  .observ-score-buttons {
     display: flex;
     gap: $observ-spacing-sm;
+  }
+
+  .observ-score-button {
+    display: flex;
     align-items: center;
+    gap: $observ-spacing-xs;
+    padding: $observ-spacing-sm $observ-spacing-md;
+    border: 1px solid $observ-gray-300;
+    border-radius: $observ-border-radius-sm;
+    background-color: $observ-white;
+    cursor: pointer;
+    transition: $observ-transition;
+
+    input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    &:hover {
+      border-color: $observ-gray-400;
+    }
+
+    // Highlight when radio inside is checked (CSS :has selector)
+    &:has(input[type="radio"]:checked) {
+      border-color: $observ-primary;
+      background-color: lighten($observ-primary, 45%);
+      box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
+    }
+
+    // Keep legacy --selected modifier for backwards compatibility
+    &--selected {
+      border-color: $observ-primary;
+      background-color: lighten($observ-primary, 45%);
+    }
   }
-}
 
-.observ-alert {
-  padding: $observ-spacing-md;
-  border-radius: $observ-border-radius;
-  margin-bottom: $observ-spacing-lg;
-  font-size: $observ-font-size-sm;
+  .observ-score-icon {
+    font-size: $observ-font-size-lg;
 
-  &--success {
-    background-color: lighten($observ-success, 45%);
-    color: darken($observ-success, 20%);
-    border: 1px solid lighten($observ-success, 30%);
-  }
+    &--pass {
+      color: $observ-success;
+    }
 
-  &--danger {
-    background-color: lighten($observ-danger, 45%);
-    color: darken($observ-danger, 20%);
-    border: 1px solid lighten($observ-danger, 30%);
-  }
-
-  &--warning {
-    background-color: lighten($observ-warning, 45%);
-    color: darken($observ-warning, 30%);
-    border: 1px solid lighten($observ-warning, 30%);
-  }
-
-  &--info {
-    background-color: lighten($observ-info, 45%);
-    color: darken($observ-info, 20%);
-    border: 1px solid lighten($observ-info, 30%);
+    &--fail {
+      color: $observ-danger;
+    }
   }
 }
