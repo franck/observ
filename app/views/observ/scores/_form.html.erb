@@ -1,0 +1,39 @@
+<%# Score form partial for scoring sessions and traces %>
+<%# Usage: render "observ/scores/form", scoreable: @trace %>
+
+<% score_url = scoreable.is_a?(Observ::Session) ? session_scores_path(scoreable) : trace_scores_path(scoreable) %>
+<% existing = scoreable.manual_score %>
+
+<%= form_with(
+  url: score_url,
+  id: "score-form",
+  class: "observ-score-form",
+  data: { turbo_frame: "_top" }
+) do |form| %>
+  <div class="observ-form-field">
+    <label class="observ-form-label">Score this <%= scoreable.class.name.demodulize.downcase %></label>
+    <div class="observ-score-buttons">
+      <label class="observ-score-button <%= 'observ-score-button--selected' if existing&.passed? %>">
+        <input type="radio" name="value" value="1" <%= "checked" if existing&.passed? %>>
+        <span class="observ-score-icon observ-score-icon--pass">&#10003;</span>
+        Good
+      </label>
+      <label class="observ-score-button <%= 'observ-score-button--selected' if existing&.failed? %>">
+        <input type="radio" name="value" value="0" <%= "checked" if existing&.failed? %>>
+        <span class="observ-score-icon observ-score-icon--fail">&#10005;</span>
+        Bad
+      </label>
+    </div>
+    <input type="hidden" name="data_type" value="boolean">
+    <input type="hidden" name="name" value="manual">
+  </div>
+
+  <div class="observ-form-field">
+    <label class="observ-form-label" for="score_comment">Comment (optional)</label>
+    <textarea name="comment" id="score_comment" class="observ-form-textarea" rows="2" placeholder="Add a comment..."><%= existing&.comment %></textarea>
+  </div>
+
+  <div class="observ-form-actions">
+    <%= form.submit "Save Score", class: "observ-button observ-button--primary" %>
+  </div>
+<% end %>

@@ -2,9 +2,13 @@
 
 module Observ
   class Session < ApplicationRecord
+    include Observ::Scoreable
+    include Observ::Reviewable
+    include Observ::JsonQueryable
+
     self.table_name = "observ_sessions"
 
-  has_many :traces, class_name: "Observ::Trace",
+    has_many :traces, class_name: "Observ::Trace",
            foreign_key: :observ_session_id, dependent: :destroy, inverse_of: :observ_session
   has_many :annotations, as: :annotatable, dependent: :destroy
 

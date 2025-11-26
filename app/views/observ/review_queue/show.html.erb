@@ -1,0 +1,76 @@
+<div class="observ-page">
+  <div class="observ-page__header">
+    <div class="observ-page__breadcrumb">
+      <%= link_to "Review Queue", reviews_path %> /
+      <span>Review Item</span>
+    </div>
+    <h1 class="observ-page__title">
+      Review <%= @review_item.reviewable_type_display %>
+      <span class="observ-badge <%= @review_item.priority_badge_class %>">
+        <%= @review_item.priority.capitalize %>
+      </span>
+    </h1>
+    <% if @queue_position %>
+      <p class="observ-text--muted">
+        Reviewing <%= @queue_position[:current] %> of <%= @queue_position[:total] %>
+      </p>
+    <% end %>
+  </div>
+
+  <div class="observ-review-layout">
+    <div class="observ-review-main">
+      <div class="observ-alert observ-alert--warning">
+        <strong>Flagged: <%= @review_item.reason_display %></strong>
+        <% if @review_item.reason_details.present? %>
+          <% @review_item.reason_details.each do |key, value| %>
+            <br><%= key.to_s.humanize %>: <%= value %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if @reviewable.is_a?(Observ::Trace) %>
+        <%= render "observ/traces/details", trace: @reviewable, open_in_new_tab: true %>
+
+        <%= render "observ/traces/input", trace: @reviewable %>
+
+        <%= render "observ/traces/output", trace: @reviewable %>
+
+        <%= render "observ/traces/metadata", trace: @reviewable %>
+
+        <%= render "observ/traces/observations", observations: @observations, trace: @reviewable, show_total: true, total_count: @reviewable.observations.count %>
+      <% elsif @reviewable.is_a?(Observ::Session) %>
+        <%= render "observ/sessions/metrics", session_metrics: @session_metrics, session: @reviewable %>
+
+        <%= render "observ/sessions/metadata", session: @reviewable %>
+
+        <%= render "observ/sessions/traces", traces: @traces, session: @reviewable, show_total: true, total_count: @session_metrics[:total_traces], open_in_new_tab: true %>
+
+        <%= render "observ/sessions/chat", chat: @chat, limit: 10, hide_actions: true %>
+      <% end %>
+    </div>
+
+    <div class="observ-review-sidebar">
+      <div class="observ-card">
+        <div class="observ-card__header">
+          <h2 class="observ-card__title">Score This Item</h2>
+        </div>
+        <div class="observ-card__body">
+          <%= render "observ/scores/form", scoreable: @reviewable %>
+        </div>
+      </div>
+
+      <div class="observ-review-actions">
+        <%= form_with url: complete_review_path(@review_item), method: :post, local: true do |f| %>
+          <input type="hidden" name="next" value="true">
+          <%= f.submit "Save & Next", class: "observ-button observ-button--primary observ-button--block" %>
+        <% end %>
+
+        <%= form_with url: skip_review_path(@review_item), method: :post, local: true do |f| %>
+          <%= f.submit "Skip", class: "observ-button observ-button--secondary observ-button--block" %>
+        <% end %>
+
+        <%= link_to "Back to Queue", reviews_path, class: "observ-button observ-button--link observ-button--block" %>
+      </div>
+    </div>
+  </div>
+</div>

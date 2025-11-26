@@ -1,0 +1,10 @@
+<%= turbo_stream.replace "score-form" do %>
+  <%= render "observ/scores/form", scoreable: @scoreable %>
+<% end %>
+
+<%= turbo_stream.replace "score-status" do %>
+  <div id="score-status" class="observ-score-status observ-score-status--saved">
+    <span class="observ-score-status__icon">&#10003;</span>
+    Score saved
+  </div>
+<% end %>

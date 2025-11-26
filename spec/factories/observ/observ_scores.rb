@@ -2,8 +2,7 @@
 
 FactoryBot.define do
   factory :observ_score, class: "Observ::Score" do
-    association :dataset_run_item, factory: :observ_dataset_run_item
-    trace { dataset_run_item.trace || association(:observ_trace) }
+    association :scoreable, factory: :observ_dataset_run_item
     name { "accuracy" }
     value { 1.0 }
     data_type { :numeric }
@@ -32,6 +31,18 @@ FactoryBot.define do
 
     trait :with_comment do
       comment { "Evaluation comment" }
+    end
+
+    trait :for_session do
+      association :scoreable, factory: :observ_session
+    end
+
+    trait :for_trace do
+      association :scoreable, factory: :observ_trace
+    end
+
+    trait :for_dataset_run_item do
+      association :scoreable, factory: :observ_dataset_run_item
     end
   end
 end

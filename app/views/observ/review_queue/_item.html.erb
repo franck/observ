@@ -1,0 +1,39 @@
+<tr class="observ-table__row">
+  <td>
+    <span class="observ-badge <%= review_item.priority_badge_class %>">
+      <%= review_item.priority.capitalize %>
+    </span>
+  </td>
+  <td>
+    <span class="observ-type-label">
+      <%= review_item.reviewable_type_display %>
+    </span>
+  </td>
+  <td>
+    <%= review_item.reason_display %>
+    <% if review_item.reason_details.present? %>
+      <span class="observ-text--muted observ-text--small">
+        <% if review_item.reason_details["cost"] %>
+          ($<%= number_with_precision(review_item.reason_details["cost"], precision: 4) %>)
+        <% elsif review_item.reason_details["latency_ms"] %>
+          (<%= number_with_delimiter(review_item.reason_details["latency_ms"]) %>ms)
+        <% elsif review_item.reason_details["tokens"] %>
+          (<%= number_with_delimiter(review_item.reason_details["tokens"]) %> tokens)
+        <% end %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <span class="observ-badge observ-badge--<%= review_item.status == 'in_progress' ? 'warning' : 'secondary' %>">
+      <%= review_item.status.humanize %>
+    </span>
+  </td>
+  <td>
+    <span class="observ-text--muted" title="<%= review_item.created_at %>">
+      <%= time_ago_in_words(review_item.created_at) %> ago
+    </span>
+  </td>
+  <td>
+    <%= link_to "Review", review_path(review_item), class: "observ-button observ-button--primary observ-button--small" %>
+  </td>
+</tr>

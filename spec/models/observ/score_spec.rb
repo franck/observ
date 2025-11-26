@@ -4,8 +4,7 @@ require "rails_helper"
 
 RSpec.describe Observ::Score, type: :model do
   describe "associations" do
-    it { is_expected.to belong_to(:dataset_run_item).class_name("Observ::DatasetRunItem") }
-    it { is_expected.to belong_to(:trace).class_name("Observ::Trace") }
+    it { is_expected.to belong_to(:scoreable) }
     it { is_expected.to belong_to(:observation).class_name("Observ::Observation").optional }
   end
 
@@ -16,11 +15,10 @@ RSpec.describe Observ::Score, type: :model do
     it { is_expected.to validate_presence_of(:value) }
     it { is_expected.to validate_numericality_of(:value) }
 
-    it "validates uniqueness of name scoped to dataset_run_item and source" do
+    it "validates uniqueness of name scoped to scoreable and source" do
       existing = create(:observ_score, name: "accuracy", source: :programmatic)
       duplicate = build(:observ_score,
-        dataset_run_item: existing.dataset_run_item,
-        trace: existing.trace,
+        scoreable: existing.scoreable,
         name: "accuracy",
         source: :programmatic
       )
@@ -30,18 +28,50 @@ RSpec.describe Observ::Score, type: :model do
     it "allows same name with different source" do
       existing = create(:observ_score, name: "accuracy", source: :programmatic)
       different_source = build(:observ_score,
-        dataset_run_item: existing.dataset_run_item,
-        trace: existing.trace,
+        scoreable: existing.scoreable,
         name: "accuracy",
         source: :manual
       )
       expect(different_source).to be_valid
+    end
+
+    it "allows same name and source for different scoreables" do
+      create(:observ_score, name: "accuracy", source: :programmatic)
+      different_scoreable = build(:observ_score,
+        name: "accuracy",
+        source: :programmatic
+      )
+      expect(different_scoreable).to be_valid
     end
   end
 
   describe "enums" do
     it { is_expected.to define_enum_for(:data_type).with_values(numeric: 0, boolean: 1, categorical: 2) }
     it { is_expected.to define_enum_for(:source).with_values(programmatic: 0, manual: 1, llm_judge: 2) }
+  end
+
+  describe "scopes" do
+    let!(:session_score) { create(:observ_score, :for_session) }
+    let!(:trace_score) { create(:observ_score, :for_trace) }
+    let!(:run_item_score) { create(:observ_score, :for_dataset_run_item) }
+
+    describe ".for_sessions" do
+      it "returns only scores for sessions" do
+        expect(described_class.for_sessions).to contain_exactly(session_score)
+      end
+    end
+
+    describe ".for_traces" do
+      it "returns only scores for traces" do
+        expect(described_class.for_traces).to contain_exactly(trace_score)
+      end
+    end
+
+    describe ".for_dataset_run_items" do
+      it "returns only scores for dataset run items" do
+        expect(described_class.for_dataset_run_items).to contain_exactly(run_item_score)
+      end
+    end
   end
 
   describe "#passed?" do
@@ -116,15 +146,91 @@ RSpec.describe Observ::Score, type: :model do
     end
   end
 
-  describe "delegations" do
-    let(:score) { create(:observ_score) }
+  describe "convenience accessors" do
+    describe "#dataset_run_item" do
+      it "returns scoreable when scoreable is a DatasetRunItem" do
+        run_item = create(:observ_dataset_run_item)
+        score = create(:observ_score, scoreable: run_item)
+        expect(score.dataset_run_item).to eq(run_item)
+      end
 
-    it "delegates dataset_run to dataset_run_item" do
-      expect(score.dataset_run).to eq(score.dataset_run_item.dataset_run)
+      it "returns nil when scoreable is not a DatasetRunItem" do
+        session = create(:observ_session)
+        score = create(:observ_score, scoreable: session)
+        expect(score.dataset_run_item).to be_nil
+      end
     end
 
-    it "delegates dataset_item to dataset_run_item" do
-      expect(score.dataset_item).to eq(score.dataset_run_item.dataset_item)
+    describe "#trace" do
+      it "returns scoreable when scoreable is a Trace" do
+        trace = create(:observ_trace)
+        score = create(:observ_score, scoreable: trace)
+        expect(score.trace).to eq(trace)
+      end
+
+      it "returns trace from DatasetRunItem when scoreable is a DatasetRunItem" do
+        trace = create(:observ_trace)
+        run_item = create(:observ_dataset_run_item, trace: trace)
+        score = create(:observ_score, scoreable: run_item)
+        expect(score.trace).to eq(trace)
+      end
+
+      it "returns nil when scoreable is a Session" do
+        session = create(:observ_session)
+        score = create(:observ_score, scoreable: session)
+        expect(score.trace).to be_nil
+      end
+    end
+
+    describe "#session" do
+      it "returns scoreable when scoreable is a Session" do
+        session = create(:observ_session)
+        score = create(:observ_score, scoreable: session)
+        expect(score.session).to eq(session)
+      end
+
+      it "returns observ_session when scoreable is a Trace" do
+        session = create(:observ_session)
+        trace = create(:observ_trace, observ_session: session)
+        score = create(:observ_score, scoreable: trace)
+        expect(score.session).to eq(session)
+      end
+
+      it "returns session from trace when scoreable is a DatasetRunItem" do
+        session = create(:observ_session)
+        trace = create(:observ_trace, observ_session: session)
+        run_item = create(:observ_dataset_run_item, trace: trace)
+        score = create(:observ_score, scoreable: run_item)
+        expect(score.session).to eq(session)
+      end
+    end
+
+    describe "#dataset_run" do
+      it "delegates to dataset_run_item when present" do
+        run_item = create(:observ_dataset_run_item)
+        score = create(:observ_score, scoreable: run_item)
+        expect(score.dataset_run).to eq(run_item.dataset_run)
+      end
+
+      it "returns nil when scoreable is not a DatasetRunItem" do
+        trace = create(:observ_trace)
+        score = create(:observ_score, scoreable: trace)
+        expect(score.dataset_run).to be_nil
+      end
+    end
+
+    describe "#dataset_item" do
+      it "delegates to dataset_run_item when present" do
+        run_item = create(:observ_dataset_run_item)
+        score = create(:observ_score, scoreable: run_item)
+        expect(score.dataset_item).to eq(run_item.dataset_item)
+      end
+
+      it "returns nil when scoreable is not a DatasetRunItem" do
+        trace = create(:observ_trace)
+        score = create(:observ_score, scoreable: trace)
+        expect(score.dataset_item).to be_nil
+      end
     end
   end
 end

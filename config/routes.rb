@@ -19,6 +19,7 @@ Observ::Engine.routes.draw do
       get :annotations_drawer
     end
     resources :annotations, only: [ :index, :create, :destroy ]
+    resources :scores, only: [ :create, :destroy ]
   end
 
   resources :traces, only: [ :index, :show ] do
@@ -32,6 +33,7 @@ Observ::Engine.routes.draw do
       post :add_to_dataset
     end
     resources :annotations, only: [ :index, :create, :destroy ]
+    resources :scores, only: [ :create, :destroy ]
   end
 
   resources :observations, only: [ :index, :show ] do
@@ -44,6 +46,18 @@ Observ::Engine.routes.draw do
   get "annotations/sessions", to: "annotations#sessions_index", as: :sessions_annotations
   get "annotations/traces", to: "annotations#traces_index", as: :traces_annotations
   get "annotations/export", to: "annotations#export", as: :export_annotations
+
+  resources :reviews, only: [ :index, :show ], controller: "review_queue" do
+    collection do
+      get :sessions
+      get :traces
+      get :stats
+    end
+    member do
+      post :complete
+      post :skip
+    end
+  end
 
   resources :prompts do
     member do

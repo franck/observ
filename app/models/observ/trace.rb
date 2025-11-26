@@ -2,6 +2,9 @@
 
 module Observ
   class Trace < ApplicationRecord
+    include Observ::Scoreable
+    include Observ::Reviewable
+
     self.table_name = "observ_traces"
 
     belongs_to :observ_session, class_name: "Observ::Session", inverse_of: :traces

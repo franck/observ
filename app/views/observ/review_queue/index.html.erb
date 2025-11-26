@@ -1,0 +1,47 @@
+<div class="observ-page">
+  <div class="observ-page__header">
+    <h1 class="observ-page__title">Review Queue</h1>
+    <div class="observ-page__actions">
+      <%= link_to "Stats", stats_reviews_path, class: "observ-button observ-button--secondary" %>
+    </div>
+  </div>
+
+  <div class="observ-tabs">
+    <%= link_to "All", reviews_path, class: "observ-tab #{'observ-tab--active' if @filter == :all}" %>
+    <%= link_to "Sessions", sessions_reviews_path, class: "observ-tab #{'observ-tab--active' if @filter == :sessions}" %>
+    <%= link_to "Traces", traces_reviews_path, class: "observ-tab #{'observ-tab--active' if @filter == :traces}" %>
+  </div>
+
+  <%= render "stats", stats: @stats %>
+
+  <% if @review_items.any? %>
+    <div class="observ-table-container">
+      <table class="observ-table">
+        <thead>
+          <tr>
+            <th>Priority</th>
+            <th>Type</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @review_items.each do |review_item| %>
+            <%= render "item", review_item: review_item %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= paginate @review_items, theme: "observ" %>
+  <% else %>
+    <div class="observ-empty-state">
+      <p class="observ-empty-state__text">No items to review</p>
+      <p class="observ-empty-state__subtext">
+        Items will appear here when they are flagged by guardrails or added manually.
+      </p>
+    </div>
+  <% end %>
+</div>
