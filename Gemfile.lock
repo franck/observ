@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    observ (0.4.0)
+    rubyllm-observ (0.5.1)
       aasm (~> 5.5)
       csv (~> 3.0)
       kaminari (~> 1.2)
@@ -366,11 +366,11 @@ DEPENDENCIES
   capybara (~> 3.0)
   factory_bot_rails (~> 6.0)
   faker (~> 3.0)
-  observ!
   ostruct
   puma
   rspec-rails (~> 7.0)
   rubocop-rails-omakase
+  rubyllm-observ!
   shoulda-matchers (~> 6.0)
   sqlite3
   turbo-rails (~> 2.0)
