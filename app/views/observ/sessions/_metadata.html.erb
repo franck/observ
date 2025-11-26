@@ -1,0 +1,17 @@
+<% if session.metadata.present? && session.metadata.any? %>
+  <section class="observ-card">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Metadata</h2>
+    </header>
+    <div class="observ-card__body">
+      <dl class="observ-definition-list">
+        <% session.metadata.each do |key, value| %>
+          <div class="observ-definition-list__item">
+            <dt class="observ-definition-list__term"><%= key %></dt>
+            <dd class="observ-definition-list__definition"><%= value %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </section>
+<% end %>

@@ -1,0 +1,47 @@
+<section class="observ-card observ-card--compact">
+  <header class="observ-card__header">
+    <h2 class="observ-card__title">Details</h2>
+  </header>
+  <div class="observ-card__body">
+    <dl class="observ-definition-list observ-definition-list--compact">
+      <div class="observ-definition-list__item">
+        <dt class="observ-definition-list__term">Session</dt>
+        <dd class="observ-definition-list__definition">
+          <%= link_to truncate_id(trace.observ_session.session_id, 12), session_path(trace.observ_session), class: "observ-link", target: local_assigns[:open_in_new_tab] ? "_blank" : nil %>
+        </dd>
+      </div>
+      <div class="observ-definition-list__item">
+        <dt class="observ-definition-list__term">Name</dt>
+        <dd class="observ-definition-list__definition"><%= trace.name || "—" %></dd>
+      </div>
+      <div class="observ-definition-list__item">
+        <dt class="observ-definition-list__term">Start Time</dt>
+        <dd class="observ-definition-list__definition"><%= observ_timestamp(trace.start_time) %></dd>
+      </div>
+      <% if trace.end_time %>
+        <div class="observ-definition-list__item">
+          <dt class="observ-definition-list__term">End Time</dt>
+          <dd class="observ-definition-list__definition"><%= observ_timestamp(trace.end_time) %></dd>
+        </div>
+      <% end %>
+      <div class="observ-definition-list__item">
+        <dt class="observ-definition-list__term">Duration</dt>
+        <dd class="observ-definition-list__definition">
+          <% if trace.duration_ms %>
+            <%= format_duration_ms(trace.duration_ms) %>
+          <% else %>
+            <span class="observ-text--muted">In Progress</span>
+          <% end %>
+        </dd>
+      </div>
+      <div class="observ-definition-list__item">
+        <dt class="observ-definition-list__term">Total Tokens</dt>
+        <dd class="observ-definition-list__definition"><%= format_tokens(trace.total_tokens) %></dd>
+      </div>
+      <div class="observ-definition-list__item">
+        <dt class="observ-definition-list__term">Total Cost</dt>
+        <dd class="observ-definition-list__definition"><%= format_currency(trace.total_cost) %></dd>
+      </div>
+    </dl>
+  </div>
+</section>

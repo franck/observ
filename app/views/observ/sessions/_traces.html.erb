@@ -1,0 +1,92 @@
+<%
+  # Local variables:
+  # - traces: collection of traces to display
+  # - session: the session object
+  # - limit: optional, if set will show "X of Y" notice
+%>
+
+<section class="observ-card">
+  <header class="observ-card__header">
+    <h2 class="observ-card__title">
+      Traces (<%= traces.count %>)
+      <% if local_assigns[:show_total] && local_assigns[:total_count] && total_count > traces.count %>
+        of <%= total_count %>
+      <% end %>
+    </h2>
+  </header>
+  <div class="observ-card__body">
+    <% if traces.any? %>
+      <table class="observ-table">
+        <thead class="observ-table__header">
+          <tr class="observ-table__row">
+            <th class="observ-table__cell">Trace ID</th>
+            <th class="observ-table__cell">Name</th>
+            <th class="observ-table__cell">Model(s)</th>
+            <th class="observ-table__cell">Start Time</th>
+            <th class="observ-table__cell">Duration</th>
+            <th class="observ-table__cell observ-table__cell--numeric">Observations</th>
+            <th class="observ-table__cell observ-table__cell--numeric">Tokens</th>
+            <th class="observ-table__cell observ-table__cell--numeric">Cost</th>
+            <th class="observ-table__cell">Status</th>
+            <th class="observ-table__cell"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% traces.each do |trace| %>
+            <tr class="observ-table__row">
+              <td class="observ-table__cell">
+                <code class="observ-code observ-code--inline"><%= truncate_id(trace.trace_id, 12) %></code>
+              </td>
+              <td class="observ-table__cell">
+                <%= trace.name || "—" %>
+              </td>
+              <td class="observ-table__cell">
+                <% models = trace.models_used %>
+                <% if models.any? %>
+                  <%= models.join(", ") %>
+                <% else %>
+                  <span class="observ-text--muted">—</span>
+                <% end %>
+              </td>
+              <td class="observ-table__cell">
+                <%= observ_timestamp(trace.start_time) %>
+              </td>
+              <td class="observ-table__cell">
+                <% if trace.duration_ms %>
+                  <%= format_duration_ms(trace.duration_ms) %>
+                <% else %>
+                  <span class="observ-text--muted">—</span>
+                <% end %>
+              </td>
+              <td class="observ-table__cell observ-table__cell--numeric">
+                <%= trace.observations.count %>
+              </td>
+              <td class="observ-table__cell observ-table__cell--numeric">
+                <%= format_tokens(trace.total_tokens) %>
+              </td>
+              <td class="observ-table__cell observ-table__cell--numeric">
+                <%= format_currency(trace.total_cost) %>
+              </td>
+              <td class="observ-table__cell">
+                <%= observ_status_badge(observ_trace_status(trace)) %>
+              </td>
+              <td class="observ-table__cell observ-table__cell--actions">
+                <%= link_to "View", trace_path(trace), class: "observ-button observ-button--sm", target: local_assigns[:open_in_new_tab] ? "_blank" : nil %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <% if local_assigns[:show_total] && local_assigns[:total_count] && total_count > traces.count %>
+        <p class="observ-text--muted observ-review-preview-notice">
+          Showing first <%= traces.count %> traces. 
+          <%= link_to "View all #{total_count} traces", session_path(session), class: "observ-link", target: "_blank" %>
+        </p>
+      <% end %>
+    <% else %>
+      <div class="observ-card__empty">
+        <p>No traces found for this session.</p>
+      </div>
+    <% end %>
+  </div>
+</section>

@@ -1,0 +1,59 @@
+<%
+  # Local variables:
+  # - chat: the chat object
+  # - limit: optional, number of messages to show (default: all)
+%>
+
+<% if chat.present? %>
+  <section class="observ-card">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Chat Conversation</h2>
+      <% unless local_assigns[:hide_actions] %>
+        <div class="observ-card__actions">
+          <%= link_to "View Chat", chat_path(chat), class: "observ-button observ-button--sm" %>
+        </div>
+      <% end %>
+    </header>
+    <div class="observ-card__body">
+      <% if chat.messages.any? %>
+        <% messages = local_assigns[:limit] ? chat.messages.order(created_at: :asc).limit(limit) : chat.messages.order(created_at: :asc) %>
+        <div class="observ-chat-messages">
+          <% messages.each do |message| %>
+            <div class="observ-chat-message observ-chat-message--<%= message.role %>">
+              <div class="observ-chat-message__header">
+                <span class="observ-chat-message__role"><%= message.role.capitalize %></span>
+                <span class="observ-chat-message__time"><%= observ_relative_time(message.created_at) %></span>
+                <% if message.traces.exists? %>
+                  <%= link_to "View Trace", trace_path(message.traces.first), class: "observ-chat-message__trace-link" %>
+                <% end %>
+                <% if message.input_tokens || message.output_tokens %>
+                  <span class="observ-chat-message__tokens">
+                    <% if message.input_tokens %>
+                      <span>In: <%= format_tokens(message.input_tokens) %></span>
+                    <% end %>
+                    <% if message.output_tokens %>
+                      <span>Out: <%= format_tokens(message.output_tokens) %></span>
+                    <% end %>
+                  </span>
+                <% end %>
+              </div>
+              <div class="observ-chat-message__content">
+                <%= simple_format(message.content) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <% if local_assigns[:limit] && chat.messages.count > limit %>
+          <p class="observ-text--muted observ-review-preview-notice">
+            Showing first <%= limit %> messages. 
+            <%= link_to "View all #{chat.messages.count} messages", chat_path(chat), class: "observ-link", target: "_blank" %>
+          </p>
+        <% end %>
+      <% else %>
+        <div class="observ-card__empty">
+          <p>No messages found in this chat.</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>

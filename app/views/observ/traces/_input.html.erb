@@ -1,0 +1,10 @@
+<% if trace.input.present? %>
+  <section class="observ-card observ-card--compact">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Input</h2>
+    </header>
+    <div class="observ-card__body">
+      <%= render_input_output(trace.input, compact: true) %>
+    </div>
+  </section>
+<% end %>

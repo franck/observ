@@ -1,0 +1,10 @@
+<% if trace.metadata.present? && trace.metadata.any? %>
+  <section class="observ-card observ-card--compact">
+    <header class="observ-card__header">
+      <h2 class="observ-card__title">Metadata</h2>
+    </header>
+    <div class="observ-card__body">
+      <%= render_json_viewer(trace.metadata, compact: true) %>
+    </div>
+  </section>
+<% end %>
