@@ -1,0 +1,18 @@
+// Observ Namespace Mixin
+// ======================
+// Use this mixin to scope all Observ styles under .observ-layout
+// This ensures isolation from host application styles.
+//
+// Usage:
+//   @include observ-scoped {
+//     .observ-button { ... }
+//   }
+//
+// Outputs:
+//   .observ-layout .observ-button { ... }
+
+@mixin observ-scoped {
+  .observ-layout {
+    @content;
+  }
+}

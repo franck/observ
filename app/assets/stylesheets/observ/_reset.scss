@@ -1,0 +1,210 @@
+// Observ CSS Reset
+// ================
+// This file provides a scoped CSS reset for form elements within Observ
+// to ensure they are not affected by styles from the host application.
+// 
+// IMPORTANT: This reset is intentionally minimal and focused on FORM ELEMENTS ONLY.
+// Structural elements (lists, tables, headings) are styled by Observ's component stylesheets.
+
+@import 'variables';
+
+.observ-layout {
+  // ============================================
+  // Box Sizing Reset (applied to all elements)
+  // ============================================
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  // ============================================
+  // Form Elements Reset
+  // ============================================
+  // These resets ensure form elements have consistent styling
+  // regardless of the host app's global CSS
+
+  // Labels - reset font to inherit from parent
+  label {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  // Buttons - full reset to prevent host app interference
+  button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  // Anchors - minimal reset (font only, let component classes control colors)
+  a {
+    font-family: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  // Fieldset and Legend - remove default browser styling
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  legend {
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+  }
+
+  // Details and Summary - reset for consistent behavior
+  details {
+    font-family: inherit;
+  }
+
+  summary {
+    font-family: inherit;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::marker {
+      display: none;
+    }
+  }
+
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: $observ-gray-900;
+    background-color: $observ-white;
+    border: 1px solid $observ-gray-300;
+    border-radius: $observ-border-radius-sm;
+    margin: 0;
+
+    &:focus {
+      outline: none;
+      border-color: $observ-primary;
+      box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
+    }
+
+    &::placeholder {
+      color: $observ-gray-400;
+      opacity: 1;
+    }
+
+    &:disabled {
+      background-color: $observ-gray-100;
+      color: $observ-gray-500;
+      cursor: not-allowed;
+    }
+  }
+
+  // Text inputs
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input[type="time"] {
+    height: auto;
+    padding: $observ-spacing-sm $observ-spacing-md;
+    background-color: $observ-white;
+    color: $observ-gray-900;
+  }
+
+  // Date inputs - ensure consistent styling
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input[type="time"] {
+    &::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.6;
+      filter: none;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  // Select elements
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: $observ-spacing-sm $observ-spacing-md;
+    padding-right: calc(#{$observ-spacing-md} + 1.5rem);
+    background-color: $observ-white;
+    color: $observ-gray-900;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $observ-spacing-sm center;
+    cursor: pointer;
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    option {
+      background-color: $observ-white;
+      color: $observ-gray-900;
+    }
+  }
+
+  // Textarea
+  textarea {
+    padding: $observ-spacing-sm $observ-spacing-md;
+    background-color: $observ-white;
+    color: $observ-gray-900;
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  // Checkbox and Radio - minimal reset
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    accent-color: $observ-primary;
+    // Don't override background for checkboxes/radios as they have native styling
+    background-color: transparent;
+    border: none;
+  }
+}

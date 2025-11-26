@@ -1,156 +1,161 @@
-.observ-chat-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.875rem;
-}
+@import 'variables';
+@import 'namespace';
 
-.observ-chat-message {
-  border-left: 3px solid #e5e7eb;
-  padding: 1rem;
-  background-color: #f9fafb;
-  border-radius: 0.25rem;
-  transition: all 0.15s ease-in-out;
-}
+@include observ-scoped {
+  .observ-chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.875rem;
+  }
 
-.observ-chat-message:hover {
-  background-color: #f3f4f6;
-}
+  .observ-chat-message {
+    border-left: 3px solid #e5e7eb;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.25rem;
+    transition: all 0.15s ease-in-out;
 
-.observ-chat-message--user {
-  border-left-color: #3b82f6;
-}
+    &:hover {
+      background-color: #f3f4f6;
+    }
 
-.observ-chat-message--assistant {
-  border-left-color: #10b981;
-}
+    &--user {
+      border-left-color: #3b82f6;
+    }
 
-.observ-chat-message--system {
-  border-left-color: #6b7280;
-}
+    &--assistant {
+      border-left-color: #10b981;
+    }
 
-.observ-chat-message--tool {
-  border-left-color: #f59e0b;
-}
+    &--system {
+      border-left-color: #6b7280;
+    }
 
-.observ-chat-message__header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-  flex-wrap: wrap;
-}
+    &--tool {
+      border-left-color: #f59e0b;
+    }
 
-.observ-chat-message__trace-link {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  background-color: #3b82f6;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 0.25rem;
-  font-weight: 600;
-  transition: all 0.15s ease-in-out;
-}
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
 
-.observ-chat-message__trace-link:hover {
-  background-color: #2563eb;
-}
+    &__trace-link {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      background-color: #3b82f6;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 0.25rem;
+      font-weight: 600;
+      transition: all 0.15s ease-in-out;
 
-.observ-chat-message__role {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #4b5563;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+      &:hover {
+        background-color: #2563eb;
+      }
+    }
 
-.observ-chat-message__time {
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
+    &__role {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #4b5563;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-.observ-chat-message__tokens {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-left: auto;
-}
+    &__time {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
 
-.observ-chat-message__tokens span {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.125rem 0.5rem;
-  background-color: #e5e7eb;
-  border-radius: 0.25rem;
-  font-variant-numeric: tabular-nums;
-}
+    &__tokens {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-left: auto;
 
-.observ-chat-message__content {
-  color: #111827;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
+      span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.125rem 0.5rem;
+        background-color: #e5e7eb;
+        border-radius: 0.25rem;
+        font-variant-numeric: tabular-nums;
+      }
+    }
 
-.observ-chat-message__content p {
-  margin: 0 0 0.5rem 0;
-}
+    &__content {
+      color: #111827;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
 
-.observ-chat-message__content p:last-child {
-  margin-bottom: 0;
-}
+      p {
+        margin: 0 0 0.5rem 0;
 
-.observ-chat-message__content code {
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  background-color: #e5e7eb;
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
-  font-size: 0.875em;
-}
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
 
-.observ-chat-message__content pre {
-  background-color: #1f2937;
-  color: #f9fafb;
-  padding: 1rem;
-  border-radius: 0.375rem;
-  overflow-x: auto;
-  margin: 0.5rem 0;
-}
+      code {
+        font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+        background-color: #e5e7eb;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+      }
 
-.observ-chat-message__content pre code {
-  background-color: transparent;
-  padding: 0;
-  color: inherit;
-}
+      pre {
+        background-color: #1f2937;
+        color: #f9fafb;
+        padding: 1rem;
+        border-radius: 0.375rem;
+        overflow-x: auto;
+        margin: 0.5rem 0;
 
-.observ-chat-message__tool-calls {
-  margin-top: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+        code {
+          background-color: transparent;
+          padding: 0;
+          color: inherit;
+        }
+      }
+    }
 
-.observ-chat-message__tool-calls-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+    &__tool-calls {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-.observ-chat-message__tool-call {
-  background: #f3f4f6;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  font-size: 0.875rem;
-  border-left: 3px solid #f59e0b;
-}
+    &__tool-calls-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-.observ-chat-message__tool-call-name {
-  font-weight: 600;
+    &__tool-call {
+      background: #f3f4f6;
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+      font-size: 0.875rem;
+      border-left: 3px solid #f59e0b;
+    }
+
+    &__tool-call-name {
+      font-weight: 600;
+    }
+  }
 }

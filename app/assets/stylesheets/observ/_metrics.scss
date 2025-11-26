@@ -1,99 +1,102 @@
 @import 'variables';
+@import 'namespace';
 
-.observ-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $observ-spacing-lg;
+@include observ-scoped {
+  .observ-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $observ-spacing-lg;
 
-  &--4col {
-    grid-template-columns: repeat(4, 1fr);
+    &--4col {
+      grid-template-columns: repeat(4, 1fr);
 
-    @media (max-width: $observ-breakpoint-lg) {
-      grid-template-columns: repeat(2, 1fr);
-    }
+      @media (max-width: $observ-breakpoint-lg) {
+        grid-template-columns: repeat(2, 1fr);
+      }
 
-    @media (max-width: $observ-breakpoint-sm) {
-      grid-template-columns: 1fr;
+      @media (max-width: $observ-breakpoint-sm) {
+        grid-template-columns: 1fr;
+      }
     }
   }
-}
 
-.observ-metric-card {
-  background-color: $observ-white;
-  border-radius: $observ-border-radius;
-  box-shadow: $observ-shadow;
-  padding: $observ-spacing-lg;
-  transition: $observ-transition;
+  .observ-metric-card {
+    background-color: $observ-white;
+    border-radius: $observ-border-radius;
+    box-shadow: $observ-shadow;
+    padding: $observ-spacing-lg;
+    transition: $observ-transition;
 
-  &:hover {
-    box-shadow: $observ-shadow-md;
+    &:hover {
+      box-shadow: $observ-shadow-md;
+    }
+
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $observ-spacing-md;
+    }
+
+    &__label {
+      font-size: $observ-font-size-sm;
+      font-weight: 500;
+      color: $observ-gray-600;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    &__body {
+      display: flex;
+      align-items: baseline;
+      gap: $observ-spacing-sm;
+    }
+
+    &__value {
+      font-size: $observ-font-size-3xl;
+      font-weight: 700;
+      color: $observ-gray-900;
+      margin: 0;
+      line-height: 1;
+
+      &--small {
+        font-size: $observ-font-size-xl;
+      }
+    }
+
+    &--highlighted {
+      background: linear-gradient(135deg, lighten($observ-primary, 45%) 0%, lighten($observ-info, 45%) 100%);
+      border: 1px solid $observ-primary;
+
+      .observ-metric-card__value {
+        color: $observ-primary;
+      }
+    }
   }
 
-  &__header {
-    display: flex;
+  .observ-trend {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: $observ-spacing-md;
-  }
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: $observ-border-radius-sm;
+    font-size: $observ-font-size-xs;
+    font-weight: 600;
 
-  &__label {
-    font-size: $observ-font-size-sm;
-    font-weight: 500;
-    color: $observ-gray-600;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  &__body {
-    display: flex;
-    align-items: baseline;
-    gap: $observ-spacing-sm;
-  }
-
-  &__value {
-    font-size: $observ-font-size-3xl;
-    font-weight: 700;
-    color: $observ-gray-900;
-    margin: 0;
-    line-height: 1;
-
-    &--small {
-      font-size: $observ-font-size-xl;
+    &--positive {
+      background-color: lighten($observ-success, 45%);
+      color: darken($observ-success, 10%);
     }
-  }
 
-  &--highlighted {
-    background: linear-gradient(135deg, lighten($observ-primary, 45%) 0%, lighten($observ-info, 45%) 100%);
-    border: 1px solid $observ-primary;
-
-    .observ-metric-card__value {
-      color: $observ-primary;
+    &--negative {
+      background-color: lighten($observ-danger, 45%);
+      color: darken($observ-danger, 10%);
     }
-  }
-}
 
-.observ-trend {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: $observ-border-radius-sm;
-  font-size: $observ-font-size-xs;
-  font-weight: 600;
-
-  &--positive {
-    background-color: lighten($observ-success, 45%);
-    color: darken($observ-success, 10%);
-  }
-
-  &--negative {
-    background-color: lighten($observ-danger, 45%);
-    color: darken($observ-danger, 10%);
-  }
-
-  &--neutral {
-    background-color: $observ-gray-100;
-    color: $observ-gray-600;
+    &--neutral {
+      background-color: $observ-gray-100;
+      color: $observ-gray-600;
+    }
   }
 }

@@ -1,0 +1,137 @@
+@import 'variables';
+@import 'namespace';
+
+// Shared Filter Component
+// Usage: Apply .observ-filters to a card section, then use BEM children
+//
+// Example:
+//   <section class="observ-card observ-filters">
+//     <div class="observ-card__body">
+//       <%= form_with class: "observ-filters__form" do |f| %>
+//         <div class="observ-filters__field observ-filters__field--flex">
+//           <%= f.label :search, class: "observ-filters__label" %>
+//           <%= f.text_field :search, class: "observ-filters__input" %>
+//         </div>
+//         <div class="observ-filters__field observ-filters__field--md">
+//           <%= f.label :status, class: "observ-filters__label" %>
+//           <%= f.select :status, options, class: "observ-filters__select" %>
+//         </div>
+//         <div class="observ-filters__actions">
+//           <%= f.submit "Filter", class: "observ-button observ-button--secondary" %>
+//           <%= link_to "Clear", path, class: "observ-button" %>
+//         </div>
+//       <% end %>
+//     </div>
+//   </section>
+
+@include observ-scoped {
+  .observ-filters {
+    margin-bottom: $observ-spacing-lg;
+
+    &__form {
+      display: flex;
+      gap: $observ-spacing-md;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    &__field {
+      display: flex;
+      flex-direction: column;
+
+      // Flexible field (takes remaining space)
+      &--flex {
+        flex: 1;
+        min-width: 150px;
+      }
+
+      // Fixed width modifiers
+      &--sm {
+        width: 8rem;
+      }
+
+      &--md {
+        width: 10rem;
+      }
+
+      &--lg {
+        width: 12rem;
+      }
+    }
+
+    &__label {
+      display: block;
+      margin-bottom: $observ-spacing-xs;
+      font-weight: 500;
+      color: $observ-gray-900;
+      font-size: $observ-font-size-sm;
+    }
+
+    &__input,
+    &__select {
+      width: 100%;
+      padding: $observ-spacing-sm;
+      border: 1px solid $observ-gray-300;
+      border-radius: $observ-border-radius-sm;
+      font-size: $observ-font-size-base;
+      font-family: inherit;
+      color: $observ-gray-900;
+      background-color: $observ-white;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        border-color: $observ-gray-400;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $observ-primary;
+        box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
+      }
+
+      &::placeholder {
+        color: $observ-gray-400;
+      }
+
+      &:disabled {
+        background-color: $observ-gray-100;
+        color: $observ-gray-500;
+        cursor: not-allowed;
+      }
+    }
+
+    &__select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right $observ-spacing-sm center;
+      padding-right: calc(#{$observ-spacing-sm} + 1.5rem);
+
+      option {
+        background-color: $observ-white;
+        color: $observ-gray-900;
+      }
+    }
+
+    // Date inputs
+    &__input[type="date"],
+    &__input[type="datetime-local"] {
+      &::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.6;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__actions {
+      display: flex;
+      gap: $observ-spacing-sm;
+    }
+  }
+}

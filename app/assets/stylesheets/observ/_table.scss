@@ -1,53 +1,63 @@
 @import 'variables';
+@import 'namespace';
 
-.observ-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: $observ-font-size-sm;
-
-  &__header {
-    background-color: $observ-gray-50;
+@include observ-scoped {
+  .observ-table-container {
+    overflow-x: auto;
   }
 
-  &__row {
-    border-bottom: 1px solid $observ-gray-200;
-    transition: $observ-transition;
+  .observ-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $observ-font-size-sm;
+    background-color: $observ-white;
 
-    &:hover {
+    &__header {
       background-color: $observ-gray-50;
     }
-  }
 
-  &__cell {
-    padding: $observ-spacing-md;
-    text-align: left;
-    color: $observ-gray-700;
+    &__row {
+      border-bottom: 1px solid $observ-gray-200;
+      transition: $observ-transition;
 
-    &--numeric {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
+      &:hover {
+        background-color: $observ-gray-50;
+      }
     }
 
-    &--actions {
-      text-align: right;
-      width: 1%;
-      white-space: nowrap;
+    &__cell {
+      padding: $observ-spacing-md;
+      text-align: left;
+      color: $observ-gray-700;
+      vertical-align: middle;
+
+      &--numeric {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      &--actions {
+        text-align: right;
+        width: 1%;
+        white-space: nowrap;
+      }
+
+      thead & {
+        font-weight: 600;
+        color: $observ-gray-900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: $observ-font-size-xs;
+        padding-top: $observ-spacing-sm;
+        padding-bottom: $observ-spacing-sm;
+        background-color: $observ-gray-50;
+      }
     }
 
-    thead & {
-      font-weight: 600;
-      color: $observ-gray-900;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: $observ-font-size-xs;
-      padding-top: $observ-spacing-sm;
-      padding-bottom: $observ-spacing-sm;
-    }
-  }
-
-  &--compact {
-    .observ-table__cell {
-      padding: $observ-spacing-sm $observ-spacing-md;
+    &--compact {
+      .observ-table__cell {
+        padding: $observ-spacing-sm $observ-spacing-md;
+      }
     }
   }
 }
