@@ -5,5 +5,6 @@ module Observ
     include Observ::ChatsHelper
     include Observ::PaginationHelper
     include Observ::DatasetsHelper
+    include Observ::ReviewsHelper
   end
 end

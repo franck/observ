@@ -1,9 +1,16 @@
 <%= turbo_stream.update "drawer-header-title" do %>
-  Session Annotations
+  Scores & Annotations
 <% end %>
 
 <%= turbo_stream.update "drawer-content" do %>
   <div class="observ-drawer__section">
+    <h3 class="observ-drawer__section-title">Score</h3>
+    <div id="score-status"></div>
+    <%= render "observ/scores/form", scoreable: @session %>
+  </div>
+
+  <div class="observ-drawer__section">
+    <h3 class="observ-drawer__section-title">Add Annotation</h3>
     <%= render "observ/annotations/form", annotatable: @session, annotation: @annotation %>
   </div>
 

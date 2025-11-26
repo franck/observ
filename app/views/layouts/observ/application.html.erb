@@ -47,6 +47,15 @@
           <li class="observ-nav__item">
             <%= link_to "Datasets", datasets_path, class: "observ-nav__link #{controller_name == 'datasets' || controller_name == 'dataset_items' || controller_name == 'dataset_runs' ? 'observ-nav__link--active' : ''}" %>
           </li>
+          <li class="observ-nav__item">
+            <%= link_to reviews_path, class: "observ-nav__link #{controller_name == 'review_queue' ? 'observ-nav__link--active' : ''}" do %>
+              Review Queue
+              <% pending_count = Observ::ReviewItem.actionable.count rescue 0 %>
+              <% if pending_count > 0 %>
+                <span class="observ-badge observ-badge--danger"><%= pending_count %></span>
+              <% end %>
+            <% end %>
+          </li>
         </ul>
 
         <div class="observ-nav__actions">
