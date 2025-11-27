@@ -102,9 +102,9 @@
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
-    color: $observ-gray-900;
-    background-color: $observ-white;
-    border: 1px solid $observ-gray-300;
+    color: $observ-text-primary;
+    background-color: $observ-bg-elevated;
+    border: 1px solid $observ-border-color;
     border-radius: $observ-border-radius-sm;
     margin: 0;
 
@@ -115,13 +115,13 @@
     }
 
     &::placeholder {
-      color: $observ-gray-400;
+      color: $observ-text-muted;
       opacity: 1;
     }
 
     &:disabled {
-      background-color: $observ-gray-100;
-      color: $observ-gray-500;
+      background-color: $observ-bg-surface;
+      color: $observ-text-muted;
       cursor: not-allowed;
     }
   }
@@ -141,8 +141,8 @@
   input[type="time"] {
     height: auto;
     padding: $observ-spacing-sm $observ-spacing-md;
-    background-color: $observ-white;
-    color: $observ-gray-900;
+    background-color: $observ-bg-elevated;
+    color: $observ-text-primary;
   }
 
   // Date inputs - ensure consistent styling
@@ -151,10 +151,12 @@
   input[type="month"],
   input[type="week"],
   input[type="time"] {
+    color-scheme: dark;
+
     &::-webkit-calendar-picker-indicator {
       cursor: pointer;
       opacity: 0.6;
-      filter: none;
+      filter: invert(1);
 
       &:hover {
         opacity: 1;
@@ -169,9 +171,9 @@
     -moz-appearance: none;
     padding: $observ-spacing-sm $observ-spacing-md;
     padding-right: calc(#{$observ-spacing-md} + 1.5rem);
-    background-color: $observ-white;
-    color: $observ-gray-900;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-color: $observ-bg-elevated;
+    color: $observ-text-primary;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right $observ-spacing-sm center;
     cursor: pointer;
@@ -181,16 +183,16 @@
     }
 
     option {
-      background-color: $observ-white;
-      color: $observ-gray-900;
+      background-color: $observ-bg-elevated;
+      color: $observ-text-primary;
     }
   }
 
   // Textarea
   textarea {
     padding: $observ-spacing-sm $observ-spacing-md;
-    background-color: $observ-white;
-    color: $observ-gray-900;
+    background-color: $observ-bg-elevated;
+    color: $observ-text-primary;
     resize: vertical;
     min-height: 80px;
   }

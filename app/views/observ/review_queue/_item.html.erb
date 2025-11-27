@@ -1,15 +1,15 @@
 <tr class="observ-table__row">
-  <td>
+  <td class="observ-table__cell">
     <span class="observ-badge <%= review_item.priority_badge_class %>">
       <%= review_item.priority.capitalize %>
     </span>
   </td>
-  <td>
+  <td class="observ-table__cell">
     <span class="observ-type-label">
       <%= review_item.reviewable_type_display %>
     </span>
   </td>
-  <td>
+  <td class="observ-table__cell">
     <%= review_item.reason_display %>
     <% if review_item.reason_details.present? %>
       <span class="observ-text--muted observ-text--small">
@@ -23,17 +23,17 @@
       </span>
     <% end %>
   </td>
-  <td>
+  <td class="observ-table__cell">
     <span class="observ-badge observ-badge--<%= review_item.status == 'in_progress' ? 'warning' : 'secondary' %>">
       <%= review_item.status.humanize %>
     </span>
   </td>
-  <td>
+  <td class="observ-table__cell">
     <span class="observ-text--muted" title="<%= review_item.created_at %>">
       <%= time_ago_in_words(review_item.created_at) %> ago
     </span>
   </td>
-  <td>
-    <%= link_to "Review", review_path(review_item), class: "observ-button observ-button--primary observ-button--small" %>
+  <td class="observ-table__cell observ-table__cell--actions">
+    <%= link_to "Review", review_path(review_item), class: "observ-button observ-button--sm" %>
   </td>
 </tr>
