@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2025-11-27
+
+### Added
+
+- **Vite Entry Point**: Dedicated Vite entry point for isolated asset loading
+  - Enables cleaner integration with host application's asset pipeline
+  - Better separation of Observ assets from host app assets
+
 ## [0.6.0] - 2025-11-27
 
 ### Added
@@ -506,6 +514,7 @@ Chat feature adds (optional):
 
 ---
 
+[0.6.1]: https://github.com/franck/observ/releases/tag/v0.6.1
 [0.6.0]: https://github.com/franck/observ/releases/tag/v0.6.0
 [0.5.1]: https://github.com/franck/observ/releases/tag/v0.5.1
 [0.5.0]: https://github.com/franck/observ/releases/tag/v0.5.0
@@ -513,4 +522,4 @@ Chat feature adds (optional):
 [0.3.0]: https://github.com/franck/observ/releases/tag/v0.3.0
 [0.1.2]: https://github.com/franck/observ/releases/tag/v0.1.2
 [0.1.0]: https://github.com/franck/observ/releases/tag/v0.1.0
-[Unreleased]: https://github.com/franck/observ/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/franck/observ/compare/v0.6.1...HEAD
