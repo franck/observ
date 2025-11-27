@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <%= paginate @review_items, theme: "observ" %>
+    <%= observ_pagination(@review_items) %>
   <% else %>
     <div class="observ-empty-state">
       <p class="observ-empty-state__text">No items to review</p>
