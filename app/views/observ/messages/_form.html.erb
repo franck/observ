@@ -1,4 +1,4 @@
-<%= form_with(model: message, url: chat_messages_path(chat), id: "new_message", data: { controller: "observ--message-form" }) do |form| %>
+<%= form_with(model: message, url: chat_messages_path(chat), id: "new_message", class: "observ-message-form", data: { controller: "observ--message-form" }) do |form| %>
   <% if message.errors.any? %>
     <div class="observ-alert observ-alert--danger">
       <h3 class="observ-alert__title"><%= pluralize(message.errors.count, "error") %> prohibited this message from being saved:</h3>
@@ -10,24 +10,23 @@
     </div>
   <% end %>
 
-  <div class="observ-form-group">
-    <%= form.text_field :content, 
-      class: "observ-input observ-input--wide", 
+  <div class="observ-message-form__group">
+    <%= form.text_area :content, 
+      rows: 2,
+      class: "observ-message-form__input", 
       placeholder: "Type your message...", 
       autofocus: true,
       data: { 
         observ__message_form_target: "input",
         action: "input->observ--message-form#toggleSubmit"
       } %>
-  </div>
-
-  <div class="observ-form-actions">
-    <%= form.submit "Send message", 
+    <%= form.submit "Send", 
       class: "observ-button observ-button--primary",
       data: { observ__message_form_target: "submit" } %>
-    <span class="observ-loading-indicator" data-observ--message-form-target="loadingIndicator" style="display: none;">
-      <span class="observ-spinner"></span>
-      <span>Waiting for response...</span>
-    </span>
+  </div>
+  
+  <div class="observ-message-form__loading" data-observ--message-form-target="loadingIndicator" style="display: none;">
+    <span class="observ-spinner"></span>
+    <span>Waiting for response...</span>
   </div>
 <% end %>

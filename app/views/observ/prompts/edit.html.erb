@@ -3,15 +3,15 @@
 <% content_for :page_header do %>
   <div class="observ-page-header__content">
     <div>
-      <%= link_to "← Back to Prompt", prompt_path(@prompt.name), style: "display: inline-block; margin-bottom: 0.5rem; color: #2563eb;" %>
+      <%= link_to "← Back to Prompt", prompt_path(@prompt.name), class: "observ-link" %>
       <h1 class="observ-page-header__title">Edit Prompt Draft</h1>
-      <p style="color: #6b7280; margin-top: 0.25rem;">
+      <p class="observ-prompt-header__subtitle">
         Editing <%= @prompt.name %> (v<%= @prompt.version %> - Draft)
       </p>
     </div>
   </div>
 <% end %>
 
-<div class="observ-container" style="max-width: 56rem; margin-left: auto; margin-right: auto;">
+<div class="observ-container">
   <%= render "form", prompt: @prompt %>
 </div>

@@ -99,9 +99,9 @@
   input,
   select,
   textarea {
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
+    font-family: $observ-font-family;
+    font-size: $observ-font-size-base;
+    line-height: 1.5;
     color: $observ-text-primary;
     background-color: $observ-bg-elevated;
     border: 1px solid $observ-border-color;
@@ -114,9 +114,45 @@
       box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
     }
 
+    // Placeholder styling - full reset with vendor prefixes
     &::placeholder {
       color: $observ-text-muted;
       opacity: 1;
+      font-family: $observ-font-family;
+      font-style: normal;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    &::-webkit-input-placeholder {
+      color: $observ-text-muted;
+      opacity: 1;
+      font-family: $observ-font-family;
+      font-style: normal;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    &::-moz-placeholder {
+      color: $observ-text-muted;
+      opacity: 1;
+      font-family: $observ-font-family;
+      font-style: normal;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    &:-ms-input-placeholder {
+      color: $observ-text-muted;
+      opacity: 1;
+      font-family: $observ-font-family;
+      font-style: normal;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: normal;
     }
 
     &:disabled {

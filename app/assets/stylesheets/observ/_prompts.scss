@@ -277,6 +277,276 @@
     color: $observ-text-secondary;
   }
 
+  // ==========================================================================
+  // PROMPT PAGE HEADER
+  // ==========================================================================
+  .observ-prompt-header {
+    &__subtitle {
+      color: $observ-text-muted;
+      margin-top: $observ-spacing-xs;
+      font-size: $observ-font-size-sm;
+    }
+  }
+
+  // ==========================================================================
+  // TIMELINE (for versions page)
+  // ==========================================================================
+  .observ-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: $observ-spacing-lg;
+  }
+
+  .observ-timeline__item {
+    display: flex;
+    gap: $observ-spacing-md;
+  }
+
+  .observ-timeline__marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .observ-timeline__dot {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &--success {
+      background-color: $observ-success;
+    }
+
+    &--warning {
+      background-color: $observ-warning;
+    }
+
+    &--muted {
+      background-color: $observ-text-muted;
+    }
+  }
+
+  .observ-timeline__line {
+    width: 2px;
+    flex: 1;
+    background-color: $observ-border-color;
+    margin: $observ-spacing-xs 0;
+  }
+
+  .observ-timeline__content {
+    flex: 1;
+    padding-bottom: $observ-spacing-lg;
+  }
+
+  // ==========================================================================
+  // VERSION CARD (for timeline items)
+  // ==========================================================================
+  .observ-version-card {
+    border: 1px solid $observ-border-color;
+    border-radius: $observ-border-radius;
+    padding: $observ-spacing-md;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: $observ-border-strong;
+    }
+
+    &__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: $observ-spacing-sm;
+    }
+
+    &__title-row {
+      display: flex;
+      align-items: center;
+      gap: $observ-spacing-sm;
+      margin-bottom: $observ-spacing-xs;
+    }
+
+    &__title {
+      font-size: $observ-font-size-lg;
+      font-weight: 600;
+      margin: 0;
+      color: $observ-text-primary;
+    }
+
+    &__meta {
+      font-size: $observ-font-size-sm;
+      color: $observ-text-muted;
+      margin: 0;
+    }
+
+    &__author {
+      font-weight: 500;
+    }
+
+    &__commit {
+      font-size: $observ-font-size-sm;
+      color: $observ-text-secondary;
+      margin: $observ-spacing-sm 0 0;
+      font-style: italic;
+    }
+
+    &__actions {
+      display: flex;
+      gap: $observ-spacing-sm;
+    }
+
+    &__preview {
+      margin-top: $observ-spacing-sm;
+      padding: $observ-spacing-sm;
+      background-color: $observ-bg-elevated;
+      border-radius: $observ-border-radius-sm;
+      font-family: $observ-font-family-mono;
+      font-size: $observ-font-size-sm;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: $observ-text-secondary;
+    }
+  }
+
+  // ==========================================================================
+  // COMPARE PAGE
+  // ==========================================================================
+  .observ-compare {
+    &__selector {
+      display: flex;
+      gap: $observ-spacing-md;
+      align-items: flex-end;
+    }
+
+    &__field {
+      flex: 1;
+    }
+
+    &__grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      border-top: 1px solid $observ-border-subtle;
+
+      @media (max-width: $observ-breakpoint-md) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &__panel {
+      padding: $observ-spacing-lg;
+
+      &--left {
+        border-right: 1px solid $observ-border-subtle;
+
+        @media (max-width: $observ-breakpoint-md) {
+          border-right: none;
+          border-bottom: 1px solid $observ-border-subtle;
+        }
+      }
+    }
+
+    &__version-header {
+      display: flex;
+      align-items: center;
+      gap: $observ-spacing-sm;
+      margin-bottom: $observ-spacing-md;
+    }
+
+    &__version-title {
+      font-size: $observ-font-size-xl;
+      font-weight: 600;
+      margin: 0;
+      color: $observ-text-primary;
+    }
+
+    &__metadata {
+      display: flex;
+      flex-direction: column;
+      gap: $observ-spacing-sm;
+      font-size: $observ-font-size-sm;
+    }
+
+    &__metadata-item {
+      dt {
+        color: $observ-text-muted;
+        margin: 0;
+      }
+
+      dd {
+        font-weight: 500;
+        margin: $observ-spacing-xs 0 0;
+        color: $observ-text-primary;
+
+        &--italic {
+          font-style: italic;
+        }
+      }
+    }
+
+    &__content-block {
+      background-color: $observ-bg-elevated;
+      padding: $observ-spacing-md;
+      border-radius: $observ-border-radius-sm;
+      overflow-x: auto;
+
+      pre {
+        margin: 0;
+        font-family: $observ-font-family-mono;
+        font-size: $observ-font-size-sm;
+        white-space: pre-wrap;
+      }
+    }
+
+    &__section-title {
+      font-size: $observ-font-size-xl;
+      font-weight: 600;
+      margin: 0;
+      color: $observ-text-primary;
+    }
+  }
+
+  // ==========================================================================
+  // PROMPT FORM ENHANCEMENTS
+  // ==========================================================================
+  .observ-prompt-form {
+    &__variable-preview {
+      margin-top: $observ-spacing-sm;
+      padding: $observ-spacing-sm;
+      background-color: rgba($observ-info, 0.1);
+      border-radius: $observ-border-radius-sm;
+      display: none;
+
+      &--visible {
+        display: block;
+      }
+    }
+
+    &__variable-title {
+      font-size: $observ-font-size-sm;
+      font-weight: 500;
+      color: $observ-info;
+      margin: 0 0 $observ-spacing-sm;
+    }
+
+    &__variable-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $observ-spacing-sm;
+    }
+
+  }
+
+  // Form actions with space-between layout
+  .observ-form__actions--between {
+    justify-content: space-between;
+  }
+
+  .observ-form__actions-group {
+    display: flex;
+    gap: $observ-spacing-sm;
+  }
+
   // Prompt Actions Component
   .prompt-actions {
     display: flex;

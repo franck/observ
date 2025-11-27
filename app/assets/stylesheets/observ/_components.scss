@@ -311,10 +311,10 @@
     border-radius: $observ-border-radius-sm;
     background-color: $observ-bg-elevated;
     color: $observ-text-primary;
+    font-family: $observ-font-family;
     font-size: $observ-font-size-sm;
     line-height: 1.5;
     transition: $observ-transition;
-    font-family: inherit;
 
     &:hover {
       border-color: $observ-border-strong;
@@ -326,8 +326,45 @@
       box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
     }
 
+    // Placeholder styling - full reset with vendor prefixes
     &::placeholder {
       color: $observ-text-muted;
+      opacity: 1;
+      font-family: $observ-font-family;
+      font-style: normal;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    &::-webkit-input-placeholder {
+      color: $observ-text-muted;
+      opacity: 1;
+      font-family: $observ-font-family;
+      font-style: normal;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    &::-moz-placeholder {
+      color: $observ-text-muted;
+      opacity: 1;
+      font-family: $observ-font-family;
+      font-style: normal;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    &:-ms-input-placeholder {
+      color: $observ-text-muted;
+      opacity: 1;
+      font-family: $observ-font-family;
+      font-style: normal;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: normal;
     }
 
     &:disabled {
@@ -382,7 +419,9 @@
     &__textarea {
       width: 100%;
       padding: $observ-spacing-sm $observ-spacing-md;
+      font-family: $observ-font-family;
       font-size: $observ-font-size-base;
+      line-height: 1.5;
       color: $observ-text-primary;
       background-color: $observ-bg-elevated;
       border: 1px solid $observ-border-color;
@@ -395,8 +434,45 @@
         box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
       }
 
+      // Placeholder styling - full reset with vendor prefixes
       &::placeholder {
         color: $observ-text-muted;
+        opacity: 1;
+        font-family: $observ-font-family;
+        font-style: normal;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: normal;
+      }
+
+      &::-webkit-input-placeholder {
+        color: $observ-text-muted;
+        opacity: 1;
+        font-family: $observ-font-family;
+        font-style: normal;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: normal;
+      }
+
+      &::-moz-placeholder {
+        color: $observ-text-muted;
+        opacity: 1;
+        font-family: $observ-font-family;
+        font-style: normal;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: normal;
+      }
+
+      &:-ms-input-placeholder {
+        color: $observ-text-muted;
+        opacity: 1;
+        font-family: $observ-font-family;
+        font-style: normal;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: normal;
       }
 
       &:disabled {
@@ -413,6 +489,23 @@
       &--code {
         font-family: $observ-font-family-mono;
         font-size: $observ-font-size-sm;
+
+        // Code textarea placeholder should also use mono font
+        &::placeholder {
+          font-family: $observ-font-family-mono;
+        }
+
+        &::-webkit-input-placeholder {
+          font-family: $observ-font-family-mono;
+        }
+
+        &::-moz-placeholder {
+          font-family: $observ-font-family-mono;
+        }
+
+        &:-ms-input-placeholder {
+          font-family: $observ-font-family-mono;
+        }
       }
     }
 
@@ -442,6 +535,87 @@
       padding-top: $observ-spacing-lg;
       border-top: 1px solid $observ-border-subtle;
       margin-top: $observ-spacing-lg;
+    }
+
+    &__checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: $observ-spacing-xs;
+    }
+
+    &__checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: $observ-spacing-sm;
+      cursor: pointer;
+      user-select: none;
+
+      &:hover .observ-form__checkbox-custom {
+        border-color: $observ-primary;
+      }
+    }
+
+    &__checkbox {
+      // Hide the native checkbox but keep it accessible
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+
+      // When checked, style the custom checkbox
+      &:checked + .observ-form__checkbox-custom {
+        background-color: $observ-primary;
+        border-color: $observ-primary;
+
+        &::after {
+          opacity: 1;
+          transform: rotate(45deg) scale(1);
+        }
+      }
+
+      // Focus state
+      &:focus + .observ-form__checkbox-custom {
+        box-shadow: 0 0 0 3px rgba($observ-primary, 0.2);
+      }
+    }
+
+    &__checkbox-custom {
+      position: relative;
+      width: 1.125rem;
+      height: 1.125rem;
+      background-color: $observ-bg-elevated;
+      border: 2px solid $observ-border-strong;
+      border-radius: $observ-border-radius-sm;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+
+      // Checkmark
+      &::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 5px;
+        height: 9px;
+        border: solid $observ-white;
+        border-width: 0 2px 2px 0;
+        opacity: 0;
+        transform: rotate(45deg) scale(0.5);
+        transition: all 0.15s ease;
+      }
+    }
+
+    &__checkbox-text {
+      font-family: $observ-font-family;
+      font-size: $observ-font-size-sm;
+      color: $observ-text-primary;
+    }
+
+    &__checkbox-hint {
+      margin-left: calc(1.125rem + #{$observ-spacing-sm});
+      font-family: $observ-font-family;
+      font-size: $observ-font-size-xs;
+      color: $observ-text-muted;
     }
   }
 

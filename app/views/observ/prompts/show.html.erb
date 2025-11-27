@@ -3,9 +3,9 @@
 <% content_for :page_header do %>
   <div class="observ-page-header__content">
     <div>
-      <%= link_to "← Back to Prompts", prompts_path, class: "prompt-page-header__back-link" %>
+      <%= link_to "← Back to Prompts", prompts_path, class: "observ-link" %>
       <h1 class="observ-page-header__title"><%= @prompt.name %></h1>
-      <p class="prompt-page-header__subtitle">
+      <p class="observ-prompt-header__subtitle">
         Currently viewing version <%= @prompt.version %>
       </p>
     </div>

@@ -1,76 +1,74 @@
 <%= form_with model: form, url: prompts_path, method: :post do |f| %>
 
   <% if form.errors.any? %>
-    <div class="observ-card" style="margin-bottom: 1.5rem; border-left: 4px solid #dc2626;">
-      <div class="observ-card__body">
-        <h3 style="color: #dc2626; font-weight: 500; margin: 0 0 0.5rem;">
-          <%= pluralize(form.errors.count, "error") %> prohibited this prompt from being saved:
-        </h3>
-        <ul style="list-style: disc; padding-left: 1.5rem; color: #dc2626; font-size: 0.875rem; margin: 0;">
-          <% form.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
+    <div class="observ-alert observ-alert--danger">
+      <h3 class="observ-alert__title">
+        <%= pluralize(form.errors.count, "error") %> prohibited this prompt from being saved:
+      </h3>
+      <ul class="observ-alert__list">
+        <% form.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
     </div>
   <% end %>
 
   <div class="observ-card">
     <div class="observ-card__body">
       <!-- Prompt Name -->
-      <div style="margin-bottom: 1.5rem;">
-        <%= f.label :name, "Prompt Name", style: "display: block; margin-bottom: 0.5rem; font-weight: 500;" %>
+      <div class="observ-form__group">
+        <%= f.label :name, "Prompt Name", class: "observ-form__label" %>
         <%= f.text_field :name,
           placeholder: "e.g., research-agent-system-prompt",
-          style: "width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" %>
-        <p style="margin-top: 0.25rem; font-size: 0.875rem; color: #6b7280;">
+          class: "observ-form__input" %>
+        <p class="observ-form__hint">
           Use kebab-case. This will be used to identify the prompt (e.g., "my-agent-system-prompt")
         </p>
       </div>
 
       <!-- Commit Message -->
-      <div style="margin-bottom: 1.5rem;">
-        <%= f.label :commit_message, "Commit Message", style: "display: block; margin-bottom: 0.5rem; font-weight: 500;" %>
+      <div class="observ-form__group">
+        <%= f.label :commit_message, "Commit Message", class: "observ-form__label" %>
         <%= f.text_area :commit_message,
           rows: 2,
           placeholder: "Describe what changed in this version...",
-          style: "width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-family: inherit;" %>
-        <p style="margin-top: 0.25rem; font-size: 0.875rem; color: #6b7280;">
+          class: "observ-form__textarea" %>
+        <p class="observ-form__hint">
           Optional but recommended for tracking changes
         </p>
       </div>
 
       <!-- Prompt Content -->
-      <div style="margin-bottom: 1.5rem;" data-controller="observ--prompt-variables">
-        <%= f.label :prompt, "Prompt Content", style: "display: block; margin-bottom: 0.5rem; font-weight: 500;" %>
+      <div class="observ-form__group" data-controller="observ--prompt-variables">
+        <%= f.label :prompt, "Prompt Content", class: "observ-form__label" %>
         <%= f.text_area :prompt,
           rows: 15,
           placeholder: "Enter your prompt here...\n\nUse {{variable_name}} for dynamic variables.",
-          style: "width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-family: monospace; font-size: 0.875rem;",
+          class: "observ-form__textarea observ-form__textarea--code",
           data: { 
             observ__prompt_variables_target: "input",
             action: "input->observ--prompt-variables#detectVariables"
           } %>
-        <p style="margin-top: 0.25rem; font-size: 0.875rem; color: #6b7280;">
-          Use <code style="background-color: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem;">{{variable_name}}</code> syntax for variables
+        <p class="observ-form__hint">
+          Use <code class="observ-code">{{variable_name}}</code> syntax for variables
         </p>
 
         <!-- Variable Preview -->
-        <div data-observ--prompt-variables-target="preview" style="margin-top: 0.75rem; padding: 0.75rem; background-color: #eff6ff; border-radius: 0.375rem; display: none;">
-          <p style="font-size: 0.875rem; font-weight: 500; color: #1e40af; margin: 0 0 0.5rem;">Detected Variables:</p>
-          <div data-observ--prompt-variables-target="list" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+        <div data-observ--prompt-variables-target="preview" class="observ-prompt-form__variable-preview">
+          <p class="observ-prompt-form__variable-title">Detected Variables:</p>
+          <div data-observ--prompt-variables-target="list" class="observ-prompt-form__variable-list"></div>
         </div>
       </div>
 
       <!-- Configuration (JSON) -->
-      <div style="margin-bottom: 1.5rem;">
-        <%= f.label :config, "Configuration (JSON)", style: "display: block; margin-bottom: 0.5rem; font-weight: 500;" %>
+      <div class="observ-form__group">
+        <%= f.label :config, "Configuration (JSON)", class: "observ-form__label" %>
         <%= f.text_area :config,
           rows: 8,
           placeholder: '{\n  "model": "gpt-4o",\n  "temperature": 0.7,\n  "max_tokens": 2000\n}',
-          style: "width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-family: monospace; font-size: 0.875rem;",
+          class: "observ-form__textarea observ-form__textarea--code",
           data: { controller: "json-editor" } %>
-        <p style="margin-top: 0.25rem; font-size: 0.875rem; color: #6b7280;">
+        <p class="observ-form__hint">
           Optional JSON configuration for model parameters and metadata
         </p>
       </div>
@@ -79,20 +77,21 @@
       <%= f.hidden_field :from_version %>
 
       <!-- Actions -->
-      <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
-        <div>
-          <label style="display: flex; align-items: center;">
-            <%= f.check_box :promote_to_production, style: "margin-right: 0.5rem;" %>
-            <span style="font-size: 0.875rem; color: #374151;">
+      <div class="observ-form__actions observ-form__actions--between">
+        <div class="observ-form__checkbox-group">
+          <label class="observ-form__checkbox-label">
+            <%= f.check_box :promote_to_production, class: "observ-form__checkbox" %>
+            <span class="observ-form__checkbox-custom"></span>
+            <span class="observ-form__checkbox-text">
               Promote to production immediately
             </span>
           </label>
-          <p style="margin-left: 1.5rem; font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+          <p class="observ-form__checkbox-hint">
             If unchecked, prompt will be saved as draft
           </p>
         </div>
 
-        <div style="display: flex; gap: 0.75rem;">
+        <div class="observ-form__actions-group">
           <%= link_to "Cancel", prompts_path, class: "observ-button" %>
           <%= f.submit "Create Prompt", class: "observ-button observ-button--primary" %>
         </div>

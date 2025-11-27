@@ -159,4 +159,90 @@
       font-weight: 600;
     }
   }
+
+  // ==========================================================================
+  // MESSAGE FORM (chat input)
+  // ==========================================================================
+  .observ-message-form {
+    padding: $observ-spacing-lg;
+    background: $observ-bg-elevated;
+    border-top: 1px solid $observ-border-color;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+
+    &__group {
+      display: flex;
+      gap: $observ-spacing-md;
+      align-items: flex-end;
+    }
+
+    &__input {
+      flex: 1;
+      padding: $observ-spacing-md $observ-spacing-lg;
+      border: 2px solid $observ-border-color;
+      border-radius: $observ-border-radius;
+      background: $observ-bg-surface;
+      resize: vertical;
+      min-height: 60px;
+      max-height: 200px;
+      font-family: $observ-font-family;
+      font-size: $observ-font-size-base;
+      font-weight: 400;
+      color: $observ-text-primary;
+      line-height: 1.6;
+      transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        border-color: $observ-border-strong;
+        background: lighten($observ-bg-surface, 2%);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $observ-primary;
+        background: lighten($observ-bg-surface, 3%);
+        box-shadow: 0 0 0 3px rgba($observ-primary, 0.15);
+      }
+
+      // Placeholder styling - vendor prefixes for cross-browser support
+      &::placeholder {
+        color: $observ-text-muted;
+        font-style: italic;
+        opacity: 1;
+      }
+
+      &::-webkit-input-placeholder {
+        color: $observ-text-muted;
+        font-style: italic;
+        opacity: 1;
+      }
+
+      &::-moz-placeholder {
+        color: $observ-text-muted;
+        font-style: italic;
+        opacity: 1;
+      }
+
+      &:-ms-input-placeholder {
+        color: $observ-text-muted;
+        font-style: italic;
+        opacity: 1;
+      }
+    }
+
+    .observ-button {
+      min-width: 100px;
+      padding: $observ-spacing-md $observ-spacing-xl;
+      font-size: $observ-font-size-base;
+      flex-shrink: 0;
+    }
+
+    &__loading {
+      display: flex;
+      align-items: center;
+      gap: $observ-spacing-sm;
+      margin-top: $observ-spacing-sm;
+      color: $observ-text-secondary;
+      font-size: $observ-font-size-sm;
+    }
+  }
 }
