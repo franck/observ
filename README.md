@@ -89,7 +89,7 @@ rails db:migrate
 - Observ enhancements on RubyLLM infrastructure
 - Example agents and tools
 
-See **[Chat Installation Guide](docs/CHAT_INSTALLATION.md)** for detailed setup.
+See **Creating Agents and Services** in `docs/creating-agents-and-services.md` for detailed setup.
 
 ---
 
@@ -345,7 +345,7 @@ end
    - All chat interactions appear in `/observ/sessions`
    - Full observability of tokens, costs, and tool calls
 
-See **[Chat Installation Guide](docs/CHAT_INSTALLATION.md)** for complete documentation.
+See `docs/creating-agents-and-services.md` for complete documentation on creating agents.
 
 ### Phase Tracking (Optional Chat Feature)
 
@@ -528,6 +528,54 @@ session.annotations.create(
 # Visit /observ/annotations/export in browser
 ```
 
+### Datasets & Evaluators
+
+Observ includes a dataset and evaluator system for testing LLM outputs against predefined inputs and scoring results.
+
+**Creating a dataset:**
+
+```ruby
+# Create a dataset
+dataset = Observ::Dataset.create!(
+  name: "Article Recommendations Test Set",
+  description: "Test cases for article recommendation system"
+)
+
+# Add test items
+dataset.items.create!(
+  input: { user_query: "Recommend articles for someone feeling anxious" },
+  expected_output: { recommended_articles: ["art_001", "art_003"] }
+)
+```
+
+**Running evaluations:**
+
+```ruby
+# Create a dataset run
+run = dataset.runs.create!(
+  name: "GPT-4 baseline",
+  model_name: "gpt-4",
+  status: :pending
+)
+
+# Run items are created when executing your LLM against the dataset
+# Each run item links a dataset item to a trace
+
+# Score outputs with built-in evaluators
+Observ::Evaluators::ExactMatchEvaluator.new.evaluate(run_item)
+Observ::Evaluators::ContainsEvaluator.new(keywords: ["anxiety"]).evaluate(run_item)
+```
+
+**Built-in evaluators:**
+- `ExactMatchEvaluator` - Exact string match against expected output
+- `ContainsEvaluator` - Check if output contains specific keywords
+- `JsonStructureEvaluator` - Validate JSON structure
+- `LlmJudgeEvaluator` - Use an LLM to score output quality
+
+Visit `/observ/datasets` to manage datasets and view run results in the UI.
+
+See `docs/dataset_and_evaluator_feature.md` for complete documentation.
+
 ## Asset Management
 
 Observ provides several tools for managing assets in your Rails application:
@@ -622,7 +670,7 @@ Observ uses:
 ### Chat Feature (Optional Add-on)
 - **RubyLLM**: Required for chat/agent testing feature
 - Installed with `rails generate observ:install:chat`
-- See [Chat Installation Guide](docs/CHAT_INSTALLATION.md)
+- See `docs/creating-agents-and-services.md` for agent documentation
 
 ## Testing
 
@@ -775,4 +823,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Version
 
-Current version: 0.1.0
+Current version: 0.5.1
