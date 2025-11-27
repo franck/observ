@@ -9,11 +9,11 @@
     align-items: center;
     padding: $observ-spacing-md 0;
     margin-top: $observ-spacing-xl;
-    border-top: 1px solid $observ-gray-200;
+    border-top: 1px solid $observ-border-subtle;
     
     &__info {
       font-size: $observ-font-size-sm;
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
     }
     
     &__links {
@@ -31,16 +31,16 @@
         display: inline-block;
         padding: 0.375rem 0.75rem;
         text-decoration: none;
-        color: $observ-gray-700;
-        background-color: $observ-white;
-        border: 1px solid $observ-gray-300;
+        color: $observ-text-secondary;
+        background-color: $observ-bg-elevated;
+        border: 1px solid $observ-border-color;
         border-radius: $observ-border-radius-sm;
         font-size: $observ-font-size-sm;
         transition: $observ-transition;
         line-height: 1.5;
         
         &:hover:not(.current):not(.gap) {
-          background-color: $observ-gray-50;
+          background-color: $observ-bg-hover;
           border-color: $observ-primary;
           color: $observ-primary;
         }
@@ -57,7 +57,7 @@
           border: none;
           background: none;
           cursor: default;
-          color: $observ-gray-400;
+          color: $observ-text-muted;
         }
         
         &.disabled {
@@ -65,9 +65,9 @@
           cursor: not-allowed;
           
           &:hover {
-            background-color: $observ-white;
-            border-color: $observ-gray-300;
-            color: $observ-gray-700;
+            background-color: $observ-bg-elevated;
+            border-color: $observ-border-color;
+            color: $observ-text-secondary;
           }
         }
       }
@@ -116,16 +116,16 @@
         display: inline-block;
         padding: 0.375rem 0.75rem;
         text-decoration: none;
-        color: $observ-gray-700;
-        background-color: $observ-white;
-        border: 1px solid $observ-gray-300;
+        color: $observ-text-secondary;
+        background-color: $observ-bg-elevated;
+        border: 1px solid $observ-border-color;
         border-radius: $observ-border-radius-sm;
         font-size: $observ-font-size-sm;
         transition: $observ-transition;
         line-height: 1.5;
         
         &:hover:not(.current):not(.gap) {
-          background-color: $observ-gray-50;
+          background-color: $observ-bg-hover;
           border-color: $observ-primary;
           color: $observ-primary;
         }
@@ -142,7 +142,7 @@
           border: none;
           background: none;
           cursor: default;
-          color: $observ-gray-400;
+          color: $observ-text-muted;
         }
       }
       
