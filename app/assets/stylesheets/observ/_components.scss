@@ -530,10 +530,11 @@
       padding: $observ-spacing-sm $observ-spacing-md;
       background-color: $observ-bg-elevated;
       border-radius: $observ-border-radius-sm;
+      border: 1px solid transparent;
       transition: $observ-transition;
 
       &:hover {
-        background-color: $observ-bg-hover;
+        border-color: $observ-border-subtle;
       }
     }
 
