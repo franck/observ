@@ -1,9 +1,16 @@
+// =============================================================================
+// BRAND & ACCENT COLORS
+// =============================================================================
 $observ-primary: #3b82f6;
 $observ-success: #10b981;
 $observ-warning: #f59e0b;
 $observ-danger: #ef4444;
 $observ-info: #06b6d4;
+$observ-purple: #a78bfa;              // AI/special features accent
 
+// =============================================================================
+// GRAY SCALE
+// =============================================================================
 $observ-gray-50: #f9fafb;
 $observ-gray-100: #f3f4f6;
 $observ-gray-200: #e5e7eb;
@@ -18,6 +25,47 @@ $observ-gray-900: #111827;
 $observ-white: #ffffff;
 $observ-black: #000000;
 
+// =============================================================================
+// DARK THEME - Base Colors (Better Stack inspired)
+// =============================================================================
+$observ-dark-bg-page: #0d0d1a;        // Deep navy page background
+$observ-dark-bg-surface: #1a1a2e;     // Card/surface background
+$observ-dark-bg-elevated: #252540;    // Elevated elements (dropdowns, modals)
+$observ-dark-bg-hover: #2a2a45;       // Hover states
+
+// =============================================================================
+// DARK THEME - Borders
+// =============================================================================
+$observ-dark-border: #2a2a40;         // Standard border
+$observ-dark-border-subtle: #1f1f35;  // Subtle dividers
+$observ-dark-border-strong: #3a3a55;  // Emphasized borders
+
+// =============================================================================
+// DARK THEME - Text
+// =============================================================================
+$observ-dark-text-primary: #f3f4f6;   // Primary text (gray-100)
+$observ-dark-text-secondary: #9ca3af; // Secondary text (gray-400)
+$observ-dark-text-muted: #6b7280;     // Muted text (gray-500)
+
+// =============================================================================
+// SEMANTIC COLOR MAPPINGS (dark theme as default)
+// =============================================================================
+$observ-bg-page: $observ-dark-bg-page;
+$observ-bg-surface: $observ-dark-bg-surface;
+$observ-bg-elevated: $observ-dark-bg-elevated;
+$observ-bg-hover: $observ-dark-bg-hover;
+
+$observ-border-color: $observ-dark-border;
+$observ-border-subtle: $observ-dark-border-subtle;
+$observ-border-strong: $observ-dark-border-strong;
+
+$observ-text-primary: $observ-dark-text-primary;
+$observ-text-secondary: $observ-dark-text-secondary;
+$observ-text-muted: $observ-dark-text-muted;
+
+// =============================================================================
+// SPACING
+// =============================================================================
 $observ-spacing-xs: 0.25rem;
 $observ-spacing-sm: 0.5rem;
 $observ-spacing-md: 1rem;

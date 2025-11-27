@@ -5,9 +5,9 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: $observ-gray-50;
+  background-color: $observ-bg-page;
   font-family: $observ-font-family;
-  color: $observ-gray-900;
+  color: $observ-text-primary;
   font-size: $observ-font-size-base;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -15,9 +15,8 @@
 
   // All nested components are scoped within .observ-layout
   .observ-nav {
-    background-color: $observ-white;
-    border-bottom: 1px solid $observ-gray-200;
-    box-shadow: $observ-shadow-sm;
+    background-color: $observ-bg-surface;
+    border-bottom: 1px solid $observ-border-color;
 
     &__container {
       max-width: 1440px;
@@ -35,7 +34,7 @@
     }
 
     &__brand-link {
-      color: $observ-gray-900;
+      color: $observ-text-primary;
       text-decoration: none;
       transition: $observ-transition;
 
@@ -82,8 +81,8 @@
       top: 100%;
       left: 0;
       margin-top: 8px;
-      background-color: $observ-white;
-      border: 1px solid $observ-gray-200;
+      background-color: $observ-bg-elevated;
+      border: 1px solid $observ-border-color;
       border-radius: $observ-border-radius;
       box-shadow: $observ-shadow-md;
       list-style: none;
@@ -109,15 +108,15 @@
     &__dropdown-link {
       display: block;
       padding: $observ-spacing-sm $observ-spacing-md;
-      color: $observ-gray-700;
+      color: $observ-text-secondary;
       text-decoration: none;
       transition: $observ-transition;
       font-weight: 500;
       white-space: nowrap;
 
       &:hover {
-        background-color: $observ-gray-100;
-        color: $observ-gray-900;
+        background-color: $observ-bg-hover;
+        color: $observ-text-primary;
         text-decoration: none;
       }
     }
@@ -125,7 +124,7 @@
     &__link {
       display: block;
       padding: $observ-spacing-sm $observ-spacing-md;
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
       text-decoration: none;
       border-radius: $observ-border-radius-sm;
       transition: $observ-transition;
@@ -133,8 +132,8 @@
       position: relative;
 
       &:hover {
-        background-color: $observ-gray-100;
-        color: $observ-gray-900;
+        background-color: $observ-bg-hover;
+        color: $observ-text-primary;
         text-decoration: none;
       }
 
@@ -163,11 +162,11 @@
       }
 
       &--secondary {
-        color: $observ-gray-500;
+        color: $observ-text-muted;
         font-size: $observ-font-size-sm;
 
         &:hover {
-          color: $observ-gray-700;
+          color: $observ-text-secondary;
         }
       }
     }
@@ -193,8 +192,8 @@
   }
 
   .observ-footer {
-    background-color: $observ-white;
-    border-top: 1px solid $observ-gray-200;
+    background-color: $observ-bg-surface;
+    border-top: 1px solid $observ-border-subtle;
     margin-top: auto;
 
     &__container {
@@ -205,7 +204,7 @@
     }
 
     &__text {
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       font-size: $observ-font-size-sm;
       margin: 0;
     }
@@ -223,12 +222,12 @@
       font-size: $observ-font-size-2xl;
       font-weight: 700;
       margin: 0;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
     }
 
     &__breadcrumb {
       font-size: $observ-font-size-sm;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       margin-bottom: $observ-spacing-xs;
 
       a {
@@ -262,7 +261,7 @@
     }
 
     &__breadcrumb {
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       font-size: $observ-font-size-sm;
       margin-bottom: $observ-spacing-xs;
     }
@@ -271,7 +270,7 @@
       font-size: $observ-font-size-3xl;
       font-weight: 700;
       margin: 0;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
       letter-spacing: -0.025em;
       line-height: 1.2;
     }
@@ -294,29 +293,30 @@
     border-radius: $observ-border-radius;
     margin-bottom: $observ-spacing-lg;
     font-size: $observ-font-size-sm;
+    border-left: 3px solid;
 
     &--success {
-      background-color: lighten($observ-success, 45%);
-      color: darken($observ-success, 20%);
-      border: 1px solid lighten($observ-success, 30%);
+      background-color: rgba($observ-success, 0.1);
+      color: lighten($observ-success, 15%);
+      border-left-color: $observ-success;
     }
 
     &--danger {
-      background-color: lighten($observ-danger, 45%);
-      color: darken($observ-danger, 20%);
-      border: 1px solid lighten($observ-danger, 30%);
+      background-color: rgba($observ-danger, 0.1);
+      color: lighten($observ-danger, 15%);
+      border-left-color: $observ-danger;
     }
 
     &--warning {
-      background-color: lighten($observ-warning, 45%);
-      color: darken($observ-warning, 30%);
-      border: 1px solid lighten($observ-warning, 30%);
+      background-color: rgba($observ-warning, 0.1);
+      color: lighten($observ-warning, 10%);
+      border-left-color: $observ-warning;
     }
 
     &--info {
-      background-color: lighten($observ-info, 45%);
-      color: darken($observ-info, 20%);
-      border: 1px solid lighten($observ-info, 30%);
+      background-color: rgba($observ-info, 0.1);
+      color: lighten($observ-info, 15%);
+      border-left-color: $observ-info;
     }
   }
 
@@ -343,13 +343,13 @@
 
     &__text {
       font-size: $observ-font-size-lg;
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
       margin: 0 0 $observ-spacing-sm;
     }
 
     &__subtext {
       font-size: $observ-font-size-sm;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       margin: 0;
     }
   }
@@ -358,7 +358,8 @@
     display: flex;
     gap: $observ-spacing-lg;
     padding: $observ-spacing-md;
-    background-color: $observ-gray-50;
+    background-color: $observ-bg-surface;
+    border: 1px solid $observ-border-subtle;
     border-radius: $observ-border-radius;
     margin-bottom: $observ-spacing-lg;
   }
@@ -372,7 +373,7 @@
     &__value {
       font-size: $observ-font-size-xl;
       font-weight: 600;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
 
       &--large {
         font-size: $observ-font-size-3xl;
@@ -381,7 +382,7 @@
 
     &__label {
       font-size: $observ-font-size-sm;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
     }
   }
 
@@ -392,12 +393,12 @@
 
     dt {
       font-weight: 500;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
     }
 
     dd {
       margin: 0;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
     }
   }
 
@@ -449,20 +450,20 @@
       display: block;
       margin-bottom: $observ-spacing-xs;
       font-weight: 500;
-      color: $observ-gray-700;
+      color: $observ-text-secondary;
       font-size: $observ-font-size-sm;
     }
 
     .observ-form-textarea {
       width: 100%;
       padding: $observ-spacing-sm;
-      border: 1px solid $observ-gray-300;
+      border: 1px solid $observ-border-color;
       border-radius: $observ-border-radius-sm;
       font-family: inherit;
       font-size: $observ-font-size-sm;
       resize: vertical;
-      background-color: $observ-white;
-      color: $observ-gray-900;
+      background-color: $observ-bg-elevated;
+      color: $observ-text-primary;
 
       &:focus {
         outline: none;
@@ -487,9 +488,10 @@
     align-items: center;
     gap: $observ-spacing-xs;
     padding: $observ-spacing-sm $observ-spacing-md;
-    border: 1px solid $observ-gray-300;
+    border: 1px solid $observ-border-color;
     border-radius: $observ-border-radius-sm;
-    background-color: $observ-white;
+    background-color: $observ-bg-elevated;
+    color: $observ-text-primary;
     cursor: pointer;
     transition: $observ-transition;
 
@@ -501,20 +503,20 @@
     }
 
     &:hover {
-      border-color: $observ-gray-400;
+      border-color: $observ-border-strong;
     }
 
     // Highlight when radio inside is checked (CSS :has selector)
     &:has(input[type="radio"]:checked) {
       border-color: $observ-primary;
-      background-color: lighten($observ-primary, 45%);
+      background-color: rgba($observ-primary, 0.15);
       box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
     }
 
     // Keep legacy --selected modifier for backwards compatibility
     &--selected {
       border-color: $observ-primary;
-      background-color: lighten($observ-primary, 45%);
+      background-color: rgba($observ-primary, 0.15);
     }
   }
 
