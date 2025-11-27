@@ -60,20 +60,16 @@
         </div>
         <div class="observ-card__body">
           <% if @stats[:by_priority].any? %>
-            <table class="observ-table observ-table--compact">
-              <tbody>
-                <% @stats[:by_priority].each do |priority, count| %>
-                  <tr>
-                    <td>
-                      <span class="observ-badge <%= priority_badge_class(priority) %>">
-                        <%= priority.to_s.titleize %>
-                      </span>
-                    </td>
-                    <td class="observ-text--right"><%= count %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
+            <div class="observ-stat-list">
+              <% @stats[:by_priority].each do |priority, count| %>
+                <div class="observ-stat-list__item">
+                  <span class="observ-badge <%= priority_badge_class(priority) %>">
+                    <%= priority.to_s.titleize %>
+                  </span>
+                  <span class="observ-stat-list__value"><%= count %></span>
+                </div>
+              <% end %>
+            </div>
           <% else %>
             <div class="observ-text--muted">No data</div>
           <% end %>
@@ -87,22 +83,14 @@
       </div>
       <div class="observ-card__body">
         <% if @stats[:by_reason].any? %>
-          <table class="observ-table">
-            <thead>
-              <tr>
-                <th>Reason</th>
-                <th class="observ-text--right">Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @stats[:by_reason].sort_by { |_, count| -count }.each do |reason, count| %>
-                <tr>
-                  <td><%= reason&.titleize&.gsub("_", " ") || "Manual" %></td>
-                  <td class="observ-text--right"><%= count %></td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
+          <div class="observ-stat-list observ-stat-list--spacious">
+            <% @stats[:by_reason].sort_by { |_, count| -count }.each do |reason, count| %>
+              <div class="observ-stat-list__item">
+                <span class="observ-stat-list__label"><%= reason&.titleize&.gsub("_", " ") || "Manual" %></span>
+                <span class="observ-stat-list__value"><%= count %></span>
+              </div>
+            <% end %>
+          </div>
         <% else %>
           <div class="observ-text--muted">No data</div>
         <% end %>

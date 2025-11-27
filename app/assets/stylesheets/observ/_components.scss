@@ -516,6 +516,48 @@
     border-bottom: 2px solid $observ-border-subtle;
     margin-bottom: $observ-spacing-lg;
   }
+
+  // Stat list for displaying key-value pairs with good spacing
+  .observ-stat-list {
+    display: flex;
+    flex-direction: column;
+    gap: $observ-spacing-sm;
+
+    &__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $observ-spacing-sm $observ-spacing-md;
+      background-color: $observ-bg-elevated;
+      border-radius: $observ-border-radius-sm;
+      transition: $observ-transition;
+
+      &:hover {
+        background-color: $observ-bg-hover;
+      }
+    }
+
+    &__label {
+      font-size: $observ-font-size-sm;
+      color: $observ-text-secondary;
+    }
+
+    &__value {
+      font-size: $observ-font-size-sm;
+      font-weight: 600;
+      color: $observ-text-primary;
+      font-variant-numeric: tabular-nums;
+    }
+
+    // Variant with larger spacing
+    &--spacious {
+      gap: $observ-spacing-md;
+
+      .observ-stat-list__item {
+        padding: $observ-spacing-md $observ-spacing-lg;
+      }
+    }
+  }
 }
 
 @keyframes observ-spin {
