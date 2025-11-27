@@ -1,10 +1,12 @@
 @import 'variables';
 
+// Sidebar width
+$observ-sidebar-width: 220px;
+
 // The root layout class - this one stays at the top level
 .observ-layout {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   background-color: $observ-bg-page;
   font-family: $observ-font-family;
   color: $observ-text-primary;
@@ -13,30 +15,34 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  // All nested components are scoped within .observ-layout
-  .observ-nav {
+  // ==========================================================================
+  // SIDEBAR NAVIGATION
+  // ==========================================================================
+  .observ-sidebar {
+    width: $observ-sidebar-width;
+    min-height: 100vh;
     background-color: $observ-bg-surface;
-    border-bottom: 1px solid $observ-border-color;
+    border-right: 1px solid $observ-border-color;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
 
-    &__container {
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 0 $observ-spacing-lg;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
+    &__header {
+      padding: $observ-spacing-lg;
+      border-bottom: 1px solid $observ-border-subtle;
     }
 
     &__brand {
-      font-size: $observ-font-size-xl;
-      font-weight: 600;
-    }
-
-    &__brand-link {
+      font-size: $observ-font-size-lg;
+      font-weight: 700;
       color: $observ-text-primary;
       text-decoration: none;
-      transition: $observ-transition;
+      display: block;
+      letter-spacing: -0.01em;
 
       &:hover {
         color: $observ-primary;
@@ -44,144 +50,120 @@
       }
     }
 
+    &__nav {
+      flex: 1;
+      padding: $observ-spacing-md 0;
+      overflow-y: auto;
+    }
+
+    &__section {
+      margin-bottom: $observ-spacing-md;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    &__section-title {
+      padding: $observ-spacing-sm $observ-spacing-lg;
+      font-size: $observ-font-size-xs;
+      font-weight: 600;
+      color: $observ-text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
     &__menu {
-      display: flex;
       list-style: none;
       margin: 0;
       padding: 0;
-      gap: $observ-spacing-md;
     }
 
     &__item {
       margin: 0;
       padding: 0;
-      list-style: none;
-
-      &--dropdown {
-        position: relative;
-      }
-    }
-
-    &__dropdown-toggle {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: inherit;
-    }
-
-    &__dropdown-arrow {
-      margin-left: 4px;
-      font-size: 0.75em;
-      transition: transform 0.2s;
-    }
-
-    &__dropdown-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      margin-top: 8px;
-      background-color: $observ-bg-elevated;
-      border: 1px solid $observ-border-color;
-      border-radius: $observ-border-radius;
-      box-shadow: $observ-shadow-md;
-      list-style: none;
-      padding: $observ-spacing-xs 0;
-      min-width: 160px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-8px);
-      transition: all 0.2s ease;
-      z-index: 1000;
-
-      &--open {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-
-      li {
-        margin: 0;
-      }
-    }
-
-    &__dropdown-link {
-      display: block;
-      padding: $observ-spacing-sm $observ-spacing-md;
-      color: $observ-text-secondary;
-      text-decoration: none;
-      transition: $observ-transition;
-      font-weight: 500;
-      white-space: nowrap;
-
-      &:hover {
-        background-color: $observ-bg-hover;
-        color: $observ-text-primary;
-        text-decoration: none;
-      }
     }
 
     &__link {
-      display: block;
-      padding: $observ-spacing-sm $observ-spacing-md;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $observ-spacing-sm $observ-spacing-lg;
       color: $observ-text-secondary;
       text-decoration: none;
-      border-radius: $observ-border-radius-sm;
-      transition: $observ-transition;
+      font-size: $observ-font-size-sm;
       font-weight: 500;
-      position: relative;
+      border-left: 3px solid transparent;
+      transition: $observ-transition;
 
       &:hover {
-        background-color: $observ-bg-hover;
         color: $observ-text-primary;
+        background-color: $observ-bg-hover;
         text-decoration: none;
       }
 
       &--active {
-        background-color: $observ-primary;
-        color: $observ-white;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: -1px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 60%;
-          height: 2px;
-          background-color: rgba(255, 255, 255, 0.5);
-          border-radius: 2px 2px 0 0;
-        }
+        color: $observ-text-primary;
+        background-color: $observ-bg-elevated;
+        border-left-color: $observ-primary;
 
         &:hover {
-          background-color: darken($observ-primary, 5%);
-          color: $observ-white;
-          text-decoration: none;
-        }
-      }
-
-      &--secondary {
-        color: $observ-text-muted;
-        font-size: $observ-font-size-sm;
-
-        &:hover {
-          color: $observ-text-secondary;
+          background-color: $observ-bg-elevated;
         }
       }
     }
 
-    &__actions {
+    &__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 $observ-spacing-xs;
+      font-size: $observ-font-size-xs;
+      font-weight: 600;
+      background-color: $observ-danger;
+      color: $observ-white;
+      border-radius: 10px;
+    }
+
+    &__footer {
+      padding: $observ-spacing-md $observ-spacing-lg;
+      border-top: 1px solid $observ-border-subtle;
+      margin-top: auto;
+    }
+
+    &__back-link {
       display: flex;
-      gap: $observ-spacing-sm;
+      align-items: center;
+      gap: $observ-spacing-xs;
+      color: $observ-text-muted;
+      text-decoration: none;
+      font-size: $observ-font-size-sm;
+      transition: $observ-transition;
+
+      &:hover {
+        color: $observ-text-secondary;
+        text-decoration: none;
+      }
     }
+  }
+
+  // ==========================================================================
+  // MAIN CONTENT WRAPPER
+  // ==========================================================================
+  .observ-main-wrapper {
+    flex: 1;
+    margin-left: $observ-sidebar-width;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
 
   .observ-main {
     flex: 1;
     max-width: 1440px;
     width: 100%;
-    margin: 0 auto;
     padding: $observ-spacing-xl $observ-spacing-lg;
   }
 
@@ -198,7 +180,6 @@
 
     &__container {
       max-width: 1440px;
-      margin: 0 auto;
       padding: $observ-spacing-lg;
       text-align: center;
     }

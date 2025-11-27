@@ -14,83 +14,112 @@
   </head>
 
   <body class="observ-layout" data-controller="observ--drawer">
-    <nav class="observ-nav">
-      <div class="observ-nav__container">
-        <div class="observ-nav__brand">
-          <%= link_to "Observability", root_path, class: "observ-nav__brand-link" %>
-        </div>
-        
-        <ul class="observ-nav__menu">
-          <li class="observ-nav__item">
-            <%= link_to "Dashboard", dashboard_path, class: "observ-nav__link #{current_page?(dashboard_path) ? 'observ-nav__link--active' : ''}" %>
-          </li>
-          <% if Observ.config.chat_ui_enabled? && respond_to?(:chats_path) %>
-            <li class="observ-nav__item">
-              <%= link_to "Chats", chats_path, class: "observ-nav__link #{current_page?(chats_path) ? 'observ-nav__link--active' : ''}" %>
+    <aside class="observ-sidebar">
+      <div class="observ-sidebar__header">
+        <%= link_to "Observ", root_path, class: "observ-sidebar__brand" %>
+      </div>
+
+      <nav class="observ-sidebar__nav">
+        <%# Primary navigation %>
+        <div class="observ-sidebar__section">
+          <ul class="observ-sidebar__menu">
+            <li class="observ-sidebar__item">
+              <%= link_to "Dashboard", dashboard_path, class: "observ-sidebar__link #{current_page?(dashboard_path) ? 'observ-sidebar__link--active' : ''}" %>
             </li>
-          <% end %>
-          <li class="observ-nav__item">
-            <%= link_to "Sessions", sessions_path, class: "observ-nav__link #{current_page?(sessions_path) ? 'observ-nav__link--active' : ''}" %>
-          </li>
-          <li class="observ-nav__item">
-            <%= link_to "Traces", traces_path, class: "observ-nav__link #{current_page?(traces_path) ? 'observ-nav__link--active' : ''}" %>
-          </li>
-          <li class="observ-nav__item">
-            <%= link_to "Observations", observations_path, class: "observ-nav__link #{current_page?(observations_path) ? 'observ-nav__link--active' : ''}" %>
-          </li>
-          <li class="observ-nav__item">
-            <%= link_to "Annotations", sessions_annotations_path, class: "observ-nav__link #{current_page?(sessions_annotations_path) || current_page?(traces_annotations_path) ? 'observ-nav__link--active' : ''}" %>
-          </li>
-          <li class="observ-nav__item">
-            <%= link_to "Prompts", prompts_path, class: "observ-nav__link #{controller_name == 'prompts' || controller_name == 'prompt_versions' ? 'observ-nav__link--active' : ''}" %>
-          </li>
-          <li class="observ-nav__item">
-            <%= link_to "Datasets", datasets_path, class: "observ-nav__link #{controller_name == 'datasets' || controller_name == 'dataset_items' || controller_name == 'dataset_runs' ? 'observ-nav__link--active' : ''}" %>
-          </li>
-          <li class="observ-nav__item">
-            <%= link_to reviews_path, class: "observ-nav__link #{controller_name == 'review_queue' ? 'observ-nav__link--active' : ''}" do %>
-              Review Queue
-              <% pending_count = Observ::ReviewItem.actionable.count rescue 0 %>
-              <% if pending_count > 0 %>
-                <span class="observ-badge observ-badge--danger"><%= pending_count %></span>
-              <% end %>
+            <% if Observ.config.chat_ui_enabled? && respond_to?(:chats_path) %>
+              <li class="observ-sidebar__item">
+                <%= link_to "Chats", chats_path, class: "observ-sidebar__link #{current_page?(chats_path) ? 'observ-sidebar__link--active' : ''}" %>
+              </li>
             <% end %>
-          </li>
-        </ul>
-
-        <div class="observ-nav__actions">
-          <%= link_to Observ.config.back_to_app_label, main_app.instance_exec(&Observ.config.back_to_app_path), class: "observ-nav__link observ-nav__link--secondary" %>
+          </ul>
         </div>
+
+        <%# Data section %>
+        <div class="observ-sidebar__section">
+          <div class="observ-sidebar__section-title">Data</div>
+          <ul class="observ-sidebar__menu">
+            <li class="observ-sidebar__item">
+              <%= link_to "Sessions", sessions_path, class: "observ-sidebar__link #{current_page?(sessions_path) ? 'observ-sidebar__link--active' : ''}" %>
+            </li>
+            <li class="observ-sidebar__item">
+              <%= link_to "Traces", traces_path, class: "observ-sidebar__link #{current_page?(traces_path) ? 'observ-sidebar__link--active' : ''}" %>
+            </li>
+            <li class="observ-sidebar__item">
+              <%= link_to "Observations", observations_path, class: "observ-sidebar__link #{current_page?(observations_path) ? 'observ-sidebar__link--active' : ''}" %>
+            </li>
+          </ul>
+        </div>
+
+        <%# Tools section %>
+        <div class="observ-sidebar__section">
+          <div class="observ-sidebar__section-title">Tools</div>
+          <ul class="observ-sidebar__menu">
+            <li class="observ-sidebar__item">
+              <%= link_to "Prompts", prompts_path, class: "observ-sidebar__link #{controller_name == 'prompts' || controller_name == 'prompt_versions' ? 'observ-sidebar__link--active' : ''}" %>
+            </li>
+            <li class="observ-sidebar__item">
+              <%= link_to "Datasets", datasets_path, class: "observ-sidebar__link #{controller_name == 'datasets' || controller_name == 'dataset_items' || controller_name == 'dataset_runs' ? 'observ-sidebar__link--active' : ''}" %>
+            </li>
+            <li class="observ-sidebar__item">
+              <%= link_to "Annotations", sessions_annotations_path, class: "observ-sidebar__link #{current_page?(sessions_annotations_path) || current_page?(traces_annotations_path) ? 'observ-sidebar__link--active' : ''}" %>
+            </li>
+          </ul>
+        </div>
+
+        <%# Quality section %>
+        <div class="observ-sidebar__section">
+          <div class="observ-sidebar__section-title">Quality</div>
+          <ul class="observ-sidebar__menu">
+            <li class="observ-sidebar__item">
+              <%= link_to reviews_path, class: "observ-sidebar__link #{controller_name == 'review_queue' ? 'observ-sidebar__link--active' : ''}" do %>
+                <span>Review Queue</span>
+                <% pending_count = Observ::ReviewItem.actionable.count rescue 0 %>
+                <% if pending_count > 0 %>
+                  <span class="observ-sidebar__badge"><%= pending_count %></span>
+                <% end %>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="observ-sidebar__footer">
+        <%= link_to main_app.instance_exec(&Observ.config.back_to_app_path), class: "observ-sidebar__back-link" do %>
+          <span>&larr;</span>
+          <span><%= Observ.config.back_to_app_label %></span>
+        <% end %>
       </div>
-    </nav>
+    </aside>
 
-    <main class="observ-main">
-      <% if content_for?(:page_header) %>
-        <div class="observ-page-header">
-          <%= yield :page_header %>
+    <div class="observ-main-wrapper">
+      <main class="observ-main">
+        <% if content_for?(:page_header) %>
+          <div class="observ-page-header">
+            <%= yield :page_header %>
+          </div>
+        <% end %>
+
+        <% if notice.present? %>
+          <div class="observ-alert observ-alert--success">
+            <%= notice %>
+          </div>
+        <% end %>
+
+        <% if alert.present? %>
+          <div class="observ-alert observ-alert--danger">
+            <%= alert %>
+          </div>
+        <% end %>
+
+        <%= yield %>
+      </main>
+
+      <footer class="observ-footer">
+        <div class="observ-footer__container">
+          <p class="observ-footer__text">Observability Dashboard</p>
         </div>
-      <% end %>
-
-      <% if notice.present? %>
-        <div class="observ-alert observ-alert--success">
-          <%= notice %>
-        </div>
-      <% end %>
-
-      <% if alert.present? %>
-        <div class="observ-alert observ-alert--danger">
-          <%= alert %>
-        </div>
-      <% end %>
-
-      <%= yield %>
-    </main>
-
-    <footer class="observ-footer">
-      <div class="observ-footer__container">
-        <p class="observ-footer__text">Observability Dashboard · Rails Observ POC</p>
-      </div>
-    </footer>
+      </footer>
+    </div>
 
     <%= render "shared/drawer" %>
   </body>
