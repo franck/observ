@@ -76,9 +76,9 @@ rails db:migrate
 rails ruby_llm:load_models
 
 # Then install Observ
-rails observ:install:migrations
 rails generate observ:install         # Core features
-rails generate observ:install:chat    # Chat feature
+rails generate observ:install_chat    # Chat feature
+rails observ:install:migrations
 rails db:migrate
 ```
 

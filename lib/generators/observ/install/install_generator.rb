@@ -14,6 +14,7 @@ module Observ
     #   rails generate observ:install --skip-index
     #   rails generate observ:install --skip-routes  # Don't auto-mount engine
     #   rails generate observ:install --force        # Skip confirmation prompt
+    #   rails generate observ:install --skip-vite-entrypoint  # Don't generate Vite entry point
     class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path("templates", __dir__)
 
@@ -29,8 +30,8 @@ module Observ
 
       class_option :skip_index,
                    type: :boolean,
-                   desc: "Skip generation of index files",
-                   default: false
+                   desc: "Skip generation of index files (default: true, index.js no longer needed)",
+                   default: true
 
       class_option :force,
                    type: :boolean,
@@ -41,6 +42,16 @@ module Observ
                    type: :boolean,
                    desc: "Skip automatic route mounting",
                    default: false
+
+      class_option :skip_vite_entrypoint,
+                   type: :boolean,
+                   desc: "Skip generation of Vite entry point",
+                   default: false
+
+      class_option :vite_entrypoint_dest,
+                   type: :string,
+                   desc: "Destination path for Vite entry point (default: app/javascript/entrypoints)",
+                   default: "app/javascript/entrypoints"
 
       def confirm_installation
         return if options[:force]
@@ -59,10 +70,12 @@ module Observ
         js_files_to_copy = collect_files_to_copy("javascripts", "*.js", js_dest)
         index_will_be_generated = !options[:skip_index] && will_generate_index?(js_dest)
         route_will_be_added = !options[:skip_routes] && !route_already_exists?
+        vite_entrypoint_will_be_created = !options[:skip_vite_entrypoint] && will_create_vite_entrypoint?
 
         # Check if there are any changes to make
         total_changes = stylesheets_to_copy.count + js_files_to_copy.count +
-                       (index_will_be_generated ? 1 : 0) + (route_will_be_added ? 1 : 0)
+                       (index_will_be_generated ? 1 : 0) + (route_will_be_added ? 1 : 0) +
+                       (vite_entrypoint_will_be_created ? 1 : 0)
 
         if total_changes == 0
           say "No changes needed - all files are up to date!", :green
@@ -92,9 +105,13 @@ module Observ
         end
 
         # Show generated files
-        if index_will_be_generated
+        generated_files = []
+        generated_files << "#{js_dest}/index.js (controller index)" if index_will_be_generated
+        generated_files << "#{options[:vite_entrypoint_dest]}/observ.js (Vite entry point)" if vite_entrypoint_will_be_created
+
+        if generated_files.any?
           say "Generated Files:", :yellow
-          say "  • #{js_dest}/index.js (controller index)", :white
+          generated_files.each { |file| say "  • #{file}", :white }
           say "\n"
         end
 
@@ -145,6 +162,26 @@ module Observ
         )
       end
 
+      def install_vite_entrypoint
+        return if options[:skip_vite_entrypoint]
+
+        dest_dir = Rails.root.join(options[:vite_entrypoint_dest])
+        dest_file = dest_dir.join("observ.js")
+
+        if dest_file.exist?
+          say "  Vite entry point already exists: #{dest_file}", :yellow
+          return
+        end
+
+        say "Creating Vite entry point...", :cyan
+        say "-" * 80, :cyan
+
+        FileUtils.mkdir_p(dest_dir)
+        copy_file "observ.js", dest_file
+        say "  Created #{dest_file}", :green
+        say "\n"
+      end
+
       def show_post_install_message
         say "\n"
         say "=" * 80, :green
@@ -161,10 +198,18 @@ module Observ
         end
 
         say "Next steps:", :cyan
-        say "  1. Import stylesheets in your application", :cyan
-        say "     Add to app/javascript/application.js:", :cyan
-        say "     import 'observ'", :cyan
-        say "\n"
+
+        if options[:skip_vite_entrypoint]
+          say "  1. Import Observ in your application", :cyan
+          say "     Add to app/javascript/application.js:", :cyan
+          say "     import 'observ'", :cyan
+          say "\n"
+        else
+          say "  1. Add 'observ' to your Vite entrypoints (if not auto-detected)", :cyan
+          say "     The entry point was created at: #{options[:vite_entrypoint_dest]}/observ.js", :cyan
+          say "\n"
+        end
+
         say "  2. Restart your development server", :cyan
         say "     bin/dev or rails server", :cyan
         say "\n"
@@ -236,6 +281,13 @@ module Observ
         # Index file will be generated if it doesn't exist
         # (we don't check content as the generator always creates it)
         !index_file.exist?
+      end
+
+      # Check if Vite entry point will be created
+      # @return [Boolean] true if observ.js will be created
+      def will_create_vite_entrypoint?
+        dest_file = Rails.root.join(options[:vite_entrypoint_dest], "observ.js")
+        !dest_file.exist?
       end
 
       # Logger adapter for Rails generator
