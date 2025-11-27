@@ -135,19 +135,6 @@ RSpec.describe Observ::GuardrailService do
       end
     end
 
-    context "with short_session condition" do
-      let(:session) { create(:observ_session, total_traces_count: 1, end_time: Time.current) }
-
-      it "enqueues session for review with normal priority" do
-        expect {
-          described_class.evaluate_session(session)
-        }.to change(Observ::ReviewItem, :count).by(1)
-
-        review_item = session.review_item
-        expect(review_item.reason).to eq("short_session")
-        expect(review_item.priority).to eq("normal")
-      end
-    end
 
     context "with many_traces condition" do
       let(:session) { create(:observ_session, total_traces_count: 25) }

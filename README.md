@@ -30,7 +30,7 @@ For LLM observability without the chat UI:
 **1. Add to Gemfile:**
 
 ```ruby
-gem "observ"
+gem "rubyllm-observ"
 ```
 
 **2. Install:**
@@ -61,7 +61,7 @@ For full observability + interactive agent testing UI:
 **1. Add to Gemfile:**
 
 ```ruby
-gem "observ"
+gem "rubyllm-observ"
 gem "ruby_llm"  # Required for chat feature
 ```
 
@@ -823,4 +823,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Version
 
-Current version: 0.5.1
+Current version: 0.6.0

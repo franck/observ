@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2025-11-27
+
+### Added
+
+- **Dark Theme**: Complete dark theme implementation for the entire UI
+  - New color system with CSS custom properties
+  - Dark theme support for all components (cards, forms, tables, drawers)
+  - Improved contrast and accessibility
+
+- **Sidebar Navigation**: Replaced top navigation bar with collapsible sidebar
+  - Better organization of navigation items
+  - More screen real estate for content
+
+### Changed
+
+- **Styleguide Compliance**: Updated all views to follow BEM naming conventions
+  - Refactored prompts views for consistency
+  - Fixed pagination styling across all pages
+  - Improved date input styling
+  - Better HTML structure throughout
+
+- **README Updates**: Fixed gem name references and updated documentation
+  - Changed gem name from `observ` to `rubyllm-observ`
+  - Updated version references
+  - Fixed broken documentation links
+  - Added datasets documentation
+
+### Fixed
+
+- Review queue pagination issues
+- Various visual design improvements for stats pages
+- Chat messages styling in dark theme
+- JSON viewer dark theme support
+- Annotations drawer styling
+
 ## [0.5.1] - 2025-11-25
 
 ### Changed
@@ -421,6 +456,41 @@ Chat feature adds (optional):
 
 ## [Unreleased]
 
+## [0.6.0] - 2025-11-27
+
+### Added
+
+- **Dark Theme**: Complete dark theme implementation for the entire UI
+  - New color system with CSS custom properties
+  - Dark theme support for all components (cards, forms, tables, drawers)
+  - Improved contrast and accessibility
+
+- **Sidebar Navigation**: Replaced top navigation bar with collapsible sidebar
+  - Better organization of navigation items
+  - More screen real estate for content
+
+### Changed
+
+- **Styleguide Compliance**: Updated all views to follow BEM naming conventions
+  - Refactored prompts views for consistency
+  - Fixed pagination styling across all pages
+  - Improved date input styling
+  - Better HTML structure throughout
+
+- **README Updates**: Fixed gem name references and updated documentation
+  - Changed gem name from `observ` to `rubyllm-observ`
+  - Updated version references
+  - Fixed broken documentation links
+  - Added datasets documentation
+
+### Fixed
+
+- Review queue pagination issues
+- Various visual design improvements for stats pages
+- Chat messages styling in dark theme
+- JSON viewer dark theme support
+- Annotations drawer styling
+
 ### Planned for Future Versions
 
 - Langfuse export integration
@@ -436,10 +506,11 @@ Chat feature adds (optional):
 
 ---
 
+[0.6.0]: https://github.com/franck/observ/releases/tag/v0.6.0
 [0.5.1]: https://github.com/franck/observ/releases/tag/v0.5.1
 [0.5.0]: https://github.com/franck/observ/releases/tag/v0.5.0
 [0.4.0]: https://github.com/franck/observ/releases/tag/v0.4.0
 [0.3.0]: https://github.com/franck/observ/releases/tag/v0.3.0
 [0.1.2]: https://github.com/franck/observ/releases/tag/v0.1.2
 [0.1.0]: https://github.com/franck/observ/releases/tag/v0.1.0
-[Unreleased]: https://github.com/franck/observ/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/franck/observ/compare/v0.6.0...HEAD
