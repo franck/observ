@@ -6,68 +6,98 @@
     </div>
   </div>
 
-  <div class="observ-grid observ-grid--4">
-    <div class="observ-card">
-      <div class="observ-card__body observ-text--center">
-        <div class="observ-stat__value observ-stat__value--large"><%= @stats[:total_pending] %></div>
-        <div class="observ-stat__label">Total Pending</div>
+  <div class="observ-page__content">
+    <div class="observ-grid observ-grid--4">
+      <div class="observ-card">
+        <div class="observ-card__body observ-text--center">
+          <div class="observ-stat__value observ-stat__value--large"><%= @stats[:total_pending] %></div>
+          <div class="observ-stat__label">Total Pending</div>
+        </div>
+      </div>
+
+      <div class="observ-card">
+        <div class="observ-card__body observ-text--center">
+          <div class="observ-stat__value observ-stat__value--large"><%= @stats[:total_completed] %></div>
+          <div class="observ-stat__label">Total Completed</div>
+        </div>
+      </div>
+
+      <div class="observ-card">
+        <div class="observ-card__body observ-text--center">
+          <div class="observ-stat__value observ-stat__value--large"><%= @stats[:completed_today] %></div>
+          <div class="observ-stat__label">Completed Today</div>
+        </div>
+      </div>
+
+      <div class="observ-card">
+        <div class="observ-card__body observ-text--center">
+          <div class="observ-stat__value observ-stat__value--large"><%= @stats[:completed_this_week] %></div>
+          <div class="observ-stat__label">This Week</div>
+        </div>
       </div>
     </div>
 
-    <div class="observ-card">
-      <div class="observ-card__body observ-text--center">
-        <div class="observ-stat__value observ-stat__value--large"><%= @stats[:total_completed] %></div>
-        <div class="observ-stat__label">Total Completed</div>
+    <div class="observ-grid observ-grid--2">
+      <div class="observ-card">
+        <div class="observ-card__header">
+          <h3 class="observ-card__title">Pass Rate</h3>
+        </div>
+        <div class="observ-card__body observ-text--center">
+          <% if @stats[:pass_rate] %>
+            <div class="observ-stat__value observ-stat__value--large <%= @stats[:pass_rate] >= 70 ? 'observ-text--success' : (@stats[:pass_rate] >= 40 ? 'observ-text--warning' : 'observ-text--danger') %>">
+              <%= @stats[:pass_rate] %>%
+            </div>
+            <div class="observ-stat__label">of reviewed items passed</div>
+          <% else %>
+            <div class="observ-text--muted">No completed reviews yet</div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="observ-card">
+        <div class="observ-card__header">
+          <h3 class="observ-card__title">By Priority</h3>
+        </div>
+        <div class="observ-card__body">
+          <% if @stats[:by_priority].any? %>
+            <table class="observ-table observ-table--compact">
+              <tbody>
+                <% @stats[:by_priority].each do |priority, count| %>
+                  <tr>
+                    <td>
+                      <span class="observ-badge <%= priority_badge_class(priority) %>">
+                        <%= priority.to_s.titleize %>
+                      </span>
+                    </td>
+                    <td class="observ-text--right"><%= count %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <div class="observ-text--muted">No data</div>
+          <% end %>
+        </div>
       </div>
     </div>
 
-    <div class="observ-card">
-      <div class="observ-card__body observ-text--center">
-        <div class="observ-stat__value observ-stat__value--large"><%= @stats[:completed_today] %></div>
-        <div class="observ-stat__label">Completed Today</div>
-      </div>
-    </div>
-
-    <div class="observ-card">
-      <div class="observ-card__body observ-text--center">
-        <div class="observ-stat__value observ-stat__value--large"><%= @stats[:completed_this_week] %></div>
-        <div class="observ-stat__label">This Week</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="observ-grid observ-grid--2">
     <div class="observ-card">
       <div class="observ-card__header">
-        <h3 class="observ-card__title">Pass Rate</h3>
-      </div>
-      <div class="observ-card__body observ-text--center">
-        <% if @stats[:pass_rate] %>
-          <div class="observ-stat__value observ-stat__value--large <%= @stats[:pass_rate] >= 70 ? 'observ-text--success' : (@stats[:pass_rate] >= 40 ? 'observ-text--warning' : 'observ-text--danger') %>">
-            <%= @stats[:pass_rate] %>%
-          </div>
-          <div class="observ-stat__label">of reviewed items passed</div>
-        <% else %>
-          <div class="observ-text--muted">No completed reviews yet</div>
-        <% end %>
-      </div>
-    </div>
-
-    <div class="observ-card">
-      <div class="observ-card__header">
-        <h3 class="observ-card__title">By Priority</h3>
+        <h3 class="observ-card__title">By Reason</h3>
       </div>
       <div class="observ-card__body">
-        <% if @stats[:by_priority].any? %>
-          <table class="observ-table observ-table--compact">
+        <% if @stats[:by_reason].any? %>
+          <table class="observ-table">
+            <thead>
+              <tr>
+                <th>Reason</th>
+                <th class="observ-text--right">Count</th>
+              </tr>
+            </thead>
             <tbody>
-              <% @stats[:by_priority].each do |priority, count| %>
+              <% @stats[:by_reason].sort_by { |_, count| -count }.each do |reason, count| %>
                 <tr>
-                  <td>
-                    <span class="observ-badge <%= priority_badge_class(priority) %>">
-                      <%= priority.to_s.titleize %>
-                    </span>
-                  </td>
+                  <td><%= reason&.titleize&.gsub("_", " ") || "Manual" %></td>
                   <td class="observ-text--right"><%= count %></td>
                 </tr>
               <% end %>
@@ -77,34 +107,6 @@
           <div class="observ-text--muted">No data</div>
         <% end %>
       </div>
-    </div>
-  </div>
-
-  <div class="observ-card">
-    <div class="observ-card__header">
-      <h3 class="observ-card__title">By Reason</h3>
-    </div>
-    <div class="observ-card__body">
-      <% if @stats[:by_reason].any? %>
-        <table class="observ-table">
-          <thead>
-            <tr>
-              <th>Reason</th>
-              <th class="observ-text--right">Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @stats[:by_reason].sort_by { |_, count| -count }.each do |reason, count| %>
-              <tr>
-                <td><%= reason&.titleize&.gsub("_", " ") || "Manual" %></td>
-                <td class="observ-text--right"><%= count %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      <% else %>
-        <div class="observ-text--muted">No data</div>
-      <% end %>
     </div>
   </div>
 </div>
