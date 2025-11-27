@@ -131,16 +131,6 @@ module Observ
         say "\n"
       end
 
-      def create_view_partials
-        say "Creating view partials...", :cyan
-        say "-" * 80, :cyan
-
-        template "views/messages/_content.html.erb.tt", "app/views/messages/_content.html.erb"
-
-        say "  ✓ Created messages/_content partial", :green
-        say "\n"
-      end
-
       def create_initializer
         say "Creating observability initializer...", :cyan
         say "-" * 80, :cyan
