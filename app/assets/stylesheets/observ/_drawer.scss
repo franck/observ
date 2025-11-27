@@ -30,7 +30,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba($observ-black, 0.5);
+    background-color: rgba($observ-black, 0.7);
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     cursor: pointer;
@@ -43,8 +43,8 @@
     bottom: 0;
     width: 100%;
     max-width: 600px;
-    background-color: $observ-white;
-    box-shadow: $observ-shadow-lg;
+    background-color: $observ-bg-surface;
+    border-left: 1px solid $observ-border-color;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     display: flex;
@@ -61,8 +61,8 @@
     align-items: center;
     gap: $observ-spacing-md;
     padding: $observ-spacing-lg;
-    border-bottom: 1px solid $observ-gray-200;
-    background-color: $observ-white;
+    border-bottom: 1px solid $observ-border-subtle;
+    background-color: $observ-bg-surface;
     flex-shrink: 0;
   }
 
@@ -75,19 +75,19 @@
     padding: 0;
     border: none;
     background: none;
-    color: $observ-gray-600;
+    color: $observ-text-secondary;
     cursor: pointer;
     border-radius: $observ-border-radius-sm;
     transition: $observ-transition;
     flex-shrink: 0;
 
     &:hover {
-      background-color: $observ-gray-100;
-      color: $observ-gray-900;
+      background-color: $observ-bg-hover;
+      color: $observ-text-primary;
     }
 
     &:active {
-      background-color: $observ-gray-200;
+      background-color: $observ-bg-elevated;
     }
 
     svg {
@@ -99,7 +99,7 @@
     margin: 0;
     font-size: $observ-font-size-xl;
     font-weight: 600;
-    color: $observ-gray-900;
+    color: $observ-text-primary;
     flex: 1;
     min-width: 0;
 
@@ -113,7 +113,7 @@
     flex: 1;
     overflow-y: auto;
     padding: $observ-spacing-lg;
-    background-color: $observ-white;
+    background-color: $observ-bg-surface;
   }
 
   .observ-drawer__loading {
@@ -121,7 +121,7 @@
     align-items: center;
     justify-content: center;
     padding: $observ-spacing-2xl;
-    color: $observ-gray-500;
+    color: $observ-text-muted;
 
     .observ-spinner {
       width: 2rem;
@@ -131,8 +131,8 @@
 
   .observ-drawer__error {
     padding: $observ-spacing-lg;
-    background-color: lighten($observ-danger, 45%);
-    color: darken($observ-danger, 10%);
+    background-color: rgba($observ-danger, 0.1);
+    color: lighten($observ-danger, 15%);
     border-radius: $observ-border-radius;
     text-align: center;
   }
@@ -147,14 +147,14 @@
     width: 100%;
     min-height: 600px;
     padding: $observ-spacing-md;
-    border: 1px solid $observ-gray-300;
+    border: 1px solid $observ-border-color;
     border-radius: $observ-border-radius;
     font-family: $observ-font-family-mono;
     font-size: 12px;
     line-height: 1.6;
     resize: vertical;
-    background-color: $observ-gray-50;
-    color: $observ-gray-900;
+    background-color: $observ-bg-elevated;
+    color: $observ-text-primary;
     
     &:focus {
       outline: none;
@@ -172,11 +172,11 @@
   .observ-drawer__instructions {
     margin-bottom: $observ-spacing-md;
     padding: $observ-spacing-sm;
-    background-color: lighten($observ-info, 45%);
+    background-color: rgba($observ-info, 0.1);
     border-left: 3px solid $observ-info;
     border-radius: $observ-border-radius-sm;
     font-size: $observ-font-size-sm;
-    color: $observ-gray-700;
+    color: lighten($observ-info, 15%);
   }
 
   .observ-drawer__help {
@@ -186,13 +186,13 @@
       cursor: pointer;
       
       summary {
-        color: $observ-gray-600;
+        color: $observ-text-secondary;
         font-size: $observ-font-size-sm;
         font-weight: 500;
         padding: $observ-spacing-xs;
         
         &:hover {
-          color: $observ-gray-900;
+          color: $observ-text-primary;
         }
       }
     }
@@ -201,7 +201,7 @@
       margin-top: $observ-spacing-sm;
       padding-left: $observ-spacing-lg;
       font-size: $observ-font-size-sm;
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
       
       li {
         margin-bottom: $observ-spacing-xs;
@@ -223,7 +223,7 @@
     margin-bottom: $observ-spacing-xs;
     font-size: $observ-font-size-sm;
     font-weight: 600;
-    color: $observ-gray-700;
+    color: $observ-text-secondary;
     text-transform: uppercase;
     letter-spacing: 0.025em;
   }
@@ -241,7 +241,8 @@
     gap: $observ-spacing-md;
     margin-bottom: $observ-spacing-lg;
     padding: $observ-spacing-md;
-    background-color: $observ-gray-50;
+    background-color: $observ-bg-elevated;
+    border: 1px solid $observ-border-subtle;
     border-radius: $observ-border-radius;
   }
 
@@ -252,7 +253,7 @@
   .observ-drawer__metric-label {
     display: block;
     font-size: $observ-font-size-xs;
-    color: $observ-gray-500;
+    color: $observ-text-muted;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: $observ-spacing-xs;
@@ -262,7 +263,7 @@
     display: block;
     font-size: $observ-font-size-lg;
     font-weight: 600;
-    color: $observ-gray-900;
+    color: $observ-text-primary;
   }
 
   // Actions footer
@@ -271,12 +272,12 @@
     gap: $observ-spacing-sm;
     margin-top: $observ-spacing-lg;
     padding-top: $observ-spacing-lg;
-    border-top: 1px solid $observ-gray-200;
+    border-top: 1px solid $observ-border-subtle;
   }
 
   .observ-drawer__section {
     padding: $observ-spacing-lg;
-    border-bottom: 1px solid $observ-gray-200;
+    border-bottom: 1px solid $observ-border-subtle;
 
     &:last-child {
       border-bottom: none;
@@ -286,7 +287,7 @@
   .observ-drawer__section-title {
     font-size: $observ-font-size-sm;
     font-weight: 600;
-    color: $observ-gray-500;
+    color: $observ-text-muted;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin: 0 0 $observ-spacing-md;
