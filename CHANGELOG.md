@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2025-11-27
+
+### Fixed
+
+- Remove redundant `messages/_content` partial from `install_chat` generator
+  - The generator was creating `app/views/messages/_content.html.erb` in the host app
+  - This file was never used since `MessageEnhancements` references the gem's built-in partial at `observ/messages/content`
+
 ## [0.6.1] - 2025-11-27
 
 ### Added
@@ -514,6 +522,7 @@ Chat feature adds (optional):
 
 ---
 
+[0.6.2]: https://github.com/franck/observ/releases/tag/v0.6.2
 [0.6.1]: https://github.com/franck/observ/releases/tag/v0.6.1
 [0.6.0]: https://github.com/franck/observ/releases/tag/v0.6.0
 [0.5.1]: https://github.com/franck/observ/releases/tag/v0.5.1
@@ -522,4 +531,4 @@ Chat feature adds (optional):
 [0.3.0]: https://github.com/franck/observ/releases/tag/v0.3.0
 [0.1.2]: https://github.com/franck/observ/releases/tag/v0.1.2
 [0.1.0]: https://github.com/franck/observ/releases/tag/v0.1.0
-[Unreleased]: https://github.com/franck/observ/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/franck/observ/compare/v0.6.2...HEAD
