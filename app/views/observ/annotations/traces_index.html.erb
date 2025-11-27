@@ -1,22 +1,22 @@
 <div class="observ-container">
-  <div class="observ-header">
-    <h1 class="observ-title">Annotations</h1>
+  <div class="observ-page__header">
+    <h1 class="observ-page__title">Annotations</h1>
   </div>
 
   <div class="observ-tabs">
-    <div class="observ-tabs__list">
-      <%= link_to "Sessions", sessions_annotations_path, class: "observ-tabs__tab" %>
-      <%= link_to "Traces", traces_annotations_path, class: "observ-tabs__tab observ-tabs__tab--active" %>
-    </div>
+    <%= link_to "Sessions", sessions_annotations_path, class: "observ-tab" %>
+    <%= link_to "Traces", traces_annotations_path, class: "observ-tab observ-tab--active" %>
   </div>
 
   <div class="observ-card">
     <div class="observ-card__header">
       <h2 class="observ-card__title">All Annotations (<%= @annotations.count %>)</h2>
-      <%= link_to "Export CSV", export_annotations_path(type: "traces", format: :csv), class: "observ-button observ-button--secondary", style: "margin-left: auto;" %>
+      <div class="observ-card__actions">
+        <%= link_to "Export CSV", export_annotations_path(type: "traces", format: :csv), class: "observ-button observ-button--secondary" %>
+      </div>
     </div>
 
-    <div class="observ-card__content">
+    <div class="observ-card__body">
       <% if @annotations.any? %>
         <div class="observ-annotations-list">
           <% @annotations.each do |annotation| %>
@@ -38,7 +38,7 @@
         </div>
       <% else %>
         <div class="observ-empty-state">
-          <p>No annotations for traces yet.</p>
+          <p class="observ-empty-state__text">No annotations for traces yet.</p>
         </div>
       <% end %>
     </div>

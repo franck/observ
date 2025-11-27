@@ -119,15 +119,14 @@
     // Date inputs
     &__input[type="date"],
     &__input[type="datetime-local"] {
-      color-scheme: dark;
-
       &::-webkit-calendar-picker-indicator {
         cursor: pointer;
-        opacity: 0.6;
-        filter: invert(1);
+        filter: invert(0.7) brightness(1.5);
+        margin-left: $observ-spacing-md;
+        transition: filter 0.2s ease;
 
         &:hover {
-          opacity: 1;
+          filter: invert(0.9) brightness(1.8);
         }
       }
     }

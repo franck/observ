@@ -14,27 +14,27 @@
     </div>
   <% end %>
 
-  <div class="observ-form-group">
-    <%= form.label :agent_class_name, "Select Agent Type:", class: "observ-label" %>
+  <div class="observ-form__group">
+    <%= form.label :agent_class_name, "Select Agent Type:", class: "observ-form__label" %>
     <%= form.select :agent_class_name, 
       agent_select_options, 
       {}, 
-      class: "observ-select",
+      class: "observ-form__select",
       data: { 
         observ__chat_form_target: "agentSelect",
         action: "change->observ--chat-form#agentChanged"
       } %>
   </div>
 
-  <div class="observ-form-group observ-hidden" 
+  <div class="observ-form__group observ-hidden" 
        data-observ--chat-form-target="promptVersionGroup">
-    <%= form.label :prompt_version, "Select Prompt Version:", class: "observ-label" %>
+    <%= form.label :prompt_version, "Select Prompt Version:", class: "observ-form__label" %>
     <%= form.select :prompt_version,
       [],
       { include_blank: "Use default (production)" },
-      class: "observ-select",
+      class: "observ-form__select",
       data: { observ__chat_form_target: "promptVersionSelect" } %>
-    <p class="observ-form-help-text">
+    <p class="observ-form__hint">
       Leave as default to use the production version, or select a specific version to test.
     </p>
   </div>

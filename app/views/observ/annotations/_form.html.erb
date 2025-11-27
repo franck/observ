@@ -2,7 +2,7 @@
   model: annotation,
   url: annotatable.is_a?(Observ::Session) ? session_annotations_path(annotatable) : trace_annotations_path(annotatable),
   id: "annotation-form",
-  class: "observ-annotation-form"
+  class: "observ-form"
 ) do |form| %>
   <% if annotation.errors.any? %>
     <div class="observ-alert observ-alert--danger">
@@ -14,15 +14,15 @@
     </div>
   <% end %>
 
-  <div class="observ-form-field">
-    <%= form.label :content, "Add annotation", class: "observ-form-label" %>
+  <div class="observ-form__group">
+    <%= form.label :content, "Add annotation", class: "observ-form__label" %>
     <%= form.text_area :content,
-      class: "observ-form-textarea",
+      class: "observ-form__textarea",
       placeholder: "Enter your annotation...",
       rows: 3 %>
   </div>
 
-  <div class="observ-form-actions">
+  <div class="observ-form__actions">
     <%= form.submit "Add Annotation", class: "observ-button observ-button--primary" %>
   </div>
 <% end %>

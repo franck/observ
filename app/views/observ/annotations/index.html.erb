@@ -1,6 +1,6 @@
 <div class="observ-container">
-  <div class="observ-header">
-    <h1 class="observ-title">
+  <div class="observ-page__header">
+    <h1 class="observ-page__title">
       Annotations for <%= @annotatable.is_a?(Observ::Session) ? "Session" : "Trace" %> 
       <%= link_to @annotatable.id, @annotatable.is_a?(Observ::Session) ? session_path(@annotatable) : trace_path(@annotatable), class: "observ-link" %>
     </h1>
@@ -11,7 +11,7 @@
       <h2 class="observ-card__title">Annotations (<span id="annotations-count"><%= @annotations.count %></span>)</h2>
     </div>
 
-    <div class="observ-card__content">
+    <div class="observ-card__body">
       <%= render partial: "observ/annotations/form", locals: { annotatable: @annotatable, annotation: @annotatable.annotations.build } %>
 
       <div id="annotations-list" class="observ-annotations-list">
@@ -19,7 +19,7 @@
           <%= render partial: "observ/annotations/annotation", collection: @annotations, locals: { annotatable: @annotatable } %>
         <% else %>
           <div id="annotations-empty-state" class="observ-empty-state">
-            <p>No annotations yet.</p>
+            <p class="observ-empty-state__text">No annotations yet.</p>
           </div>
         <% end %>
       </div>

@@ -30,14 +30,14 @@
             class: "observ-filters__input" %>
         </div>
 
-        <div class="observ-filters__field observ-filters__field--sm">
+        <div class="observ-filters__field observ-filters__field--md">
           <%= f.label "filter[start_date]", "From", class: "observ-filters__label" %>
           <%= f.date_field "filter[start_date]",
             value: params.dig(:filter, :start_date),
             class: "observ-filters__input" %>
         </div>
 
-        <div class="observ-filters__field observ-filters__field--sm">
+        <div class="observ-filters__field observ-filters__field--md">
           <%= f.label "filter[end_date]", "To", class: "observ-filters__label" %>
           <%= f.date_field "filter[end_date]",
             value: params.dig(:filter, :end_date),
