@@ -13,9 +13,9 @@
   }
 
   .observ-observation-card {
-    border: 1px solid $observ-gray-200;
+    border: 1px solid $observ-border-color;
     border-radius: $observ-border-radius;
-    background-color: $observ-white;
+    background-color: $observ-bg-surface;
     overflow: hidden;
 
     &--generation {
@@ -32,7 +32,7 @@
 
     &__header {
       padding: $observ-spacing-md;
-      background-color: $observ-gray-50;
+      background-color: $observ-bg-elevated;
       display: flex;
       align-items: center;
       gap: $observ-spacing-md;
@@ -46,8 +46,8 @@
     &__type-badge {
       display: inline-flex;
       padding: 0.25rem 0.5rem;
-      background-color: $observ-gray-200;
-      color: $observ-gray-700;
+      background-color: $observ-bg-hover;
+      color: $observ-text-secondary;
       border-radius: $observ-border-radius-sm;
       font-size: $observ-font-size-xs;
       font-weight: 600;
@@ -64,7 +64,7 @@
       font-size: $observ-font-size-lg;
       font-weight: 600;
       margin: 0;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
       flex: 1;
 
       .observ-observation-card--compact & {
@@ -80,7 +80,7 @@
 
     &__id {
       font-size: $observ-font-size-sm;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
 
       .observ-observation-card--compact & {
         font-size: 0.75rem;
@@ -97,7 +97,7 @@
 
     &__section {
       padding: $observ-spacing-md;
-      border-top: 1px solid $observ-gray-100;
+      border-top: 1px solid $observ-border-subtle;
 
       &--compact {
         padding: 0.5rem 0.75rem;
@@ -107,7 +107,7 @@
     &__section-title {
       font-size: $observ-font-size-sm;
       font-weight: 600;
-      color: $observ-gray-700;
+      color: $observ-text-secondary;
       margin: 0 0 $observ-spacing-sm 0;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -120,8 +120,8 @@
 
     &__footer {
       padding: $observ-spacing-md;
-      border-top: 1px solid $observ-gray-200;
-      background-color: $observ-gray-50;
+      border-top: 1px solid $observ-border-subtle;
+      background-color: $observ-bg-elevated;
 
       .observ-observation-card--compact & {
         padding: 0.375rem 0.75rem;

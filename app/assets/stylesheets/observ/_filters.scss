@@ -63,7 +63,7 @@
       display: block;
       margin-bottom: $observ-spacing-xs;
       font-weight: 500;
-      color: $observ-gray-900;
+      color: $observ-text-secondary;
       font-size: $observ-font-size-sm;
     }
 
@@ -71,16 +71,16 @@
     &__select {
       width: 100%;
       padding: $observ-spacing-sm;
-      border: 1px solid $observ-gray-300;
+      border: 1px solid $observ-border-color;
       border-radius: $observ-border-radius-sm;
       font-size: $observ-font-size-base;
       font-family: inherit;
-      color: $observ-gray-900;
-      background-color: $observ-white;
+      color: $observ-text-primary;
+      background-color: $observ-bg-elevated;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
       &:hover {
-        border-color: $observ-gray-400;
+        border-color: $observ-border-strong;
       }
 
       &:focus {
@@ -90,12 +90,12 @@
       }
 
       &::placeholder {
-        color: $observ-gray-400;
+        color: $observ-text-muted;
       }
 
       &:disabled {
-        background-color: $observ-gray-100;
-        color: $observ-gray-500;
+        background-color: $observ-bg-surface;
+        color: $observ-text-muted;
         cursor: not-allowed;
       }
     }
@@ -105,23 +105,26 @@
       -webkit-appearance: none;
       -moz-appearance: none;
       cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right $observ-spacing-sm center;
       padding-right: calc(#{$observ-spacing-sm} + 1.5rem);
 
       option {
-        background-color: $observ-white;
-        color: $observ-gray-900;
+        background-color: $observ-bg-elevated;
+        color: $observ-text-primary;
       }
     }
 
     // Date inputs
     &__input[type="date"],
     &__input[type="datetime-local"] {
+      color-scheme: dark;
+
       &::-webkit-calendar-picker-indicator {
         cursor: pointer;
         opacity: 0.6;
+        filter: invert(1);
 
         &:hover {
           opacity: 1;

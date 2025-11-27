@@ -52,14 +52,14 @@
 
     &__header {
       padding: $observ-spacing-lg;
-      border-bottom: 1px solid $observ-gray-200;
+      border-bottom: 1px solid $observ-border-subtle;
     }
 
     &__title {
       font-size: $observ-font-size-lg;
       font-weight: 600;
       margin: 0;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
     }
 
     &__list {
@@ -71,18 +71,18 @@
     &__item {
       display: block;
       padding: 0.75rem $observ-spacing-md;
-      border-bottom: 1px solid $observ-gray-200;
+      border-bottom: 1px solid $observ-border-subtle;
       text-decoration: none;
       color: inherit;
       transition: $observ-transition;
 
       &:hover {
-        background-color: $observ-gray-50;
-        color: $observ-gray-700;
+        background-color: $observ-bg-hover;
+        color: $observ-text-primary;
       }
 
       &--active {
-        background-color: #eff6ff;
+        background-color: rgba($observ-primary, 0.1);
         border-left: 3px solid $observ-primary;
       }
     }
@@ -96,12 +96,12 @@
 
     &__version-number {
       font-weight: 500;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
     }
 
     &__commit-message {
       font-size: $observ-font-size-xs;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       margin: $observ-spacing-xs 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -110,7 +110,7 @@
 
     &__timestamp {
       font-size: $observ-font-size-xs;
-      color: $observ-gray-400;
+      color: $observ-text-muted;
       margin: $observ-spacing-xs 0 0;
     }
 
@@ -130,7 +130,7 @@
     &__header-section {
       width: 100%;
       padding-bottom: $observ-spacing-md;
-      border-bottom: 1px solid $observ-gray-200;
+      border-bottom: 1px solid $observ-border-subtle;
 
       &:last-child {
         border-bottom: none;
@@ -173,7 +173,7 @@
     }
 
     &__metadata-label {
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       font-size: $observ-font-size-xs;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -183,13 +183,13 @@
 
     &__metadata-value {
       font-weight: 500;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
       margin: 0;
     }
 
     &__commit {
       padding: 0.75rem;
-      background-color: $observ-gray-50;
+      background-color: $observ-bg-elevated;
       border-radius: $observ-border-radius-sm;
     }
 
@@ -197,12 +197,12 @@
       font-size: $observ-font-size-sm;
       font-weight: 600;
       margin: 0 0 $observ-spacing-xs 0;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
     }
 
     &__commit-message {
       font-size: $observ-font-size-sm;
-      color: $observ-gray-700;
+      color: $observ-text-secondary;
       margin: 0;
     }
 
@@ -210,11 +210,11 @@
       font-size: $observ-font-size-lg;
       font-weight: 600;
       margin: 0 0 0.75rem;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
     }
 
     &__content-block {
-      background-color: $observ-gray-50;
+      background-color: $observ-bg-elevated;
       padding: $observ-spacing-md;
       border-radius: $observ-border-radius-sm;
       overflow-x: auto;
@@ -228,7 +228,7 @@
     }
 
     &__config-block {
-      background-color: $observ-gray-50;
+      background-color: $observ-bg-elevated;
       padding: $observ-spacing-md;
       border-radius: $observ-border-radius-sm;
       overflow-x: auto;
@@ -240,12 +240,12 @@
     }
 
     &__no-config {
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       font-size: $observ-font-size-sm;
     }
 
     &__body-section {
-      border-bottom: 1px solid $observ-gray-200;
+      border-bottom: 1px solid $observ-border-subtle;
     }
   }
 
@@ -260,12 +260,12 @@
       transition: $observ-transition;
 
       &:hover {
-        color: darken($observ-primary, 10%);
+        color: lighten($observ-primary, 10%);
       }
     }
 
     &__subtitle {
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       margin-top: $observ-spacing-xs;
       font-size: $observ-font-size-sm;
     }
@@ -273,8 +273,8 @@
 
   // Badge modifier for "default" state
   .observ-badge--default {
-    background-color: $observ-gray-100;
-    color: $observ-gray-600;
+    background-color: $observ-bg-elevated;
+    color: $observ-text-secondary;
   }
 
   // Prompt Actions Component

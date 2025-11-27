@@ -18,7 +18,7 @@
 
     &__description {
       font-size: $observ-font-size-xs;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       margin: $observ-spacing-xs 0 0;
     }
 
@@ -67,7 +67,7 @@
     }
 
     &__metadata-label {
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       font-size: $observ-font-size-xs;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -77,7 +77,7 @@
 
     &__metadata-value {
       font-weight: 500;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
       margin: 0;
     }
 
@@ -89,7 +89,7 @@
     &__preview {
       display: block;
       font-size: $observ-font-size-xs;
-      background-color: $observ-gray-50;
+      background-color: $observ-bg-elevated;
       padding: $observ-spacing-xs;
       border-radius: $observ-border-radius-sm;
       overflow: hidden;
@@ -101,7 +101,7 @@
     &__run-progress {
       margin-bottom: $observ-spacing-lg;
       padding-bottom: $observ-spacing-lg;
-      border-bottom: 1px solid $observ-gray-200;
+      border-bottom: 1px solid $observ-border-subtle;
     }
 
     &__run-progress-header {
@@ -113,7 +113,7 @@
 
     &__run-progress-stats {
       font-size: $observ-font-size-sm;
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
     }
 
     // Progress bar
@@ -127,7 +127,7 @@
       display: flex;
       flex: 1;
       height: 8px;
-      background-color: $observ-gray-200;
+      background-color: $observ-bg-elevated;
       border-radius: 4px;
       overflow: hidden;
     }
@@ -147,7 +147,7 @@
 
     &__progress-text {
       font-size: $observ-font-size-xs;
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
     }
   }
 
@@ -156,11 +156,11 @@
     display: flex;
     gap: 0;
     margin-bottom: $observ-spacing-lg;
-    border-bottom: 1px solid $observ-gray-200;
+    border-bottom: 1px solid $observ-border-subtle;
 
     &__tab {
       padding: $observ-spacing-sm $observ-spacing-md;
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
       text-decoration: none;
       font-weight: 500;
       border-bottom: 2px solid transparent;
@@ -168,7 +168,7 @@
       transition: $observ-transition;
 
       &:hover {
-        color: $observ-gray-900;
+        color: $observ-text-primary;
       }
 
       &--active {
@@ -194,7 +194,7 @@
   // Empty state subtext
   .observ-card__empty-subtext {
     font-size: $observ-font-size-sm;
-    color: $observ-gray-500;
+    color: $observ-text-muted;
     margin-bottom: $observ-spacing-md;
   }
 
@@ -228,16 +228,17 @@
     align-items: center;
     gap: 0.5rem;
     padding: 1rem 1.5rem;
-    border: 2px solid $observ-gray-300;
+    border: 2px solid $observ-border-color;
     border-radius: $observ-border-radius;
     cursor: pointer;
     transition: all 0.15s ease;
-    background: $observ-white;
+    background: $observ-bg-elevated;
     font-weight: 500;
+    color: $observ-text-primary;
 
     &:hover {
       border-color: $observ-primary;
-      background: rgba($observ-primary, 0.02);
+      background: rgba($observ-primary, 0.05);
     }
 
     &:active {
@@ -291,7 +292,7 @@
       gap: 0.375rem;
       padding: 0.25rem 0;
       font-size: $observ-font-size-sm;
-      color: $observ-gray-700;
+      color: $observ-text-secondary;
     }
 
     &__indicator {
@@ -310,21 +311,21 @@
 
     &__name {
       font-weight: 500;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
     }
 
     &__value {
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
 
       &::before {
         content: '·';
         margin-right: 0.375rem;
-        color: $observ-gray-400;
+        color: $observ-text-muted;
       }
     }
 
     &__source {
-      color: $observ-gray-400;
+      color: $observ-text-muted;
       font-size: $observ-font-size-xs;
 
       &::before {
@@ -338,12 +339,12 @@
       width: 100%;
       margin-left: 1.375rem;
       font-size: $observ-font-size-xs;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       font-style: italic;
     }
 
     &__more {
-      color: $observ-gray-400;
+      color: $observ-text-muted;
       font-size: $observ-font-size-xs;
     }
   }
@@ -366,7 +367,7 @@
   .observ-datasets__existing-scores {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid $observ-gray-200;
+    border-top: 1px solid $observ-border-subtle;
 
     h4 {
       margin-bottom: 0.75rem;
@@ -383,7 +384,7 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: $observ-gray-700;
+    color: $observ-text-secondary;
     font-size: $observ-font-size-sm;
     text-transform: uppercase;
     letter-spacing: 0.025em;
@@ -393,12 +394,14 @@
   .observ-form__textarea {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid $observ-gray-300;
+    border: 1px solid $observ-border-color;
     border-radius: $observ-border-radius-sm;
     font-size: $observ-font-size-base;
     font-family: inherit;
     resize: vertical;
     min-height: 80px;
+    background-color: $observ-bg-elevated;
+    color: $observ-text-primary;
 
     &:focus {
       outline: none;
@@ -415,7 +418,7 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: $observ-gray-700;
+    color: $observ-text-secondary;
   }
 
   .observ-form__actions {
@@ -427,11 +430,11 @@
   // Review Mode Styles
   .observ-review {
     &__progress-section {
-      background: $observ-white;
+      background: $observ-bg-surface;
       padding: $observ-spacing-lg;
       border-radius: $observ-border-radius;
       margin-bottom: $observ-spacing-lg;
-      box-shadow: $observ-shadow-sm;
+      border: 1px solid $observ-border-color;
     }
 
     &__progress-header {
@@ -443,10 +446,10 @@
 
     &__progress-label {
       font-size: $observ-font-size-sm;
-      color: $observ-gray-600;
+      color: $observ-text-secondary;
 
       strong {
-        color: $observ-gray-900;
+        color: $observ-text-primary;
       }
     }
 
@@ -457,8 +460,8 @@
     }
 
     &__card {
-      background: $observ-white;
-      box-shadow: $observ-shadow-md;
+      background: $observ-bg-surface;
+      border: 1px solid $observ-border-color;
     }
 
     &__data-grid {
@@ -472,13 +475,13 @@
     }
 
     &__data-section {
-      background: $observ-gray-50;
+      background: $observ-bg-elevated;
       border-radius: $observ-border-radius;
       padding: $observ-spacing-md;
-      border: 1px solid $observ-gray-200;
+      border: 1px solid $observ-border-subtle;
 
       &--highlight {
-        background: rgba($observ-primary, 0.03);
+        background: rgba($observ-primary, 0.05);
         border-color: $observ-primary;
       }
     }
@@ -488,7 +491,7 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       margin: 0 0 $observ-spacing-sm;
     }
 
@@ -502,7 +505,7 @@
     &__existing-scores {
       margin-bottom: $observ-spacing-xl;
       padding: $observ-spacing-md;
-      background: $observ-gray-50;
+      background: $observ-bg-elevated;
       border-radius: $observ-border-radius;
     }
 
@@ -514,7 +517,7 @@
     }
 
     &__form {
-      border-top: 1px solid $observ-gray-200;
+      border-top: 1px solid $observ-border-subtle;
       padding-top: $observ-spacing-xl;
     }
 
@@ -525,7 +528,7 @@
     &__scoring-label {
       font-size: $observ-font-size-lg;
       font-weight: 600;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
       margin: 0 0 $observ-spacing-md;
     }
 
@@ -542,27 +545,26 @@
       align-items: center;
       justify-content: center;
       padding: $observ-spacing-xl $observ-spacing-lg;
-      border: 3px solid $observ-gray-300;
+      border: 3px solid $observ-border-color;
       border-radius: $observ-border-radius-lg;
       cursor: pointer;
       transition: all 0.2s ease;
-      background: $observ-white;
+      background: $observ-bg-elevated;
       max-width: 200px;
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: $observ-shadow-md;
       }
 
       &--pass {
         &:hover {
           border-color: $observ-success;
-          background: rgba($observ-success, 0.05);
+          background: rgba($observ-success, 0.1);
         }
 
         &:has(input[type="radio"]:checked) {
           border-color: $observ-success;
-          background: rgba($observ-success, 0.1);
+          background: rgba($observ-success, 0.15);
           box-shadow: 0 0 0 4px rgba($observ-success, 0.2);
         }
       }
@@ -570,12 +572,12 @@
       &--fail {
         &:hover {
           border-color: $observ-danger;
-          background: rgba($observ-danger, 0.05);
+          background: rgba($observ-danger, 0.1);
         }
 
         &:has(input[type="radio"]:checked) {
           border-color: $observ-danger;
-          background: rgba($observ-danger, 0.1);
+          background: rgba($observ-danger, 0.15);
           box-shadow: 0 0 0 4px rgba($observ-danger, 0.2);
         }
       }
@@ -605,12 +607,12 @@
     &__score-text {
       font-size: $observ-font-size-lg;
       font-weight: 600;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
     }
 
     &__score-shortcut {
       font-size: $observ-font-size-xs;
-      color: $observ-gray-400;
+      color: $observ-text-muted;
       margin-top: $observ-spacing-xs;
     }
 

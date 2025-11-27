@@ -21,16 +21,16 @@
   .observ-period-selector {
     &__select {
       padding: $observ-spacing-sm $observ-spacing-md;
-      border: 1px solid $observ-gray-300;
+      border: 1px solid $observ-border-color;
       border-radius: $observ-border-radius-sm;
-      background-color: $observ-white;
+      background-color: $observ-bg-elevated;
       font-size: $observ-font-size-sm;
-      color: $observ-gray-700;
+      color: $observ-text-secondary;
       cursor: pointer;
       transition: $observ-transition;
 
       &:hover {
-        border-color: $observ-gray-400;
+        border-color: $observ-border-strong;
       }
 
       &:focus {
