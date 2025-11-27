@@ -91,12 +91,12 @@
 
     // Number values
     .json-number {
-      color: #ff9800;
+      color: $observ-syntax-number;
     }
 
     // Boolean values
     .json-boolean {
-      color: #9c27b0;
+      color: $observ-syntax-boolean;
       font-weight: 500;
     }
 

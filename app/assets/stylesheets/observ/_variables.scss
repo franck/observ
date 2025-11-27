@@ -64,6 +64,12 @@ $observ-text-secondary: $observ-dark-text-secondary;
 $observ-text-muted: $observ-dark-text-muted;
 
 // =============================================================================
+// SYNTAX HIGHLIGHTING (for JSON viewer, code blocks)
+// =============================================================================
+$observ-syntax-number: #ff9800;           // Orange for numbers
+$observ-syntax-boolean: #c792ea;          // Purple for booleans
+
+// =============================================================================
 // SPACING
 // =============================================================================
 $observ-spacing-xs: 0.25rem;

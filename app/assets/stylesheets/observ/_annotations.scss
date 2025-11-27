@@ -3,8 +3,8 @@
 
 @include observ-scoped {
   .observ-drawer__section {
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--observ-border-color, #e5e7eb);
+    padding: $observ-spacing-lg;
+    border-bottom: 1px solid $observ-border-color;
 
     &:last-child {
       border-bottom: none;
@@ -12,47 +12,53 @@
   }
 
   .observ-drawer__section-title {
-    font-size: 1rem;
+    font-size: $observ-font-size-base;
     font-weight: 600;
-    color: var(--observ-text-primary, #111827);
-    margin: 0 0 1rem 0;
+    color: $observ-text-primary;
+    margin: 0 0 $observ-spacing-md 0;
   }
 
   .observ-annotation-form {
     .observ-form-field {
-      margin-bottom: 1rem;
+      margin-bottom: $observ-spacing-md;
     }
 
     .observ-form-label {
       display: block;
-      font-size: 0.875rem;
+      font-size: $observ-font-size-sm;
       font-weight: 500;
-      color: var(--observ-text-primary, #111827);
-      margin-bottom: 0.5rem;
+      color: $observ-text-primary;
+      margin-bottom: $observ-spacing-xs;
     }
 
     .observ-form-textarea {
       width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--observ-border-color, #d1d5db);
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
+      padding: $observ-spacing-sm $observ-spacing-md;
+      border: 1px solid $observ-border-color;
+      border-radius: $observ-border-radius;
+      font-size: $observ-font-size-sm;
       font-family: inherit;
+      background-color: $observ-bg-elevated;
+      color: $observ-text-primary;
       resize: vertical;
       transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
+      &::placeholder {
+        color: $observ-text-muted;
+      }
+
       &:focus {
         outline: none;
-        border-color: var(--observ-primary-color, #3b82f6);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: $observ-primary;
+        box-shadow: 0 0 0 3px rgba($observ-primary, 0.1);
       }
     }
 
     .observ-form-error {
       display: block;
-      font-size: 0.75rem;
-      color: var(--observ-error-color, #ef4444);
-      margin-top: 0.25rem;
+      font-size: $observ-font-size-xs;
+      color: $observ-danger;
+      margin-top: $observ-spacing-xs;
     }
 
     .observ-form-actions {
@@ -64,55 +70,55 @@
   .observ-annotations-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: $observ-spacing-md;
   }
 
   .observ-annotation {
-    padding: 1rem;
-    background: var(--observ-surface-color, #f9fafb);
-    border: 1px solid var(--observ-border-color, #e5e7eb);
-    border-radius: 0.5rem;
+    padding: $observ-spacing-md;
+    background: $observ-bg-elevated;
+    border: 1px solid $observ-border-color;
+    border-radius: $observ-border-radius;
   }
 
   .observ-annotation__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--observ-border-color, #e5e7eb);
+    margin-bottom: $observ-spacing-sm;
+    padding-bottom: $observ-spacing-xs;
+    border-bottom: 1px solid $observ-border-subtle;
   }
 
   .observ-annotation__time {
-    font-size: 0.75rem;
-    color: var(--observ-text-secondary, #6b7280);
+    font-size: $observ-font-size-xs;
+    color: $observ-text-muted;
   }
 
   .observ-annotation__delete {
     background: none;
     border: none;
-    color: var(--observ-error-color, #ef4444);
-    font-size: 0.75rem;
+    color: $observ-danger;
+    font-size: $observ-font-size-xs;
     cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+    padding: $observ-spacing-xs $observ-spacing-sm;
+    border-radius: $observ-border-radius-sm;
     transition: background-color 0.15s ease-in-out;
 
     &:hover {
-      background-color: rgba(239, 68, 68, 0.1);
+      background-color: rgba($observ-danger, 0.1);
     }
   }
 
   .observ-annotation__content {
-    font-size: 0.875rem;
-    color: var(--observ-text-primary, #111827);
+    font-size: $observ-font-size-sm;
+    color: $observ-text-primary;
     line-height: 1.5;
     white-space: pre-wrap;
     word-break: break-word;
 
     p {
-      margin: 0 0 0.5rem 0;
-      
+      margin: 0 0 $observ-spacing-xs 0;
+
       &:last-child {
         margin-bottom: 0;
       }
@@ -120,13 +126,13 @@
   }
 
   .observ-empty-state {
-    padding: 2rem;
+    padding: $observ-spacing-xl;
     text-align: center;
   }
 
   .observ-empty-state__text {
-    font-size: 0.875rem;
-    color: var(--observ-text-secondary, #6b7280);
+    font-size: $observ-font-size-sm;
+    color: $observ-text-muted;
     margin: 0;
   }
 }
