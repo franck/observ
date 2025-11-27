@@ -10,25 +10,25 @@
     width: 100%;
     border-collapse: collapse;
     font-size: $observ-font-size-sm;
-    background-color: $observ-white;
+    background-color: $observ-bg-surface;
 
     &__header {
-      background-color: $observ-gray-50;
+      background-color: $observ-bg-elevated;
     }
 
     &__row {
-      border-bottom: 1px solid $observ-gray-200;
+      border-bottom: 1px solid $observ-border-subtle;
       transition: $observ-transition;
 
       &:hover {
-        background-color: $observ-gray-50;
+        background-color: $observ-bg-hover;
       }
     }
 
     &__cell {
       padding: $observ-spacing-md;
       text-align: left;
-      color: $observ-gray-700;
+      color: $observ-text-secondary;
       vertical-align: middle;
 
       &--numeric {
@@ -44,11 +44,11 @@
 
       thead & {
         font-weight: 600;
-        color: $observ-gray-700;
+        color: $observ-text-primary;
         font-size: $observ-font-size-sm;
         padding-top: $observ-spacing-sm;
         padding-bottom: $observ-spacing-sm;
-        background-color: $observ-gray-50;
+        background-color: $observ-bg-elevated;
       }
     }
 

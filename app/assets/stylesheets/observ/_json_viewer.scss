@@ -7,8 +7,9 @@
 @include observ-scoped {
   .observ-json-viewer {
     font-family: $observ-font-family-mono;
-    background-color: $observ-gray-900;
-    color: $observ-gray-100;
+    background-color: $observ-bg-elevated;
+    border: 1px solid $observ-border-color;
+    color: $observ-text-primary;
     padding: $observ-spacing-md;
     border-radius: $observ-border-radius;
     overflow-x: auto;
@@ -44,7 +45,7 @@
       display: inline-block;
       width: 1em;
       margin-right: 0.25em;
-      color: $observ-gray-400;
+      color: $observ-text-muted;
       cursor: pointer;
       user-select: none;
       
@@ -61,7 +62,7 @@
 
     // Item count when collapsed
     .json-item-count {
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       font-style: italic;
       font-size: 0.9em;
       margin-left: 0.25em;
@@ -101,13 +102,13 @@
 
     // Null values
     .json-null {
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       font-style: italic;
     }
 
     // Punctuation (brackets, braces, colons, commas)
     .json-punctuation {
-      color: $observ-gray-400;
+      color: $observ-text-muted;
     }
 
     // Unknown/fallback
