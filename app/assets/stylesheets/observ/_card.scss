@@ -3,20 +3,19 @@
 
 @include observ-scoped {
   .observ-card {
-    background-color: $observ-white;
+    background-color: $observ-bg-surface;
+    border: 1px solid $observ-border-color;
     border-radius: $observ-border-radius;
-    box-shadow: $observ-shadow;
     overflow: hidden;
     transition: all 0.2s ease-in-out;
 
     &:hover {
-      box-shadow: $observ-shadow-md;
-      transform: translateY(-2px);
+      background-color: $observ-bg-hover;
     }
 
     &__header {
       padding: $observ-spacing-lg;
-      border-bottom: 1px solid $observ-gray-200;
+      border-bottom: 1px solid $observ-border-subtle;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -26,7 +25,7 @@
       font-size: $observ-font-size-xl;
       font-weight: 600;
       margin: 0;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
       letter-spacing: -0.01em;
     }
 
@@ -41,14 +40,14 @@
 
     &__footer {
       padding: $observ-spacing-lg;
-      border-top: 1px solid $observ-gray-200;
-      background-color: $observ-gray-50;
+      border-top: 1px solid $observ-border-subtle;
+      background-color: rgba($observ-black, 0.1);
     }
 
     &__empty {
       text-align: center;
       padding: $observ-spacing-2xl;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
     }
 
     &--span-2 {

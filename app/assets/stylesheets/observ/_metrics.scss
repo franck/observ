@@ -21,15 +21,14 @@
   }
 
   .observ-metric-card {
-    background-color: $observ-white;
+    background-color: $observ-bg-surface;
+    border: 1px solid $observ-border-color;
     border-radius: $observ-border-radius;
-    box-shadow: $observ-shadow;
     padding: $observ-spacing-lg;
     transition: all 0.2s ease-in-out;
 
     &:hover {
-      box-shadow: $observ-shadow-md;
-      transform: translateY(-2px);
+      background-color: $observ-bg-hover;
     }
 
     &__header {
@@ -42,7 +41,7 @@
     &__label {
       font-size: $observ-font-size-sm;
       font-weight: 600;
-      color: $observ-gray-500;
+      color: $observ-text-muted;
       margin: 0;
     }
 
@@ -55,7 +54,7 @@
     &__value {
       font-size: $observ-font-size-3xl;
       font-weight: 700;
-      color: $observ-gray-900;
+      color: $observ-text-primary;
       margin: 0;
       line-height: 1.1;
       letter-spacing: -0.02em;
@@ -67,7 +66,7 @@
     }
 
     &--highlighted {
-      background: linear-gradient(135deg, lighten($observ-primary, 45%) 0%, lighten($observ-info, 45%) 100%);
+      background: linear-gradient(135deg, rgba($observ-primary, 0.15) 0%, rgba($observ-info, 0.15) 100%);
       border: 1px solid $observ-primary;
 
       .observ-metric-card__value {
@@ -86,18 +85,18 @@
     font-weight: 600;
 
     &--positive {
-      background-color: lighten($observ-success, 45%);
-      color: darken($observ-success, 10%);
+      background-color: rgba($observ-success, 0.15);
+      color: lighten($observ-success, 15%);
     }
 
     &--negative {
-      background-color: lighten($observ-danger, 45%);
-      color: darken($observ-danger, 10%);
+      background-color: rgba($observ-danger, 0.15);
+      color: lighten($observ-danger, 15%);
     }
 
     &--neutral {
-      background-color: $observ-gray-100;
-      color: $observ-gray-600;
+      background-color: $observ-bg-elevated;
+      color: $observ-text-secondary;
     }
   }
 }
