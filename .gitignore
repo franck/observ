@@ -6,3 +6,4 @@
 opencodetmp
 spec/dummy/log/*.log
 spec/dummy/db/*.sqlite3
+*.gem
