@@ -158,7 +158,7 @@ Services orchestrate the business logic, handle data transformation, and manage 
 #   result = service.perform
 #
 class MyFeatureService
-  include ObservableService
+  include Observ::Concerns::ObservableService
 
   def initialize(input_data, observability_session: nil)
     @input_data = input_data
@@ -245,7 +245,7 @@ end
 
 ### Key Points
 
-1. **Include `ObservableService`**: Provides observability infrastructure
+1. **Include `Observ::Concerns::ObservableService`**: Provides observability infrastructure
 2. **Initialize observability**: Call `initialize_observability` in constructor
 3. **Wrap in `with_observability`**: Use the block for automatic session management
 4. **Instrument chat**: Call `instrument_chat` before making LLM calls
@@ -355,7 +355,7 @@ end
 
 ```ruby
 class CharacterGenerationService
-  include ObservableService
+  include Observ::Concerns::ObservableService
 
   def initialize(scenario, observability_session: nil)
     @scenario = scenario
@@ -440,7 +440,7 @@ When creating a new agent/service pair:
 - [ ] Call `use_prompt_management` with prompt name
 - [ ] Implement `schema`, `default_model`, `default_model_parameters`
 - [ ] Implement `build_user_prompt(context)` accepting a Hash
-- [ ] Create service class including `ObservableService`
+- [ ] Create service class including `Observ::Concerns::ObservableService`
 - [ ] Call `initialize_observability` in service constructor
 - [ ] Wrap main method in `with_observability` block
 - [ ] Implement `build_context` for data transformation
