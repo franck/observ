@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 2025-11-28
+
+### Fixed
+
+- **Vite Compatibility**: Removed Sprockets asset path registration from engine
+  - The engine no longer adds its stylesheet/javascript paths to `app.config.assets.paths`
+  - Fixes `cannot load such file -- sassc` error in host apps using Vite for Sass compilation
+  - Host apps now manage how to include the gem's styles using their preferred asset pipeline
+
 ## [0.6.2] - 2025-11-27
 
 ### Fixed
@@ -522,6 +531,7 @@ Chat feature adds (optional):
 
 ---
 
+[0.6.3]: https://github.com/franck/observ/releases/tag/v0.6.3
 [0.6.2]: https://github.com/franck/observ/releases/tag/v0.6.2
 [0.6.1]: https://github.com/franck/observ/releases/tag/v0.6.1
 [0.6.0]: https://github.com/franck/observ/releases/tag/v0.6.0
@@ -531,4 +541,4 @@ Chat feature adds (optional):
 [0.3.0]: https://github.com/franck/observ/releases/tag/v0.3.0
 [0.1.2]: https://github.com/franck/observ/releases/tag/v0.1.2
 [0.1.0]: https://github.com/franck/observ/releases/tag/v0.1.0
-[Unreleased]: https://github.com/franck/observ/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/franck/observ/compare/v0.6.3...HEAD
