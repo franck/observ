@@ -17,16 +17,6 @@ module Observ
       end
     end
 
-    # Asset configuration
-    initializer "observ.assets" do |app|
-      # Add engine assets to the asset pipeline
-      if app.config.respond_to?(:assets)
-        app.config.assets.paths << root.join("app/assets/stylesheets")
-        app.config.assets.paths << root.join("app/assets/javascripts")
-        app.config.assets.precompile += %w[ observ/application.css observ/application.js ]
-      end
-    end
-
     # Configure cache warming
     initializer "observ.configure_cache" do |app|
       config.after_initialize do
