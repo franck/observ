@@ -17,7 +17,6 @@ module Observ
                   :prompt_config_schema,
                   :prompt_config_schema_strict,
                   :back_to_app_path,
-                  :back_to_app_label,
                   :chat_ui_enabled,
                   :agent_path,
                   :pagination_per_page
@@ -38,7 +37,6 @@ module Observ
       @prompt_config_schema = default_prompt_config_schema
       @prompt_config_schema_strict = false
       @back_to_app_path = -> { "/" }
-      @back_to_app_label = "← Back to App"
       @chat_ui_enabled = -> { defined?(::Chat) && ::Chat.respond_to?(:acts_as_chat) }
       @agent_path = nil # Defaults to Rails.root.join("app", "agents")
       @pagination_per_page = 25

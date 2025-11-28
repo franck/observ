@@ -196,7 +196,6 @@ Observ.configure do |config|
   
   # UI configuration
   config.back_to_app_path = -> { Rails.application.routes.url_helpers.root_path }
-  config.back_to_app_label = "← Back to App"
   
   # Chat UI (auto-detects if Chat model exists with acts_as_chat)
   # Manually override if needed:
