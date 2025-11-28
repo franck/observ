@@ -1,5 +1,5 @@
 module Observ
-  class ApplicationController < ::ApplicationController
+  class ApplicationController < ActionController::Base
     layout "observ/application"
 
     # Engine-specific configuration
