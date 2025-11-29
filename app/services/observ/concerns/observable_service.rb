@@ -97,6 +97,23 @@ module Observ
         @observability.instrument_chat(chat, context: context)
       end
 
+      # Instrument RubyLLM.embed for observability
+      #
+      # This wraps the RubyLLM.embed class method to automatically create traces
+      # and track embedding calls within the observability session.
+      #
+      # @param context [Hash] Additional context to include in traces
+      # @return [Observ::EmbeddingInstrumenter, nil] The instrumenter or nil if observability is disabled
+      #
+      # @example
+      #   instrument_embedding(context: { operation: "semantic_search" })
+      #   embedding = RubyLLM.embed("Search query")
+      def instrument_embedding(context: {})
+        return unless @observability
+
+        @observability.instrument_embedding(context: context)
+      end
+
       private
 
       # Create a new observability session for this service

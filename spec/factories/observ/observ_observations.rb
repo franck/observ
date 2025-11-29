@@ -74,5 +74,25 @@ FactoryBot.define do
         end
       end
     end
+
+    factory :observ_embedding, class: 'Observ::Embedding' do
+      type { 'Observ::Embedding' }
+      name { 'embedding' }
+      model { 'text-embedding-3-small' }
+      usage { { input_tokens: 10, total_tokens: 10 } }
+      cost_usd { 0.000001 }
+      metadata { { batch_size: 1, dimensions: 1536, vectors_count: 1 } }
+
+      trait :finalized do
+        end_time { start_time + 0.2.seconds }
+        output { { model: 'text-embedding-3-small', dimensions: 1536, vectors_count: 1 }.to_json }
+      end
+
+      trait :batch do
+        input { [ 'text 1', 'text 2', 'text 3' ].to_json }
+        usage { { input_tokens: 30, total_tokens: 30 } }
+        metadata { { batch_size: 3, dimensions: 1536, vectors_count: 3 } }
+      end
+    end
   end
 end

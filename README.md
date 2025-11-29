@@ -482,6 +482,89 @@ trace.update(
 )
 ```
 
+### Embedding Instrumentation
+
+Observ can track `RubyLLM.embed` calls for observability. This is useful for RAG applications, semantic search, and any workflow using embeddings.
+
+**Basic usage:**
+
+```ruby
+# Create a session and instrument embeddings
+session = Observ::Session.create!(user_id: "rag_service")
+session.instrument_embedding(context: { operation: "semantic_search" })
+
+# All RubyLLM.embed calls are now tracked
+embedding = RubyLLM.embed("Ruby is a programmer's best friend")
+
+# Batch embeddings are also tracked
+embeddings = RubyLLM.embed(["text 1", "text 2", "text 3"])
+
+session.finalize
+```
+
+**Using with ObservableService concern:**
+
+```ruby
+class SemanticSearchService
+  include Observ::Concerns::ObservableService
+
+  def initialize(observability_session: nil)
+    initialize_observability(
+      observability_session,
+      service_name: "semantic_search",
+      metadata: { version: "1.0" }
+    )
+  end
+
+  def search(query, documents)
+    with_observability do |session|
+      # Instrument embedding calls
+      instrument_embedding(context: { operation: "search" })
+
+      # Generate query embedding
+      query_embedding = RubyLLM.embed(query)
+
+      # Generate document embeddings
+      doc_embeddings = RubyLLM.embed(documents)
+
+      # Perform similarity search...
+      find_similar(query_embedding, doc_embeddings)
+    end
+  end
+end
+```
+
+**What gets tracked:**
+
+| Metric | Description |
+|--------|-------------|
+| `model` | The embedding model used (e.g., `text-embedding-3-small`) |
+| `input_tokens` | Number of tokens in the input text(s) |
+| `cost_usd` | Calculated cost based on model pricing |
+| `dimensions` | Vector dimensions (e.g., 1536) |
+| `batch_size` | Number of texts embedded in a single call |
+| `vectors_count` | Number of vectors returned |
+| `latency` | Time taken for the embedding call |
+
+**Viewing embedding data:**
+
+Embedding observations appear in the trace view at `/observ/sessions`. Each embedding call creates:
+- A **trace** with input/output summary
+- An **embedding observation** with detailed metrics
+
+**Cost aggregation:**
+
+Embedding costs are automatically aggregated into trace and session totals, alongside generation costs. This gives you a complete picture of your LLM spending.
+
+```ruby
+session.session_metrics
+# => {
+#   total_cost: 0.0125,      # Includes both chat and embedding costs
+#   total_tokens: 1500,      # Includes embedding input tokens
+#   ...
+# }
+```
+
 ### Prompt Management
 
 Fetch prompts in your code:
@@ -653,7 +736,7 @@ bundle exec rspec
 Observ uses:
 - **Isolated namespace**: All classes under `Observ::` module
 - **Engine pattern**: Mountable Rails engine for easy integration
-- **STI for observations**: `Observ::Generation` and `Observ::Span` inherit from `Observ::Observation`
+- **STI for observations**: `Observ::Generation`, `Observ::Span`, and `Observ::Embedding` inherit from `Observ::Observation`
 - **AASM for state machine**: Prompt lifecycle management
 - **Kaminari for pagination**: Session and trace listings
 - **Stimulus controllers**: Interactive UI components

@@ -68,6 +68,34 @@ RSpec.describe Observ::Trace, type: :model do
     end
   end
 
+  describe '#create_embedding' do
+    let(:trace) { create(:observ_trace) }
+
+    it 'creates an embedding observation' do
+      expect {
+        trace.create_embedding(name: 'embed', model: 'text-embedding-3-small')
+      }.to change(trace.observations, :count).by(1)
+    end
+
+    it 'sets the correct type' do
+      embedding = trace.create_embedding(name: 'embed', model: 'text-embedding-3-small')
+      expect(embedding).to be_a(Observ::Embedding)
+      expect(embedding.type).to eq('Observ::Embedding')
+    end
+
+    it 'sets embedding attributes' do
+      embedding = trace.create_embedding(
+        name: 'test_embedding',
+        model: 'text-embedding-3-large',
+        metadata: { batch_size: 3, dimensions: 3072 }
+      )
+
+      expect(embedding.name).to eq('test_embedding')
+      expect(embedding.model).to eq('text-embedding-3-large')
+      expect(embedding.metadata).to eq({ 'batch_size' => 3, 'dimensions' => 3072 })
+    end
+  end
+
   describe '#finalize' do
     let(:trace) { create(:observ_trace) }
 
@@ -185,6 +213,40 @@ RSpec.describe Observ::Trace, type: :model do
         expect(trace.spans).to include(span)
         expect(trace.spans).not_to include(gen)
       end
+    end
+
+    describe '#embeddings' do
+      it 'returns only embedding observations' do
+        trace = create(:observ_trace, observ_session: session)
+        gen = create(:observ_generation, trace: trace)
+        span = create(:observ_span, trace: trace)
+        embedding = create(:observ_embedding, trace: trace)
+
+        expect(trace.embeddings).to include(embedding)
+        expect(trace.embeddings).not_to include(gen)
+        expect(trace.embeddings).not_to include(span)
+      end
+    end
+  end
+
+  describe '#update_aggregated_metrics with embeddings' do
+    let(:trace) { create(:observ_trace) }
+
+    before do
+      create(:observ_generation, trace: trace, cost_usd: 0.001,
+             usage: { total_tokens: 50 })
+      create(:observ_embedding, trace: trace, cost_usd: 0.0001,
+             usage: { input_tokens: 20 })
+    end
+
+    it 'includes embedding costs in total_cost' do
+      trace.update_aggregated_metrics
+      expect(trace.total_cost).to eq(0.0011)
+    end
+
+    it 'includes embedding tokens in total_tokens' do
+      trace.update_aggregated_metrics
+      expect(trace.total_tokens).to eq(70)
     end
   end
 end

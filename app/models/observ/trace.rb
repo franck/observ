@@ -42,6 +42,18 @@ module Observ
       )
     end
 
+    def create_embedding(name: "embedding", model: nil, metadata: {}, **options)
+      observations.create!(
+        observation_id: SecureRandom.uuid,
+        type: "Observ::Embedding",
+        name: name,
+        model: model,
+        metadata: metadata,
+        start_time: Time.current,
+        **options.slice(:model_parameters, :parent_observation_id)
+      )
+    end
+
     def finalize(output: nil, metadata: {})
       merged_metadata = (self.metadata || {}).merge(metadata)
       update!(
@@ -74,12 +86,20 @@ module Observ
     end
 
     def update_aggregated_metrics
-      new_total_cost = generations.sum(:cost_usd) || 0.0
+      # Include both generations and embeddings in cost calculation
+      new_total_cost = (generations.sum(:cost_usd) || 0.0) + (embeddings.sum(:cost_usd) || 0.0)
 
-      # Database-agnostic token calculation
-      new_total_tokens = generations.sum do |gen|
+      # Database-agnostic token calculation for generations
+      generation_tokens = generations.sum do |gen|
         gen.usage&.dig("total_tokens") || 0
       end
+
+      # Embeddings only have input tokens
+      embedding_tokens = embeddings.sum do |emb|
+        emb.usage&.dig("input_tokens") || 0
+      end
+
+      new_total_tokens = generation_tokens + embedding_tokens
 
       update_columns(
         total_cost: new_total_cost,
@@ -93,6 +113,10 @@ module Observ
 
     def spans
       observations.where(type: "Observ::Span")
+    end
+
+    def embeddings
+      observations.where(type: "Observ::Embedding")
     end
 
     def models_used
