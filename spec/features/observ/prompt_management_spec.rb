@@ -8,7 +8,9 @@ RSpec.describe "Prompt Management", type: :feature do
     fill_in "Prompt Name", with: "test-agent-prompt"
     fill_in "Commit Message", with: "Initial version"
     fill_in "Prompt Content", with: "Hello {{name}}, you are {{role}}"
-    fill_in "Configuration (JSON)", with: '{"model": "gpt-4o"}'
+
+    # Fill in config using the new structured fields
+    fill_in "Temperature", with: "0.7"
 
     click_button "Create Prompt"
 

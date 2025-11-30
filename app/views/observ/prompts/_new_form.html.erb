@@ -60,18 +60,8 @@
         </div>
       </div>
 
-      <!-- Configuration (JSON) -->
-      <div class="observ-form__group">
-        <%= f.label :config, "Configuration (JSON)", class: "observ-form__label" %>
-        <%= f.text_area :config,
-          rows: 8,
-          placeholder: '{\n  "model": "gpt-4o",\n  "temperature": 0.7,\n  "max_tokens": 2000\n}',
-          class: "observ-form__textarea observ-form__textarea--code",
-          data: { controller: "json-editor" } %>
-        <p class="observ-form__hint">
-          Optional JSON configuration for model parameters and metadata
-        </p>
-      </div>
+      <!-- Configuration -->
+      <%= render 'observ/prompts/config_editor', prompt: form, f: f %>
 
       <!-- Hidden field for from_version -->
       <%= f.hidden_field :from_version %>

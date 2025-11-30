@@ -103,7 +103,13 @@ module Observ
       # Parse config JSON string before updating
       update_params = prompt_params.except(:name, :version, :promote_to_production)
       if update_params[:config].present?
-        update_params[:config] = parse_config(update_params[:config])
+        parsed = parse_config(update_params[:config])
+        if parsed.nil?
+          # JSON parsing failed, re-render form with error
+          render :edit, status: :unprocessable_content
+          return
+        end
+        update_params[:config] = parsed
       end
 
       if @prompt.update(update_params)
@@ -180,8 +186,10 @@ module Observ
     def parse_config(config_string)
       return {} if config_string.blank?
       JSON.parse(config_string)
-    rescue JSON::ParserError
-      {}
+    rescue JSON::ParserError => e
+      # Add error to flash for display
+      flash.now[:alert] = "Invalid JSON configuration: #{e.message}"
+      nil
     end
 
     def current_user_identifier

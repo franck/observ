@@ -1,0 +1,119 @@
+@import 'variables';
+@import 'namespace';
+
+@include observ-scoped {
+  .observ-config-editor {
+    // Main container
+    &__fieldset {
+      border: 1px solid $observ-border-color;
+      border-radius: $observ-border-radius;
+      padding: $observ-spacing-lg;
+      margin: 0 0 $observ-spacing-lg 0;
+      background-color: $observ-bg-surface;
+    }
+
+    &__legend {
+      font-size: $observ-font-size-sm;
+      font-weight: 600;
+      color: $observ-text-secondary;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0 $observ-spacing-sm;
+    }
+
+    &__row {
+      margin-bottom: $observ-spacing-lg;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    &__input-group {
+      display: flex;
+      align-items: center;
+      gap: $observ-spacing-sm;
+    }
+
+    &__number-input {
+      max-width: 150px;
+    }
+
+    &__range-hint {
+      font-size: $observ-font-size-xs;
+      color: $observ-text-muted;
+    }
+
+    // Advanced section (collapsible)
+    &__advanced {
+      border: 1px solid $observ-border-color;
+      border-radius: $observ-border-radius;
+      background-color: $observ-bg-surface;
+
+      &[open] {
+        .observ-config-editor__advanced-summary {
+          border-bottom: 1px solid $observ-border-subtle;
+        }
+      }
+    }
+
+    &__advanced-summary {
+      padding: $observ-spacing-md $observ-spacing-lg;
+      cursor: pointer;
+      font-weight: 500;
+      color: $observ-text-secondary;
+      transition: $observ-transition;
+      list-style: none;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+
+      &::before {
+        content: '▸ ';
+        display: inline-block;
+        transition: transform 0.2s ease;
+      }
+
+      &:hover {
+        color: $observ-text-primary;
+        background-color: $observ-bg-hover;
+      }
+    }
+
+    &__advanced[open] &__advanced-summary::before {
+      transform: rotate(90deg);
+    }
+
+    &__advanced-content {
+      padding: $observ-spacing-lg;
+    }
+
+    // Validation status
+    &__status {
+      margin-top: $observ-spacing-sm;
+      padding: $observ-spacing-sm $observ-spacing-md;
+      border-radius: $observ-border-radius-sm;
+      font-size: $observ-font-size-sm;
+      font-family: $observ-font-family-mono;
+
+      &--success {
+        background-color: rgba($observ-success, 0.1);
+        color: lighten($observ-success, 15%);
+      }
+
+      &--error {
+        background-color: rgba($observ-danger, 0.1);
+        color: lighten($observ-danger, 15%);
+      }
+
+      &--valid {
+        color: lighten($observ-success, 15%);
+      }
+
+      &--invalid {
+        color: lighten($observ-danger, 15%);
+      }
+    }
+  }
+}

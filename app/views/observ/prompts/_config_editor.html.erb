@@ -1,0 +1,115 @@
+<%# 
+  Config Editor Partial
+  
+  Provides a hybrid interface for editing prompt configuration:
+  - Structured fields for common settings (model, temperature, max_tokens)
+  - Collapsible advanced section for raw JSON editing
+  
+  Local variables:
+    - prompt: The Observ::Prompt record or PromptForm being edited
+    - f: The form builder
+%>
+
+<% config = prompt_config_hash(prompt) %>
+<% config_json = config.present? ? JSON.pretty_generate(config) : "" %>
+
+<div class="observ-config-editor" 
+     data-controller="observ--config-editor"
+     data-observ--config-editor-known-keys-value='["model", "temperature", "max_tokens"]'>
+  
+  <!-- Common Settings -->
+  <fieldset class="observ-config-editor__fieldset">
+    <legend class="observ-config-editor__legend">Model Settings</legend>
+    
+    <!-- Model Select -->
+    <div class="observ-config-editor__row">
+      <label class="observ-form__label" for="config_model">Model</label>
+      <select id="config_model" 
+              class="observ-form__select"
+              data-observ--config-editor-target="model"
+              data-action="change->observ--config-editor#syncToJson">
+        <option value="">-- Select a model (optional) --</option>
+        <% chat_model_options_grouped.each do |provider, models| %>
+          <optgroup label="<%= provider %>">
+            <% models.each do |display_name, model_id| %>
+              <option value="<%= model_id %>" <%= 'selected' if config_value(prompt, :model) == model_id %>>
+                <%= display_name %>
+              </option>
+            <% end %>
+          </optgroup>
+        <% end %>
+      </select>
+      <p class="observ-form__hint">The LLM model to use for this prompt</p>
+    </div>
+    
+    <!-- Temperature -->
+    <div class="observ-config-editor__row">
+      <label class="observ-form__label" for="config_temperature">Temperature</label>
+      <div class="observ-config-editor__input-group">
+        <input type="number" 
+               id="config_temperature"
+               class="observ-form__input observ-config-editor__number-input"
+               min="0" 
+               max="2" 
+               step="0.1"
+               placeholder="0.7"
+               value="<%= config_value(prompt, :temperature) %>"
+               data-observ--config-editor-target="temperature"
+               data-action="input->observ--config-editor#syncToJson">
+        <span class="observ-config-editor__range-hint">0.0 - 2.0</span>
+      </div>
+      <p class="observ-form__hint">
+        Controls randomness: 0.0 = deterministic, 1.0 = balanced, 2.0 = creative
+      </p>
+    </div>
+    
+    <!-- Max Tokens -->
+    <div class="observ-config-editor__row">
+      <label class="observ-form__label" for="config_max_tokens">Max Tokens</label>
+      <div class="observ-config-editor__input-group">
+        <input type="number" 
+               id="config_max_tokens"
+               class="observ-form__input observ-config-editor__number-input"
+               min="1" 
+               max="128000"
+               placeholder="2000"
+               value="<%= config_value(prompt, :max_tokens) %>"
+               data-observ--config-editor-target="maxTokens"
+               data-action="input->observ--config-editor#syncToJson">
+      </div>
+      <p class="observ-form__hint">
+        Maximum number of tokens in the response
+      </p>
+    </div>
+  </fieldset>
+  
+  <!-- Advanced JSON Section (Collapsible) -->
+  <details class="observ-config-editor__advanced">
+    <summary class="observ-config-editor__advanced-summary">
+      Advanced Configuration (JSON)
+    </summary>
+    
+    <div class="observ-config-editor__advanced-content">
+      <p class="observ-form__hint">
+        Edit the raw JSON configuration. Changes here will sync with the fields above.
+        You can add custom parameters not available in the structured fields.
+      </p>
+      
+      <textarea class="observ-form__textarea observ-form__textarea--code"
+                rows="8"
+                placeholder='{"model": "gpt-4o", "temperature": 0.7, "max_tokens": 2000}'
+                data-observ--config-editor-target="jsonInput"
+                data-action="input->observ--config-editor#syncFromJson"><%= config_json %></textarea>
+      
+      <!-- Validation Status -->
+      <div class="observ-config-editor__status" 
+           data-observ--config-editor-target="status">
+      </div>
+    </div>
+  </details>
+  
+  <!-- Hidden field for form submission -->
+  <%= f.hidden_field :config, 
+        value: config_json,
+        data: { "observ--config-editor-target": "hiddenField" } %>
+</div>
