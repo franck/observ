@@ -109,6 +109,12 @@ module Observ
       instrumenter
     end
 
+    def instrument_image_generation(context: {})
+      instrumenter = Observ::ImageGenerationInstrumenter.new(self, context: context)
+      instrumenter.instrument!
+      instrumenter
+    end
+
     def chat
       @chat ||= ::Chat.find_by(observability_session_id: session_id) if defined?(::Chat)
     end

@@ -175,4 +175,23 @@ RSpec.describe Observ::Session, type: :model do
       expect(session.total_cost).to eq(0.03)
     end
   end
+
+  describe '#instrument_image_generation' do
+    let(:session) { create(:observ_session) }
+
+    it 'returns an ImageGenerationInstrumenter' do
+      instrumenter = session.instrument_image_generation
+      expect(instrumenter).to be_a(Observ::ImageGenerationInstrumenter)
+    end
+
+    it 'passes context to the instrumenter' do
+      instrumenter = session.instrument_image_generation(context: { operation: 'product_image' })
+      expect(instrumenter.context).to eq({ operation: 'product_image' })
+    end
+
+    it 'instruments the instrumenter' do
+      instrumenter = session.instrument_image_generation
+      expect(instrumenter.instance_variable_get(:@instrumented)).to be true
+    end
+  end
 end

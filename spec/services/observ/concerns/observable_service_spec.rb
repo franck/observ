@@ -33,6 +33,13 @@ RSpec.describe Observ::Concerns::ObservableService do
           { result: 'instrumented' }
         end
       end
+
+      def perform_with_image_generation
+        with_observability do |_session|
+          instrument_image_generation(context: { operation: 'product_image' })
+          { result: 'image_instrumented' }
+        end
+      end
     end
   end
 
@@ -163,6 +170,28 @@ RSpec.describe Observ::Concerns::ObservableService do
       # Should not raise
       result = service.perform_with_chat(chat)
       expect(result[:result]).to eq('instrumented')
+    end
+  end
+
+  describe '#instrument_image_generation' do
+    before do
+      allow(Rails.configuration.observability).to receive(:enabled).and_return(true)
+    end
+
+    it 'instruments image generation through session' do
+      service = test_service_class.new
+      session = service.observability
+
+      expect(session).to receive(:instrument_image_generation).with(context: { operation: 'product_image' })
+      service.perform_with_image_generation
+    end
+
+    it 'does nothing when observability is disabled' do
+      service = test_service_class.new(observability_session: false)
+
+      # Should not raise
+      result = service.perform_with_image_generation
+      expect(result[:result]).to eq('image_instrumented')
     end
   end
 end

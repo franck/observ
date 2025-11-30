@@ -96,6 +96,34 @@ RSpec.describe Observ::Trace, type: :model do
     end
   end
 
+  describe '#create_image_generation' do
+    let(:trace) { create(:observ_trace) }
+
+    it 'creates an image generation observation' do
+      expect {
+        trace.create_image_generation(name: 'paint', model: 'dall-e-3')
+      }.to change(trace.observations, :count).by(1)
+    end
+
+    it 'sets the correct type' do
+      image_gen = trace.create_image_generation(name: 'paint', model: 'dall-e-3')
+      expect(image_gen).to be_a(Observ::ImageGeneration)
+      expect(image_gen.type).to eq('Observ::ImageGeneration')
+    end
+
+    it 'sets image generation attributes' do
+      image_gen = trace.create_image_generation(
+        name: 'test_image',
+        model: 'dall-e-3',
+        metadata: { size: '1024x1024', output_format: 'url' }
+      )
+
+      expect(image_gen.name).to eq('test_image')
+      expect(image_gen.model).to eq('dall-e-3')
+      expect(image_gen.metadata).to eq({ 'size' => '1024x1024', 'output_format' => 'url' })
+    end
+  end
+
   describe '#finalize' do
     let(:trace) { create(:observ_trace) }
 
@@ -227,6 +255,21 @@ RSpec.describe Observ::Trace, type: :model do
         expect(trace.embeddings).not_to include(span)
       end
     end
+
+    describe '#image_generations' do
+      it 'returns only image generation observations' do
+        trace = create(:observ_trace, observ_session: session)
+        gen = create(:observ_generation, trace: trace)
+        span = create(:observ_span, trace: trace)
+        embedding = create(:observ_embedding, trace: trace)
+        image_gen = create(:observ_image_generation, trace: trace)
+
+        expect(trace.image_generations).to include(image_gen)
+        expect(trace.image_generations).not_to include(gen)
+        expect(trace.image_generations).not_to include(span)
+        expect(trace.image_generations).not_to include(embedding)
+      end
+    end
   end
 
   describe '#update_aggregated_metrics with embeddings' do
@@ -245,6 +288,48 @@ RSpec.describe Observ::Trace, type: :model do
     end
 
     it 'includes embedding tokens in total_tokens' do
+      trace.update_aggregated_metrics
+      expect(trace.total_tokens).to eq(70)
+    end
+  end
+
+  describe '#update_aggregated_metrics with image generations' do
+    let(:trace) { create(:observ_trace) }
+
+    before do
+      create(:observ_generation, trace: trace, cost_usd: 0.001,
+             usage: { total_tokens: 50 })
+      create(:observ_image_generation, trace: trace, cost_usd: 0.04)
+    end
+
+    it 'includes image generation costs in total_cost' do
+      trace.update_aggregated_metrics
+      expect(trace.total_cost).to eq(0.041)
+    end
+
+    it 'does not include image generations in total_tokens (they have no tokens)' do
+      trace.update_aggregated_metrics
+      expect(trace.total_tokens).to eq(50)
+    end
+  end
+
+  describe '#update_aggregated_metrics with all observation types' do
+    let(:trace) { create(:observ_trace) }
+
+    before do
+      create(:observ_generation, trace: trace, cost_usd: 0.001,
+             usage: { total_tokens: 50 })
+      create(:observ_embedding, trace: trace, cost_usd: 0.0001,
+             usage: { input_tokens: 20 })
+      create(:observ_image_generation, trace: trace, cost_usd: 0.04)
+    end
+
+    it 'includes all observation types in total_cost' do
+      trace.update_aggregated_metrics
+      expect(trace.total_cost).to eq(0.0411)
+    end
+
+    it 'includes only token-based observations in total_tokens' do
       trace.update_aggregated_metrics
       expect(trace.total_tokens).to eq(70)
     end

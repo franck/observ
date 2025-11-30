@@ -114,6 +114,23 @@ module Observ
         @observability.instrument_embedding(context: context)
       end
 
+      # Instrument RubyLLM.paint for observability
+      #
+      # This wraps the RubyLLM.paint class method to automatically create traces
+      # and track image generation calls within the observability session.
+      #
+      # @param context [Hash] Additional context to include in traces
+      # @return [Observ::ImageGenerationInstrumenter, nil] The instrumenter or nil if observability is disabled
+      #
+      # @example
+      #   instrument_image_generation(context: { operation: "product_image" })
+      #   image = RubyLLM.paint("A modern logo")
+      def instrument_image_generation(context: {})
+        return unless @observability
+
+        @observability.instrument_image_generation(context: context)
+      end
+
       private
 
       # Create a new observability session for this service

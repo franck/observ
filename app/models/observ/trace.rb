@@ -54,6 +54,18 @@ module Observ
       )
     end
 
+    def create_image_generation(name: "image_generation", model: nil, metadata: {}, **options)
+      observations.create!(
+        observation_id: SecureRandom.uuid,
+        type: "Observ::ImageGeneration",
+        name: name,
+        model: model,
+        metadata: metadata,
+        start_time: Time.current,
+        **options.slice(:model_parameters, :parent_observation_id)
+      )
+    end
+
     def finalize(output: nil, metadata: {})
       merged_metadata = (self.metadata || {}).merge(metadata)
       update!(
@@ -86,8 +98,10 @@ module Observ
     end
 
     def update_aggregated_metrics
-      # Include both generations and embeddings in cost calculation
-      new_total_cost = (generations.sum(:cost_usd) || 0.0) + (embeddings.sum(:cost_usd) || 0.0)
+      # Include generations, embeddings, and image generations in cost calculation
+      new_total_cost = (generations.sum(:cost_usd) || 0.0) +
+                       (embeddings.sum(:cost_usd) || 0.0) +
+                       (image_generations.sum(:cost_usd) || 0.0)
 
       # Database-agnostic token calculation for generations
       generation_tokens = generations.sum do |gen|
@@ -99,6 +113,7 @@ module Observ
         emb.usage&.dig("input_tokens") || 0
       end
 
+      # Image generations don't use tokens (no change to token calculation)
       new_total_tokens = generation_tokens + embedding_tokens
 
       update_columns(
@@ -117,6 +132,10 @@ module Observ
 
     def embeddings
       observations.where(type: "Observ::Embedding")
+    end
+
+    def image_generations
+      observations.where(type: "Observ::ImageGeneration")
     end
 
     def models_used

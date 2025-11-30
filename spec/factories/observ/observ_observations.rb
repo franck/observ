@@ -94,5 +94,39 @@ FactoryBot.define do
         metadata { { batch_size: 3, dimensions: 1536, vectors_count: 3 } }
       end
     end
+
+    factory :observ_image_generation, class: 'Observ::ImageGeneration' do
+      type { 'Observ::ImageGeneration' }
+      name { 'image_generation' }
+      model { 'dall-e-3' }
+      cost_usd { 0.04 }
+      metadata { { size: '1024x1024', output_format: 'url', mime_type: 'image/png' } }
+
+      trait :finalized do
+        end_time { start_time + 5.seconds }
+        output { { model: 'dall-e-3', has_url: true, mime_type: 'image/png' }.to_json }
+      end
+
+      trait :with_revised_prompt do
+        metadata do
+          {
+            size: '1024x1024',
+            output_format: 'url',
+            mime_type: 'image/png',
+            revised_prompt: 'A detailed, photorealistic image of...'
+          }
+        end
+      end
+
+      trait :base64 do
+        metadata do
+          {
+            size: '1024x1024',
+            output_format: 'base64',
+            mime_type: 'image/png'
+          }
+        end
+      end
+    end
   end
 end
