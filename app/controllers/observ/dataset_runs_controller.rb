@@ -40,7 +40,7 @@ module Observ
         redirect_to dataset_run_path(@dataset, @run),
           notice: "Run '#{@run.name}' created with #{@run.total_items} items. Execution will begin shortly."
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 

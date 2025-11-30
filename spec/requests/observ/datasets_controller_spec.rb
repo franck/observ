@@ -70,7 +70,7 @@ RSpec.describe "Observ::DatasetsController", type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("can&#39;t be blank")
     end
 
@@ -82,7 +82,7 @@ RSpec.describe "Observ::DatasetsController", type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("must be a valid agent class")
     end
   end
@@ -151,7 +151,7 @@ RSpec.describe "Observ::DatasetsController", type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

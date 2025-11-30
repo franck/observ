@@ -26,7 +26,7 @@ module Observ
         redirect_to dataset_path(@dataset, tab: "items"),
           notice: "Item added to dataset successfully."
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -38,7 +38,7 @@ module Observ
         redirect_to dataset_path(@dataset, tab: "items"),
           notice: "Item updated successfully."
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 

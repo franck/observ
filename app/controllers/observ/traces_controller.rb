@@ -60,7 +60,7 @@ module Observ
       else
         @datasets = Observ::Dataset.order(:name)
         flash.now[:alert] = "Failed to add trace to dataset: #{@item.errors.full_messages.join(', ')}"
-        render :add_to_dataset_drawer, status: :unprocessable_entity
+        render :add_to_dataset_drawer, status: :unprocessable_content
       end
     end
 

@@ -32,7 +32,7 @@ module Observ
         redirect_to dataset_path(@dataset), notice: "Dataset '#{@dataset.name}' created successfully."
       else
         @agents = available_agents
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -45,7 +45,7 @@ module Observ
         redirect_to dataset_path(@dataset), notice: "Dataset '#{@dataset.name}' updated successfully."
       else
         @agents = available_agents
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 

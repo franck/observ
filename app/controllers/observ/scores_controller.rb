@@ -26,7 +26,7 @@ module Observ
         end
       else
         respond_to do |format|
-          format.turbo_stream { render :create_error, status: :unprocessable_entity }
+          format.turbo_stream { render :create_error, status: :unprocessable_content }
           format.html { redirect_back(fallback_location: root_path, alert: "Failed to save score.") }
         end
       end

@@ -97,7 +97,7 @@ RSpec.describe "Observ::DatasetRunsController", type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "handles validation errors for blank name" do
@@ -107,7 +107,7 @@ RSpec.describe "Observ::DatasetRunsController", type: :request do
         }
       }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
