@@ -23,7 +23,7 @@ class ChatResponseJob < ApplicationJob
 
       error_message = chat.messages.create!(
         role: :assistant,
-        content: "I apologize, but I encountered an error while processing your request. This might be due to a tool call issue. Please try rephrasing your question or try again."
+        content: "**Error:** #{e.message}"
       )
 
       error_message.broadcast_replace_to(
