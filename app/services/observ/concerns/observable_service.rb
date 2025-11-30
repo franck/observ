@@ -131,6 +131,23 @@ module Observ
         @observability.instrument_image_generation(context: context)
       end
 
+      # Instrument RubyLLM.transcribe for observability
+      #
+      # This wraps the RubyLLM.transcribe class method to automatically create traces
+      # and track transcription calls within the observability session.
+      #
+      # @param context [Hash] Additional context to include in traces
+      # @return [Observ::TranscriptionInstrumenter, nil] The instrumenter or nil if observability is disabled
+      #
+      # @example
+      #   instrument_transcription(context: { operation: "meeting_notes" })
+      #   transcript = RubyLLM.transcribe("meeting.wav")
+      def instrument_transcription(context: {})
+        return unless @observability
+
+        @observability.instrument_transcription(context: context)
+      end
+
       private
 
       # Create a new observability session for this service

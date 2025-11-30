@@ -10,13 +10,13 @@ Observ currently instruments:
 |--------|------------------|--------|
 | `chat.ask` | `Observ::Generation` | Implemented |
 | `RubyLLM.embed` | `Observ::Embedding` | Implemented |
+| `RubyLLM.paint` | `Observ::ImageGeneration` | Implemented |
+| `RubyLLM.transcribe` | `Observ::Transcription` | Implemented |
 
 ## Remaining Methods
 
 | Method | Purpose | Priority |
 |--------|---------|----------|
-| `RubyLLM.paint(prompt)` | Image generation (DALL-E, Imagen) | Medium |
-| `RubyLLM.transcribe(audio)` | Audio transcription (Whisper, Gemini) | Medium |
 | `RubyLLM.moderate(text)` | Content moderation | Low |
 
 ---

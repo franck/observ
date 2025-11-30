@@ -128,5 +128,61 @@ FactoryBot.define do
         end
       end
     end
+
+    factory :observ_transcription, class: 'Observ::Transcription' do
+      type { 'Observ::Transcription' }
+      name { 'transcription' }
+      model { 'whisper-1' }
+      cost_usd { 0.006 }
+      metadata do
+        {
+          audio_duration_s: 60.0,
+          language: 'en',
+          segments_count: 12,
+          has_diarization: false
+        }
+      end
+
+      trait :finalized do
+        end_time { start_time + 3.seconds }
+        output { { text: 'Transcribed audio content...', model: 'whisper-1' }.to_json }
+      end
+
+      trait :with_diarization do
+        model { 'gpt-4o-transcribe' }
+        metadata do
+          {
+            audio_duration_s: 300.0,
+            language: 'en',
+            segments_count: 45,
+            speakers_count: 3,
+            has_diarization: true
+          }
+        end
+      end
+
+      trait :long_audio do
+        metadata do
+          {
+            audio_duration_s: 3600.0,
+            language: 'en',
+            segments_count: 500,
+            has_diarization: false
+          }
+        end
+        cost_usd { 0.36 }
+      end
+
+      trait :multilingual do
+        metadata do
+          {
+            audio_duration_s: 120.0,
+            language: 'es',
+            segments_count: 20,
+            has_diarization: false
+          }
+        end
+      end
+    end
   end
 end
