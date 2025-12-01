@@ -12,12 +12,11 @@ Observ currently instruments:
 | `RubyLLM.embed` | `Observ::Embedding` | Implemented |
 | `RubyLLM.paint` | `Observ::ImageGeneration` | Implemented |
 | `RubyLLM.transcribe` | `Observ::Transcription` | Implemented |
+| `RubyLLM.moderate` | `Observ::Moderation` | Implemented |
 
 ## Remaining Methods
 
-| Method | Purpose | Priority |
-|--------|---------|----------|
-| `RubyLLM.moderate(text)` | Content moderation | Low |
+All planned methods have been implemented. The observability expansion plan is now complete.
 
 ---
 

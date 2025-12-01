@@ -23,18 +23,19 @@ This guide explains how to create LLM-powered agents and services in this applic
 
 ### Responsibilities
 
-| Component | Responsibility |
-|-----------|----------------|
-| **Controller** | HTTP handling, parameter validation, calling service |
-| **Service** | Business logic orchestration, data transformation, observability |
-| **Agent** | LLM configuration (prompt, model, parameters, schema) |
-| **Schema** | Structured output definition for type-safe responses |
+| Component      | Responsibility                                                   |
+| -------------- | ---------------------------------------------------------------- |
+| **Controller** | HTTP handling, parameter validation, calling service             |
+| **Service**    | Business logic orchestration, data transformation, observability |
+| **Agent**      | LLM configuration (prompt, model, parameters, schema)            |
+| **Schema**     | Structured output definition for type-safe responses             |
 
 ## Step 1: Create the Agent
 
 Agents define the LLM configuration: system prompt, model, parameters, and optional schema for structured output.
 
 ### File Location
+
 `app/agents/<name>_agent.rb`
 
 ### Basic Structure
@@ -141,6 +142,7 @@ end
 Services orchestrate the business logic, handle data transformation, and manage observability.
 
 ### File Location
+
 `app/services/<name>_service.rb`
 
 ### Basic Structure
@@ -253,9 +255,24 @@ end
 6. **Error handling**: Always provide fallback with `default_response`
 7. **Normalize response**: Ensure consistent output structure
 
+### Creating Sessions Manually
+
+When creating observability sessions manually (e.g., for orchestrating multiple service calls), always include `agent_type` in the metadata. This is required for the agent name to display correctly in the Observ UI:
+
+```ruby
+Observ::Session.create!(
+  metadata: {
+    agent_type: 'MyAgent',  # Required - displays as agent name in UI
+    service: 'my_service',
+    # ... other metadata
+  }
+)
+```
+
 ## Step 3: Wire Up the Controller
 
 ### File Location
+
 `app/controllers/<namespace>/<name>_controller.rb`
 
 ### Example
@@ -278,6 +295,7 @@ end
 ## Step 4: Add Routes
 
 ### File Location
+
 `config/routes.rb`
 
 ```ruby
