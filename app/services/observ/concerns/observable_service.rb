@@ -12,11 +12,12 @@ module Observ
     #   class MyService
     #     include Observ::Concerns::ObservableService
     #
-    #     def initialize(observability_session: nil)
+    #     def initialize(observability_session: nil, moderate: false)
     #       initialize_observability(
     #         observability_session,
     #         service_name: "my_service",
-    #         metadata: { custom: "data" }
+    #         metadata: { custom: "data" },
+    #         moderate: moderate
     #       )
     #     end
     #
@@ -24,6 +25,7 @@ module Observ
     #       with_observability do |session|
     #         # Your service logic here
     #         # Session automatically finalized on success/error
+    #         # If moderate: true, content moderation runs after finalization
     #       end
     #     end
     #   end
@@ -39,7 +41,10 @@ module Observ
       # @param session_or_false [Observ::Session, false, nil] Session to use, false to disable, nil to auto-create
       # @param service_name [String] Name of the service (used in session metadata)
       # @param metadata [Hash] Additional metadata to include in the session
-      def initialize_observability(session_or_false = nil, service_name:, metadata: {})
+      # @param moderate [Boolean] Whether to run content moderation after session finalization
+      def initialize_observability(session_or_false = nil, service_name:, metadata: {}, moderate: false)
+        @moderate_on_complete = moderate
+
         if session_or_false == false
           # Explicitly disable observability
           @observability = nil
@@ -61,6 +66,9 @@ module Observ
       # whether it succeeds or raises an error. Only sessions owned by this
       # service instance (i.e., auto-created sessions) will be finalized.
       #
+      # If moderate: true was passed to initialize_observability, content moderation
+      # will be enqueued after the session is finalized.
+      #
       # @yield [session] The observability session (may be nil if disabled)
       # @return The result of the block
       #
@@ -72,9 +80,11 @@ module Observ
       def with_observability(&block)
         result = block.call(@observability)
         finalize_service_session if @owns_session
+        enqueue_moderation if should_moderate?
         result
       rescue StandardError
         finalize_service_session if @owns_session
+        enqueue_moderation if should_moderate?
         raise
       end
 
@@ -204,6 +214,33 @@ module Observ
       rescue StandardError => e
         Rails.logger.error(
           "[#{self.class.name}] Failed to finalize session: #{e.message}"
+        )
+      end
+
+      # Check if moderation should be enqueued
+      #
+      # Moderation is only enqueued when:
+      # - moderate: true was passed to initialize_observability
+      # - This service owns the session (created it)
+      # - The session exists
+      #
+      # @return [Boolean] Whether to enqueue moderation
+      def should_moderate?
+        @moderate_on_complete && @owns_session && @observability.present?
+      end
+
+      # Enqueue content moderation for the session
+      #
+      # This schedules a background job to run content moderation on all
+      # traces in the session, flagging any problematic content for review.
+      def enqueue_moderation
+        Observ::ModerationGuardrailJob.perform_later(session_id: @observability.id)
+        Rails.logger.debug(
+          "[#{self.class.name}] Moderation enqueued for session: #{@observability.session_id}"
+        )
+      rescue StandardError => e
+        Rails.logger.error(
+          "[#{self.class.name}] Failed to enqueue moderation: #{e.message}"
         )
       end
     end

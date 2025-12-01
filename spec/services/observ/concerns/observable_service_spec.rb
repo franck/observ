@@ -7,11 +7,12 @@ RSpec.describe Observ::Concerns::ObservableService do
     Class.new do
       include Observ::Concerns::ObservableService
 
-      def initialize(observability_session: nil, metadata: {})
+      def initialize(observability_session: nil, metadata: {}, moderate: false)
         initialize_observability(
           observability_session,
           service_name: 'test_service',
-          metadata: metadata
+          metadata: metadata,
+          moderate: moderate
         )
       end
 
@@ -192,6 +193,61 @@ RSpec.describe Observ::Concerns::ObservableService do
       # Should not raise
       result = service.perform_with_image_generation
       expect(result[:result]).to eq('image_instrumented')
+    end
+  end
+
+  describe 'moderate: option' do
+    before do
+      allow(Rails.configuration.observability).to receive(:enabled).and_return(true)
+    end
+
+    context 'when moderate: true and service owns session' do
+      it 'enqueues moderation job after successful completion' do
+        service = test_service_class.new(moderate: true)
+
+        expect {
+          service.perform
+        }.to have_enqueued_job(Observ::ModerationGuardrailJob).with(session_id: service.observability.id)
+      end
+
+      it 'enqueues moderation job even when block raises error' do
+        service = test_service_class.new(moderate: true)
+
+        expect {
+          service.perform_with_error rescue nil
+        }.to have_enqueued_job(Observ::ModerationGuardrailJob).with(session_id: service.observability.id)
+      end
+    end
+
+    context 'when moderate: true but session is provided (not owned)' do
+      it 'does not enqueue moderation job' do
+        existing_session = create(:observ_session)
+        service = test_service_class.new(observability_session: existing_session, moderate: true)
+
+        expect {
+          service.perform
+        }.not_to have_enqueued_job(Observ::ModerationGuardrailJob)
+      end
+    end
+
+    context 'when moderate: false (default)' do
+      it 'does not enqueue moderation job' do
+        service = test_service_class.new
+
+        expect {
+          service.perform
+        }.not_to have_enqueued_job(Observ::ModerationGuardrailJob)
+      end
+    end
+
+    context 'when observability is disabled' do
+      it 'does not enqueue moderation job' do
+        service = test_service_class.new(observability_session: false, moderate: true)
+
+        expect {
+          service.perform
+        }.not_to have_enqueued_job(Observ::ModerationGuardrailJob)
+      end
     end
   end
 end
