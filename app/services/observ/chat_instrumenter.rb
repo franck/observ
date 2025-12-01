@@ -118,7 +118,7 @@ module Observ
     # instead of adding a new user message
     def handle_complete_call(chat_instance, kwargs, block)
       # Get the last user message for trace input
-      last_user_message = chat_instance.messages.where(role: :user).last
+      last_user_message = find_messages_by_role(chat_instance.messages, :user).last
       user_message_content = last_user_message&.content
 
       # Track if this is an ephemeral trace (created just for this call)
@@ -372,6 +372,18 @@ module Observ
       []
     end
 
+    # Find messages by role, handling both ActiveRecord relations and plain Arrays.
+    # ActiveRecord-backed Chat models return relations with .where(), while raw
+    # RubyLLM::Chat objects return plain Arrays.
+    def find_messages_by_role(messages, role)
+      role_str = role.to_s
+      if messages.respond_to?(:where)
+        messages.where(role: role)
+      else
+        messages.select { |m| m.role.to_s == role_str }
+      end
+    end
+
     def extract_usage(result)
       usage = {
         input_tokens: result.input_tokens || 0,
@@ -568,13 +580,21 @@ module Observ
     def link_trace_to_message(trace, chat_instance, call_start_time)
       return unless chat_instance.respond_to?(:messages)
 
-      assistant_message = chat_instance.messages
-        .where(role: "assistant")
-        .where("created_at >= ?", call_start_time)
-        .order(created_at: :desc)
-        .first
+      messages = chat_instance.messages
+      assistant_message = if messages.respond_to?(:where)
+        # ActiveRecord-backed Chat models support query methods
+        messages
+          .where(role: "assistant")
+          .where("created_at >= ?", call_start_time)
+          .order(created_at: :desc)
+          .first
+      else
+        # Raw RubyLLM::Chat objects return plain Arrays without timestamps.
+        # Get the last assistant message (most recent from this call).
+        find_messages_by_role(messages, :assistant).last
+      end
 
-      if assistant_message
+      if assistant_message&.respond_to?(:id) && assistant_message.id
         trace.update(message_id: assistant_message.id)
         Rails.logger.info "[Observability] Linked trace #{trace.trace_id} to message #{assistant_message.id}"
       end

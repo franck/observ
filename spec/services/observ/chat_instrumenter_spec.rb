@@ -221,5 +221,137 @@ RSpec.describe Observ::ChatInstrumenter do
         expect(input[:attachments]).to be_nil
       end
     end
+
+    describe '#find_messages_by_role' do
+      context 'with ActiveRecord relation (responds to :where)' do
+        it 'uses where clause for filtering' do
+          messages = double('Messages')
+          filtered = double('FilteredMessages')
+          expect(messages).to receive(:respond_to?).with(:where).and_return(true)
+          expect(messages).to receive(:where).with(role: :user).and_return(filtered)
+
+          result = instrumenter.send(:find_messages_by_role, messages, :user)
+          expect(result).to eq(filtered)
+        end
+      end
+
+      context 'with plain Array (raw RubyLLM::Chat messages)' do
+        it 'uses select with role comparison' do
+          msg1 = double('Message', role: :user)
+          msg2 = double('Message', role: :assistant)
+          msg3 = double('Message', role: 'user') # String role
+          messages = [ msg1, msg2, msg3 ]
+
+          result = instrumenter.send(:find_messages_by_role, messages, :user)
+          expect(result).to eq([ msg1, msg3 ])
+        end
+
+        it 'handles symbol role parameter matching string roles' do
+          msg1 = double('Message', role: 'assistant')
+          msg2 = double('Message', role: :assistant)
+          messages = [ msg1, msg2 ]
+
+          result = instrumenter.send(:find_messages_by_role, messages, :assistant)
+          expect(result).to eq([ msg1, msg2 ])
+        end
+
+        it 'handles string role parameter' do
+          msg1 = double('Message', role: :user)
+          msg2 = double('Message', role: 'user')
+          messages = [ msg1, msg2 ]
+
+          result = instrumenter.send(:find_messages_by_role, messages, 'user')
+          expect(result).to eq([ msg1, msg2 ])
+        end
+
+        it 'returns empty array when no messages match' do
+          msg1 = double('Message', role: :assistant)
+          messages = [ msg1 ]
+
+          result = instrumenter.send(:find_messages_by_role, messages, :user)
+          expect(result).to eq([])
+        end
+      end
+    end
+
+    describe '#link_trace_to_message' do
+      let(:trace) { instrumenter.create_trace(name: 'test') }
+      let(:call_start_time) { Time.current }
+
+      # Use Struct for message objects since they naturally respond_to? stubbed attributes
+      let(:message_class) { Struct.new(:role, :id, keyword_init: true) }
+
+      context 'with ActiveRecord-backed messages' do
+        it 'uses ActiveRecord query methods and attempts to update trace' do
+          assistant_message = message_class.new(role: 'assistant', id: 123)
+
+          messages = double('Messages')
+          query_chain = double('QueryChain')
+
+          chat_instance = double('Chat')
+          allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)
+          allow(chat_instance).to receive(:messages).and_return(messages)
+          allow(messages).to receive(:respond_to?).with(:where).and_return(true)
+          allow(messages).to receive(:where).with(role: "assistant").and_return(query_chain)
+          allow(query_chain).to receive(:where).and_return(query_chain)
+          allow(query_chain).to receive(:order).with(created_at: :desc).and_return(query_chain)
+          allow(query_chain).to receive(:first).and_return(assistant_message)
+
+          # Verify the trace.update is called with the message_id
+          # (The actual update may fail due to FK constraint, but we verify the call is attempted)
+          expect(trace).to receive(:update).with(message_id: 123)
+
+          instrumenter.send(:link_trace_to_message, trace, chat_instance, call_start_time)
+        end
+      end
+
+      context 'with plain Array messages (raw RubyLLM::Chat)' do
+        it 'uses array filtering and attempts to update trace with last assistant message id' do
+          msg1 = message_class.new(role: :user, id: 111)
+          msg2 = message_class.new(role: :assistant, id: 456)
+          msg3 = message_class.new(role: :assistant, id: 789)
+          messages = [ msg1, msg2, msg3 ]
+
+          chat_instance = double('Chat')
+          allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)
+          allow(chat_instance).to receive(:messages).and_return(messages)
+
+          # Verify the trace.update is called with the last assistant message id
+          expect(trace).to receive(:update).with(message_id: 789)
+
+          instrumenter.send(:link_trace_to_message, trace, chat_instance, call_start_time)
+        end
+
+        it 'does not update trace when message has no id method' do
+          # Use a struct without id field
+          msg_class_no_id = Struct.new(:role, keyword_init: true)
+          msg1 = msg_class_no_id.new(role: :assistant)
+          messages = [ msg1 ]
+
+          chat_instance = double('Chat')
+          allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)
+          allow(chat_instance).to receive(:messages).and_return(messages)
+
+          # Should not attempt to update because message doesn't respond to :id
+          expect(trace).not_to receive(:update)
+
+          instrumenter.send(:link_trace_to_message, trace, chat_instance, call_start_time)
+        end
+
+        it 'does not update trace when message id is nil' do
+          msg1 = message_class.new(role: :assistant, id: nil)
+          messages = [ msg1 ]
+
+          chat_instance = double('Chat')
+          allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)
+          allow(chat_instance).to receive(:messages).and_return(messages)
+
+          # Should not attempt to update because message.id is nil
+          expect(trace).not_to receive(:update)
+
+          instrumenter.send(:link_trace_to_message, trace, chat_instance, call_start_time)
+        end
+      end
+    end
   end
 end
