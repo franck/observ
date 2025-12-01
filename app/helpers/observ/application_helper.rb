@@ -6,5 +6,6 @@ module Observ
     include Observ::PaginationHelper
     include Observ::DatasetsHelper
     include Observ::ReviewsHelper
+    include Observ::MarkdownHelper
   end
 end

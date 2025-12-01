@@ -5,7 +5,7 @@
   </div>
   
   <div id="message_<%= message.id %>_content" class="observ-chat-message__content">
-    <%= simple_format(message.content) %>
+    <%= render_markdown(message.content) %>
   </div>
   
   <% if message.tool_call? %>
