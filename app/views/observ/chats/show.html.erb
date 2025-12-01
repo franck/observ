@@ -19,6 +19,15 @@
         <%= render message %>
       <% end %>
     </div>
+    
+    <div id="typing-indicator" class="observ-typing-indicator" style="display: none;">
+      <div class="observ-typing-indicator__dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <span class="observ-typing-indicator__text">AI is thinking...</span>
+    </div>
 
     <div class="observ-form-separator">
       <%= render "observ/messages/form", chat: @chat, message: @message %>

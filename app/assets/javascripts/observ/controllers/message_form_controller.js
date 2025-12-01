@@ -38,6 +38,12 @@ export default class extends Controller {
     }
     
     this.submitTarget.style.display = this.loadingValue ? 'none' : 'inline-flex'
+    
+    // Show/hide typing indicator in messages area
+    const typingIndicator = document.getElementById('typing-indicator')
+    if (typingIndicator) {
+      typingIndicator.style.display = this.loadingValue ? 'flex' : 'none'
+    }
   }
 
   handleTurboSubmit(event) {
@@ -48,11 +54,27 @@ export default class extends Controller {
 
   handleTurboRender(event) {
     const streamElement = event.target
-    if (streamElement.target === 'new_message' || streamElement.target === 'messages') {
+    
+    // Only reset loading when the form is replaced (after user message submitted)
+    // The typing indicator will be hidden when assistant message arrives
+    if (streamElement.target === 'new_message') {
+      // Form was replaced, re-enable submit but keep typing indicator showing
       setTimeout(() => {
-        this.loadingValue = false
         this.toggleSubmit()
       }, 100)
+    }
+    
+    // Hide typing indicator when an assistant message is appended
+    if (streamElement.target === 'messages') {
+      const action = streamElement.getAttribute('action')
+      // Check if this is an append (new message) containing assistant content
+      if (action === 'append') {
+        const content = streamElement.innerHTML
+        // Check if it's an assistant message (has the assistant class)
+        if (content.includes('observ-chat-message--assistant')) {
+          this.loadingValue = false
+        }
+      }
     }
   }
 }
