@@ -565,6 +565,241 @@ session.session_metrics
 # }
 ```
 
+### Image Generation Instrumentation
+
+Observ can track `RubyLLM.paint` calls for image generation observability. This is useful for tracking DALL-E, GPT-Image, Imagen, and other image generation models.
+
+**Basic usage:**
+
+```ruby
+# Create a session and instrument image generation
+session = Observ::Session.create!(user_id: "image_service")
+session.instrument_image_generation(context: { operation: "product_image" })
+
+# All RubyLLM.paint calls are now tracked
+image = RubyLLM.paint("A modern logo for a tech startup")
+
+# With options
+image = RubyLLM.paint(
+  "A panoramic mountain landscape",
+  model: "gpt-image-1",
+  size: "1792x1024"
+)
+
+session.finalize
+```
+
+**Using with ObservableService concern:**
+
+```ruby
+class ImageGenerationService
+  include Observ::Concerns::ObservableService
+
+  def initialize(observability_session: nil)
+    initialize_observability(
+      observability_session,
+      service_name: "image_generation",
+      metadata: { version: "1.0" }
+    )
+  end
+
+  def generate_product_image(prompt)
+    with_observability do |session|
+      instrument_image_generation(context: { operation: "product_image" })
+      RubyLLM.paint(prompt, model: "dall-e-3", size: "1024x1024")
+    end
+  end
+end
+```
+
+**What gets tracked:**
+
+| Metric | Description |
+|--------|-------------|
+| `model` | The image model used (e.g., `dall-e-3`, `gpt-image-1`) |
+| `prompt` | The original prompt text |
+| `revised_prompt` | The model's revised/enhanced prompt (if available) |
+| `size` | Image dimensions (e.g., `1024x1024`, `1792x1024`) |
+| `cost_usd` | Generation cost |
+| `latency_ms` | Time to generate in milliseconds |
+| `output_format` | `url` or `base64` |
+| `mime_type` | Image MIME type (e.g., `image/png`) |
+
+### Transcription Instrumentation
+
+Observ can track `RubyLLM.transcribe` calls for audio-to-text transcription observability. This supports Whisper, GPT-4o transcription models, and other audio transcription providers.
+
+**Basic usage:**
+
+```ruby
+# Create a session and instrument transcription
+session = Observ::Session.create!(user_id: "transcription_service")
+session.instrument_transcription(context: { operation: "meeting_notes" })
+
+# All RubyLLM.transcribe calls are now tracked
+transcript = RubyLLM.transcribe("meeting.wav")
+
+# With options
+transcript = RubyLLM.transcribe(
+  "interview.mp3",
+  model: "gpt-4o-transcribe",
+  language: "es"
+)
+
+# With speaker diarization
+transcript = RubyLLM.transcribe(
+  "team-meeting.wav",
+  model: "gpt-4o-transcribe",
+  speaker_names: ["Alice", "Bob"]
+)
+
+session.finalize
+```
+
+**Using with ObservableService concern:**
+
+```ruby
+class MeetingNotesService
+  include Observ::Concerns::ObservableService
+
+  def initialize(observability_session: nil)
+    initialize_observability(
+      observability_session,
+      service_name: "meeting_notes",
+      metadata: { version: "1.0" }
+    )
+  end
+
+  def transcribe_meeting(audio_path)
+    with_observability do |session|
+      instrument_transcription(context: { operation: "meeting_notes" })
+      RubyLLM.transcribe(audio_path, model: "whisper-1")
+    end
+  end
+end
+```
+
+**What gets tracked:**
+
+| Metric | Description |
+|--------|-------------|
+| `model` | The transcription model (e.g., `whisper-1`, `gpt-4o-transcribe`) |
+| `audio_duration_s` | Length of audio in seconds |
+| `language` | Detected or specified language (ISO 639-1) |
+| `segments_count` | Number of transcript segments |
+| `speakers_count` | Number of speakers (for diarization) |
+| `has_diarization` | Whether speaker diarization was used |
+| `cost_usd` | Transcription cost (based on audio duration) |
+| `latency_ms` | Processing time in milliseconds |
+
+### Content Moderation Instrumentation
+
+Observ can track `RubyLLM.moderate` calls for content moderation observability. This is useful for safety filtering and content policy enforcement.
+
+**Basic usage:**
+
+```ruby
+# Create a session and instrument moderation
+session = Observ::Session.create!(user_id: "content_filter")
+session.instrument_moderation(context: { operation: "user_input_check" })
+
+# All RubyLLM.moderate calls are now tracked
+result = RubyLLM.moderate(user_input)
+
+if result.flagged?
+  # Handle flagged content
+  puts "Content flagged for: #{result.flagged_categories.join(', ')}"
+end
+
+session.finalize
+```
+
+**Using with ObservableService concern:**
+
+```ruby
+class ContentModerationService
+  include Observ::Concerns::ObservableService
+
+  def initialize(observability_session: nil)
+    initialize_observability(
+      observability_session,
+      service_name: "content_moderation",
+      metadata: { version: "1.0" }
+    )
+  end
+
+  def check_content(text)
+    with_observability do |session|
+      instrument_moderation(context: { operation: "user_content_check" })
+      result = RubyLLM.moderate(text)
+      
+      {
+        safe: !result.flagged?,
+        flagged_categories: result.flagged_categories,
+        highest_risk: result.flagged_categories.first
+      }
+    end
+  end
+end
+```
+
+**What gets tracked:**
+
+| Metric | Description |
+|--------|-------------|
+| `model` | The moderation model (e.g., `omni-moderation-latest`) |
+| `flagged` | Whether content was flagged |
+| `categories` | Hash of category boolean flags |
+| `category_scores` | Hash of category confidence scores (0.0-1.0) |
+| `flagged_categories` | List of categories that triggered flagging |
+| `latency_ms` | Processing time in milliseconds |
+
+**Moderation categories tracked:**
+
+- `sexual` - Sexually explicit content
+- `hate` - Hate speech based on identity
+- `harassment` - Harassing or threatening content
+- `self-harm` - Self-harm promotion
+- `violence` - Violence promotion
+- `violence/graphic` - Graphic violent content
+
+**Note:** Moderation is typically free (cost_usd = 0.0), but all calls are tracked for observability and audit purposes.
+
+### Combined Instrumentation
+
+You can instrument multiple RubyLLM methods in the same session:
+
+```ruby
+session = Observ::Session.create!(user_id: "multimodal_service")
+
+# Instrument all methods you'll use
+session.instrument_embedding(context: { operation: "search" })
+session.instrument_image_generation(context: { operation: "illustration" })
+session.instrument_transcription(context: { operation: "audio_input" })
+session.instrument_moderation(context: { operation: "safety_check" })
+
+# Now all calls are tracked
+embedding = RubyLLM.embed("search query")
+image = RubyLLM.paint("generate an illustration")
+transcript = RubyLLM.transcribe("audio.wav")
+moderation = RubyLLM.moderate(user_input)
+
+session.finalize
+```
+
+**Cost aggregation across all types:**
+
+All observation types are automatically aggregated into trace and session totals:
+
+```ruby
+session.session_metrics
+# => {
+#   total_cost: 0.0825,      # Includes chat, embedding, image, and transcription costs
+#   total_tokens: 1500,      # Includes generation and embedding tokens
+#   ...
+# }
+```
+
 ### Prompt Management
 
 Fetch prompts in your code:
@@ -736,7 +971,7 @@ bundle exec rspec
 Observ uses:
 - **Isolated namespace**: All classes under `Observ::` module
 - **Engine pattern**: Mountable Rails engine for easy integration
-- **STI for observations**: `Observ::Generation`, `Observ::Span`, and `Observ::Embedding` inherit from `Observ::Observation`
+- **STI for observations**: `Observ::Generation`, `Observ::Span`, `Observ::Embedding`, `Observ::ImageGeneration`, `Observ::Transcription`, and `Observ::Moderation` inherit from `Observ::Observation`
 - **AASM for state machine**: Prompt lifecycle management
 - **Kaminari for pagination**: Session and trace listings
 - **Stimulus controllers**: Interactive UI components
