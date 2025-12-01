@@ -10,13 +10,18 @@ RSpec.describe Observ::AgentExecutorService do
       allow(chat).to receive(:with_schema).and_return(chat)
       allow(chat).to receive(:with_params).and_return(chat)
       allow(chat).to receive(:ask).and_return(mock_response)
+      allow(chat).to receive(:complete).and_return(mock_response)
       # Add callback methods that ChatInstrumenter expects
       allow(chat).to receive(:on_tool_call)
       allow(chat).to receive(:on_tool_result)
       allow(chat).to receive(:on_new_message)
       allow(chat).to receive(:on_end_message)
       allow(chat).to receive(:define_singleton_method)
-      allow(chat).to receive(:method).with(:ask).and_return(chat.method(:ask))
+      # Return a proc that returns mock_response for both :ask and :complete methods
+      # This avoids calling chat.method() during setup which would fail
+      allow(chat).to receive(:method) do |method_name|
+        ->(*_args, **_kwargs, &_block) { mock_response }
+      end
     end
   end
 

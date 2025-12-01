@@ -1,8 +1,11 @@
 class ChatResponseJob < ApplicationJob
   retry_on RubyLLM::BadRequestError, wait: 2.seconds, attempts: 1
 
-  def perform(chat_id, content)
+  # @param chat_id [Integer] The chat ID
+  # @param user_message_id [Integer] The ID of the user message (already created by the controller)
+  def perform(chat_id, user_message_id)
     chat = Chat.find(chat_id)
+    user_message = chat.messages.find(user_message_id)
 
     # Observability is automatically enabled via after_find callback
     # All LLM calls, tool calls, and metrics are tracked automatically
@@ -12,7 +15,10 @@ class ChatResponseJob < ApplicationJob
     begin
       # Model parameters (temperature, max_tokens, etc.) are automatically configured
       # via the initialize_agent callback when the chat is created
-      chat.ask(content) do |chunk|
+      #
+      # Use complete instead of ask to avoid creating a duplicate user message.
+      # The user message was already created by the controller for immediate UI feedback.
+      chat.complete do |chunk|
         if chunk.content && !chunk.content.blank?
           message = chat.messages.last
           message.broadcast_append_chunk(chunk.content)

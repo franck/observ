@@ -5,6 +5,7 @@ RSpec.describe Observ::ChatInstrumenter do
   let(:chat) do
     chat_double = double('Chat', id: 1, model: double(id: 'gpt-4o-mini'))
     allow(chat_double).to receive(:ask)
+    allow(chat_double).to receive(:complete)
     allow(chat_double).to receive(:on_tool_call)
     allow(chat_double).to receive(:on_tool_result)
     allow(chat_double).to receive(:on_new_message)
@@ -32,8 +33,9 @@ RSpec.describe Observ::ChatInstrumenter do
       expect(instrumenter.instance_variable_get(:@instrumented)).to be true
     end
 
-    it 'wraps the ask method' do
+    it 'wraps the ask and complete methods' do
       expect(instrumenter).to receive(:wrap_ask_method)
+      expect(instrumenter).to receive(:wrap_complete_method)
       expect(instrumenter).to receive(:setup_event_handlers)
       instrumenter.instrument!
     end

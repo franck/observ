@@ -14,7 +14,11 @@ RSpec.describe Observ::DatasetRunnerService do
       allow(chat).to receive(:on_new_message)
       allow(chat).to receive(:on_end_message)
       allow(chat).to receive(:define_singleton_method)
-      allow(chat).to receive(:method).with(:ask).and_return(->(*) { mock_response })
+      allow(chat).to receive(:complete).and_return(mock_response)
+      # Return a proc that returns mock_response for both :ask and :complete methods
+      allow(chat).to receive(:method) do |method_name|
+        ->(*_args, **_kwargs, &_block) { mock_response }
+      end
     end
   end
 

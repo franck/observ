@@ -11,6 +11,7 @@ module Observ
       @current_trace = nil
       @current_tool_span = nil
       @original_ask_method = nil
+      @original_complete_method = nil
       @instrumented = false
     end
 
@@ -18,6 +19,7 @@ module Observ
       return if @instrumented
 
       wrap_ask_method
+      wrap_complete_method
       setup_event_handlers
       @instrumented = true
 
@@ -86,6 +88,66 @@ module Observ
 
       call_start_time = Time.current
       result = @original_ask_method.call(*args, **kwargs, &block)
+
+      finalize_generation(generation, result, call_start_time)
+
+      if is_ephemeral_trace
+        link_trace_to_message(trace, chat_instance, call_start_time)
+        trace.finalize(output: result.content)
+        @current_trace = nil
+      end
+
+      result
+    rescue StandardError => e
+      handle_error(e, trace, generation)
+      raise
+    end
+
+    def wrap_complete_method
+      return if @original_complete_method
+
+      @original_complete_method = chat.method(:complete)
+      instrumenter = self
+
+      chat.define_singleton_method(:complete) do |**kwargs, &block|
+        instrumenter.send(:handle_complete_call, self, kwargs, block)
+      end
+    end
+
+    # Handle complete calls - similar to ask but uses existing messages
+    # instead of adding a new user message
+    def handle_complete_call(chat_instance, kwargs, block)
+      # Get the last user message for trace input
+      last_user_message = chat_instance.messages.where(role: :user).last
+      user_message_content = last_user_message&.content
+
+      # Track if this is an ephemeral trace (created just for this call)
+      is_ephemeral_trace = @current_trace.nil?
+
+      trace = @current_trace || create_trace(
+        name: "chat.complete",
+        input: { text: user_message_content },
+        metadata: {}
+      )
+
+      model_id = extract_model_id(chat_instance)
+
+      # Extract prompt metadata from the chat's agent (if available)
+      prompt_metadata = extract_prompt_metadata(chat_instance)
+
+      generation = trace.create_generation(
+        name: "llm_call",
+        metadata: @context.merge(kwargs.slice(:temperature, :max_tokens)),
+        model: model_id,
+        model_parameters: extract_model_parameters(chat_instance),
+        **prompt_metadata
+      )
+
+      messages_snapshot = capture_messages(chat_instance)
+      generation.set_input(user_message_content, messages: messages_snapshot)
+
+      call_start_time = Time.current
+      result = @original_complete_method.call(**kwargs, &block)
 
       finalize_generation(generation, result, call_start_time)
 

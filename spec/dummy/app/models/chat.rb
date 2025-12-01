@@ -46,9 +46,22 @@ class Chat < ApplicationRecord
     )
   end
 
+  # Simulates RubyLLM's complete method which generates a response
+  # based on existing messages (without creating a new user message)
   def complete
-    yield if block_given?
-    "Completed"
+    last_user_message = messages.where(role: :user).last
+    content = last_user_message&.content || "empty"
+    assistant_message = messages.create!(role: :assistant, content: "Echo: #{content}")
+
+    yield OpenStruct.new(content: assistant_message.content) if block_given?
+
+    Response.new(
+      content: assistant_message.content,
+      input_tokens: 0,
+      output_tokens: 0,
+      raw: OpenStruct.new(body: {}, headers: {}, status: 200),
+      model_id: "dummy-model"
+    )
   end
 
   def on_tool_call(*); end
