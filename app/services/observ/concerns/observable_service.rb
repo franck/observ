@@ -148,6 +148,23 @@ module Observ
         @observability.instrument_transcription(context: context)
       end
 
+      # Instrument RubyLLM.moderate for observability
+      #
+      # This wraps the RubyLLM.moderate class method to automatically create traces
+      # and track moderation calls within the observability session.
+      #
+      # @param context [Hash] Additional context to include in traces
+      # @return [Observ::ModerationInstrumenter, nil] The instrumenter or nil if observability is disabled
+      #
+      # @example
+      #   instrument_moderation(context: { operation: "user_input_check" })
+      #   result = RubyLLM.moderate(user_input)
+      def instrument_moderation(context: {})
+        return unless @observability
+
+        @observability.instrument_moderation(context: context)
+      end
+
       private
 
       # Create a new observability session for this service

@@ -184,5 +184,85 @@ FactoryBot.define do
         end
       end
     end
+
+    factory :observ_moderation, class: 'Observ::Moderation' do
+      type { 'Observ::Moderation' }
+      name { 'moderation' }
+      model { 'omni-moderation-latest' }
+      cost_usd { 0.0 }
+      metadata do
+        {
+          flagged: false,
+          categories: {
+            'sexual' => false,
+            'hate' => false,
+            'harassment' => false,
+            'self-harm' => false,
+            'violence' => false
+          },
+          category_scores: {
+            'sexual' => 0.001,
+            'hate' => 0.002,
+            'harassment' => 0.003,
+            'self-harm' => 0.001,
+            'violence' => 0.002
+          },
+          flagged_categories: []
+        }
+      end
+
+      trait :finalized do
+        end_time { start_time + 0.1.seconds }
+        output { { model: 'omni-moderation-latest', flagged: false, flagged_categories: [] }.to_json }
+      end
+
+      trait :flagged do
+        metadata do
+          {
+            flagged: true,
+            categories: {
+              'sexual' => false,
+              'hate' => true,
+              'harassment' => true,
+              'self-harm' => false,
+              'violence' => false
+            },
+            category_scores: {
+              'sexual' => 0.001,
+              'hate' => 0.95,
+              'harassment' => 0.87,
+              'self-harm' => 0.001,
+              'violence' => 0.002
+            },
+            flagged_categories: ['hate', 'harassment']
+          }
+        end
+      end
+
+      trait :high_violence_score do
+        metadata do
+          {
+            flagged: true,
+            categories: {
+              'sexual' => false,
+              'hate' => false,
+              'harassment' => false,
+              'self-harm' => false,
+              'violence' => true,
+              'violence/graphic' => true
+            },
+            category_scores: {
+              'sexual' => 0.001,
+              'hate' => 0.002,
+              'harassment' => 0.003,
+              'self-harm' => 0.001,
+              'violence' => 0.92,
+              'violence/graphic' => 0.88
+            },
+            flagged_categories: ['violence', 'violence/graphic']
+          }
+        end
+      end
+    end
   end
 end

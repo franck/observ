@@ -10,7 +10,7 @@ module Observ
     validates :observation_id, presence: true, uniqueness: true
     validates :start_time, presence: true
     validates :type, presence: true, inclusion: {
-    in: %w[Observ::Generation Observ::Span Observ::Embedding Observ::ImageGeneration Observ::Transcription]
+    in: %w[Observ::Generation Observ::Span Observ::Embedding Observ::ImageGeneration Observ::Transcription Observ::Moderation]
   }
 
     after_save :update_trace_metrics, if: :saved_change_to_cost_or_usage?

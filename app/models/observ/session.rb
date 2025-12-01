@@ -121,6 +121,12 @@ module Observ
       instrumenter
     end
 
+    def instrument_moderation(context: {})
+      instrumenter = Observ::ModerationInstrumenter.new(self, context: context)
+      instrumenter.instrument!
+      instrumenter
+    end
+
     def chat
       @chat ||= ::Chat.find_by(observability_session_id: session_id) if defined?(::Chat)
     end
