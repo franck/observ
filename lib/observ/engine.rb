@@ -8,6 +8,13 @@ module Observ
       g.factory_bot dir: "spec/factories"
     end
 
+    # Make helpers available to host app for Turbo broadcasts
+    initializer "observ.helpers" do
+      ActiveSupport.on_load(:action_controller_base) do
+        helper Observ::MarkdownHelper
+      end
+    end
+
     # Make concerns available to host app
     initializer "observ.load_concerns" do
       config.to_prepare do
