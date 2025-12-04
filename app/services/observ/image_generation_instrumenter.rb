@@ -7,6 +7,7 @@ module Observ
     # Source: https://openai.com/pricing, https://cloud.google.com/vertex-ai/pricing
     IMAGE_PRICING = {
       # OpenAI DALL-E 3 (size and quality based)
+      # Quality options: "standard", "hd"
       "dall-e-3" => {
         "1024x1024" => { "standard" => 0.04, "hd" => 0.08 },
         "1792x1024" => { "standard" => 0.08, "hd" => 0.12 },
@@ -17,6 +18,26 @@ module Observ
         "1024x1024" => { "default" => 0.02 },
         "512x512" => { "default" => 0.018 },
         "256x256" => { "default" => 0.016 }
+      },
+      # OpenAI GPT-image-1 (token-based, estimated per-image costs)
+      # Quality options: "low", "medium", "high" (maps "standard" -> "medium")
+      # Source: "Image outputs cost approximately $0.01 (low), $0.04 (medium), $0.17 (high) for square images"
+      # Larger sizes are estimated at ~1.7x for 1792x1024 and ~2.9x for 1792x1792
+      "gpt-image-1" => {
+        "1024x1024" => { "low" => 0.01, "medium" => 0.04, "high" => 0.17 },
+        "1792x1024" => { "low" => 0.017, "medium" => 0.068, "high" => 0.29 },
+        "1024x1792" => { "low" => 0.017, "medium" => 0.068, "high" => 0.29 },
+        "1792x1792" => { "low" => 0.029, "medium" => 0.116, "high" => 0.49 },
+        "default" => { "low" => 0.01, "medium" => 0.04, "high" => 0.17 }
+      },
+      # OpenAI GPT-image-1-mini (token-based, estimated per-image costs)
+      # Approximately 5x cheaper than gpt-image-1 based on token pricing ratio
+      "gpt-image-1-mini" => {
+        "1024x1024" => { "low" => 0.002, "medium" => 0.008, "high" => 0.034 },
+        "1792x1024" => { "low" => 0.0034, "medium" => 0.0136, "high" => 0.058 },
+        "1024x1792" => { "low" => 0.0034, "medium" => 0.0136, "high" => 0.058 },
+        "1792x1792" => { "low" => 0.0058, "medium" => 0.0232, "high" => 0.098 },
+        "default" => { "low" => 0.002, "medium" => 0.008, "high" => 0.034 }
       },
       # Google Imagen models (flat rate per image)
       "imagen-3.0-generate-002" => {
@@ -31,6 +52,14 @@ module Observ
       "imagen-4.0-ultra-generate-preview-06-06" => {
         "default" => { "default" => 0.08 }
       }
+    }.freeze
+
+    # Maps quality names between different conventions
+    # DALL-E uses: "standard", "hd"
+    # GPT-image uses: "low", "medium", "high"
+    QUALITY_MAPPINGS = {
+      "standard" => "medium",  # Map DALL-E "standard" to GPT-image "medium"
+      "hd" => "high"           # Map DALL-E "hd" to GPT-image "high"
     }.freeze
 
     attr_reader :session, :context
@@ -152,9 +181,16 @@ module Observ
       size_pricing = model_pricing[size] || model_pricing["default"]
       return 0.0 unless size_pricing
 
-      # Try exact quality match, then "standard", then "default", then first available
-      size_pricing[quality] ||
-        size_pricing["standard"] ||
+      # Try exact quality match first
+      return size_pricing[quality] if size_pricing[quality]
+
+      # Try mapped quality (e.g., "standard" -> "medium" for GPT-image models)
+      mapped_quality = QUALITY_MAPPINGS[quality]
+      return size_pricing[mapped_quality] if mapped_quality && size_pricing[mapped_quality]
+
+      # Fall back to "standard", "medium", "default", or first available
+      size_pricing["standard"] ||
+        size_pricing["medium"] ||
         size_pricing["default"] ||
         size_pricing.values.first ||
         0.0

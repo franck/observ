@@ -283,5 +283,73 @@ RSpec.describe Observ::ImageGenerationInstrumenter do
       image_gen = session.traces.last.image_generations.first
       expect(image_gen.cost_usd).to eq(0.0)
     end
+
+    context 'with gpt-image-1 models' do
+      it 'returns correct cost for gpt-image-1 medium quality (default)' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1')
+        # "standard" maps to "medium" for gpt-image models
+        RubyLLM.paint("A sunset", model: "gpt-image-1")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.04)
+      end
+
+      it 'returns correct cost for gpt-image-1 low quality' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1')
+        RubyLLM.paint("A sunset", model: "gpt-image-1", quality: "low")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.01)
+      end
+
+      it 'returns correct cost for gpt-image-1 high quality' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1')
+        RubyLLM.paint("A sunset", model: "gpt-image-1", quality: "high")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.17)
+      end
+
+      it 'returns correct cost for gpt-image-1 larger size' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1')
+        RubyLLM.paint("A sunset", model: "gpt-image-1", size: "1792x1024", quality: "medium")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.068)
+      end
+
+      it 'maps standard quality to medium for gpt-image-1' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1')
+        RubyLLM.paint("A sunset", model: "gpt-image-1", quality: "standard")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.04) # medium price
+      end
+
+      it 'maps hd quality to high for gpt-image-1' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1')
+        RubyLLM.paint("A sunset", model: "gpt-image-1", quality: "hd")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.17) # high price
+      end
+    end
+
+    context 'with gpt-image-1-mini models' do
+      it 'returns correct cost for gpt-image-1-mini medium quality' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1-mini')
+        RubyLLM.paint("A sunset", model: "gpt-image-1-mini", quality: "medium")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.008)
+      end
+
+      it 'returns correct cost for gpt-image-1-mini low quality' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1-mini')
+        RubyLLM.paint("A sunset", model: "gpt-image-1-mini", quality: "low")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.002)
+      end
+
+      it 'returns correct cost for gpt-image-1-mini high quality' do
+        allow(mock_image_result).to receive(:model_id).and_return('gpt-image-1-mini')
+        RubyLLM.paint("A sunset", model: "gpt-image-1-mini", quality: "high")
+        image_gen = session.traces.last.image_generations.first
+        expect(image_gen.cost_usd).to eq(0.034)
+      end
+    end
   end
 end
