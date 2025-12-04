@@ -272,6 +272,40 @@ RSpec.describe Observ::ChatInstrumenter do
           expect(result).to eq([])
         end
       end
+
+      context 'when object claims to respond_to?(:where) but method fails' do
+        it 'falls back to array filtering when where method raises NoMethodError' do
+          # This simulates the bug where respond_to?(:where) returns true
+          # but the actual .where call fails (e.g., some proxy or edge case)
+          msg1 = double('Message', role: :user)
+          msg2 = double('Message', role: :assistant)
+          messages = [ msg1, msg2 ]
+
+          # Make the array appear to respond to :where but fail when called
+          allow(messages).to receive(:respond_to?).and_call_original
+          allow(messages).to receive(:respond_to?).with(:where).and_return(true)
+
+          result = instrumenter.send(:find_messages_by_role, messages, :user)
+          expect(result).to eq([ msg1 ])
+        end
+
+        it 'handles edge case where where returns non-chainable result' do
+          # Edge case: respond_to?(:where) is true but where doesn't exist
+          msg1 = double('Message', role: :user)
+          msg2 = double('Message', role: :assistant)
+
+          # Create a custom array-like object that claims to have where but doesn't
+          messages = Class.new(Array) do
+            def respond_to?(method, include_all = false)
+              return true if method == :where
+              super
+            end
+          end.new([ msg1, msg2 ])
+
+          result = instrumenter.send(:find_messages_by_role, messages, :user)
+          expect(result).to eq([ msg1 ])
+        end
+      end
     end
 
     describe '#link_trace_to_message' do
@@ -350,6 +384,33 @@ RSpec.describe Observ::ChatInstrumenter do
           expect(trace).not_to receive(:update)
 
           instrumenter.send(:link_trace_to_message, trace, chat_instance, call_start_time)
+        end
+      end
+
+      context 'when messages claim to respond_to?(:where) but method fails' do
+        it 'gracefully handles the error and falls back to array filtering' do
+          msg1 = message_class.new(role: :assistant, id: 123)
+
+          # Create an array that claims to respond to :where but doesn't implement it
+          messages = Class.new(Array) do
+            def respond_to?(method, include_all = false)
+              return true if method == :where
+              super
+            end
+          end.new([ msg1 ])
+
+          chat_instance = double('Chat')
+          allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)
+          allow(chat_instance).to receive(:messages).and_return(messages)
+
+          # The rescue StandardError in link_trace_to_message should catch the error
+          # and log a warning, but not crash
+          expect(Rails.logger).to receive(:warn).with(/Failed to link trace to message/)
+
+          # Should not crash even though where is not implemented
+          expect {
+            instrumenter.send(:link_trace_to_message, trace, chat_instance, call_start_time)
+          }.not_to raise_error
         end
       end
     end

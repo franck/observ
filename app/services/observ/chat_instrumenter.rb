@@ -375,10 +375,18 @@ module Observ
     # Find messages by role, handling both ActiveRecord relations and plain Arrays.
     # ActiveRecord-backed Chat models return relations with .where(), while raw
     # RubyLLM::Chat objects return plain Arrays.
+    #
+    # Note: We use a rescue block because some objects may claim to respond_to?(:where)
+    # but fail when the method is actually called (edge cases with proxies or custom objects).
     def find_messages_by_role(messages, role)
       role_str = role.to_s
       if messages.respond_to?(:where)
-        messages.where(role: role)
+        begin
+          messages.where(role: role)
+        rescue NoMethodError
+          # Fallback to array filtering if where method doesn't actually exist
+          messages.select { |m| m.role.to_s == role_str }
+        end
       else
         messages.select { |m| m.role.to_s == role_str }
       end
