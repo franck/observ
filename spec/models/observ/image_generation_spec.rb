@@ -48,6 +48,18 @@ RSpec.describe Observ::ImageGeneration, type: :model do
     end
   end
 
+  describe '#quality' do
+    it 'returns quality from metadata' do
+      image_generation = create(:observ_image_generation, metadata: { quality: 'hd' })
+      expect(image_generation.quality).to eq('hd')
+    end
+
+    it 'returns nil when quality not set' do
+      image_generation = create(:observ_image_generation, metadata: {})
+      expect(image_generation.quality).to be_nil
+    end
+  end
+
   describe '#revised_prompt' do
     it 'returns revised_prompt from metadata' do
       image_generation = create(:observ_image_generation, :with_revised_prompt)

@@ -19,6 +19,10 @@ module Observ
       metadata&.dig("size")
     end
 
+    def quality
+      metadata&.dig("quality")
+    end
+
     def revised_prompt
       metadata&.dig("revised_prompt")
     end

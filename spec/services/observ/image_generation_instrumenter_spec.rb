@@ -37,13 +37,6 @@ RSpec.describe Observ::ImageGenerationInstrumenter do
     allow(config_double).to receive(:respond_to?).with(:default_image_model).and_return(true)
     allow(config_double).to receive(:default_image_model).and_return('dall-e-3')
     allow(RubyLLM).to receive(:config).and_return(config_double)
-
-    model_info = double('ModelInfo')
-    allow(model_info).to receive(:respond_to?).with(:image_price).and_return(true)
-    allow(model_info).to receive(:image_price).and_return(0.04)
-    models_double = double('Models')
-    allow(models_double).to receive(:find).and_return(model_info)
-    allow(RubyLLM).to receive(:models).and_return(models_double)
   end
 
   after do
@@ -144,6 +137,30 @@ RSpec.describe Observ::ImageGenerationInstrumenter do
       trace = session.traces.last
       expect(trace.metadata).to include('operation' => 'test')
     end
+
+    it 'records quality in metadata' do
+      RubyLLM.paint("A sunset over mountains", quality: "hd")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.quality).to eq('hd')
+    end
+
+    it 'defaults quality to standard' do
+      RubyLLM.paint("A sunset over mountains")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.quality).to eq('standard')
+    end
+
+    it 'records size in metadata' do
+      RubyLLM.paint("A sunset over mountains", size: "1792x1024")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.metadata['size']).to eq('1792x1024')
+    end
+
+    it 'defaults size to 1024x1024' do
+      RubyLLM.paint("A sunset over mountains")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.metadata['size']).to eq('1024x1024')
+    end
   end
 
   describe 'base64 image instrumentation' do
@@ -208,31 +225,60 @@ RSpec.describe Observ::ImageGenerationInstrumenter do
     before { instrumenter.instrument! }
     after { instrumenter.uninstrument! }
 
-    it 'returns 0 when model info not found' do
-      allow(RubyLLM.models).to receive(:find).and_return(nil)
-      RubyLLM.paint("A sunset")
-      image_gen = session.traces.last.image_generations.first
-      expect(image_gen.cost_usd).to eq(0.0)
-    end
-
-    it 'falls back to output_price_per_million when image_price not available' do
-      model_info = double('ModelInfo')
-      allow(model_info).to receive(:respond_to?).with(:image_price).and_return(false)
-      allow(model_info).to receive(:respond_to?).with(:output_price_per_million).and_return(true)
-      allow(model_info).to receive(:output_price_per_million).and_return(40.0)
-      allow(RubyLLM.models).to receive(:find).and_return(model_info)
-
+    it 'returns correct cost for dall-e-3 standard 1024x1024' do
       RubyLLM.paint("A sunset")
       image_gen = session.traces.last.image_generations.first
       expect(image_gen.cost_usd).to eq(0.04)
     end
 
-    it 'returns 0 when no pricing available' do
-      model_info = double('ModelInfo')
-      allow(model_info).to receive(:respond_to?).with(:image_price).and_return(false)
-      allow(model_info).to receive(:respond_to?).with(:output_price_per_million).and_return(false)
-      allow(RubyLLM.models).to receive(:find).and_return(model_info)
+    it 'returns correct cost for dall-e-3 hd quality' do
+      RubyLLM.paint("A sunset", quality: "hd")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.cost_usd).to eq(0.08)
+    end
 
+    it 'returns correct cost for dall-e-3 larger size' do
+      RubyLLM.paint("A sunset", size: "1792x1024")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.cost_usd).to eq(0.08)
+    end
+
+    it 'returns correct cost for dall-e-3 hd with larger size' do
+      RubyLLM.paint("A sunset", size: "1792x1024", quality: "hd")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.cost_usd).to eq(0.12)
+    end
+
+    it 'returns correct cost for dall-e-2' do
+      allow(mock_image_result).to receive(:model_id).and_return('dall-e-2')
+      RubyLLM.paint("A sunset", model: "dall-e-2")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.cost_usd).to eq(0.02)
+    end
+
+    it 'returns correct cost for dall-e-2 smaller size' do
+      allow(mock_image_result).to receive(:model_id).and_return('dall-e-2')
+      RubyLLM.paint("A sunset", model: "dall-e-2", size: "512x512")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.cost_usd).to eq(0.018)
+    end
+
+    it 'returns correct cost for imagen models' do
+      allow(mock_image_result).to receive(:model_id).and_return('imagen-3.0-generate-002')
+      RubyLLM.paint("A sunset", model: "imagen-3.0-generate-002")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.cost_usd).to eq(0.04)
+    end
+
+    it 'returns 0 for unknown models' do
+      allow(mock_image_result).to receive(:model_id).and_return('unknown-model')
+      RubyLLM.paint("A sunset", model: "unknown-model")
+      image_gen = session.traces.last.image_generations.first
+      expect(image_gen.cost_usd).to eq(0.0)
+    end
+
+    it 'returns 0 when model_id is nil' do
+      allow(mock_image_result).to receive(:model_id).and_return(nil)
       RubyLLM.paint("A sunset")
       image_gen = session.traces.last.image_generations.first
       expect(image_gen.cost_usd).to eq(0.0)
