@@ -19,6 +19,37 @@ RSpec.describe Observ::GuardrailService do
       end
     end
 
+    context "with error_span condition" do
+      let(:trace) { create(:observ_trace) }
+      let!(:error_span) { create(:observ_span, :error, trace: trace) }
+
+      it "enqueues trace for review with critical priority" do
+        expect {
+          described_class.evaluate_trace(trace)
+        }.to change(Observ::ReviewItem, :count).by(1)
+
+        review_item = trace.review_item
+        expect(review_item.reason).to eq("error_span")
+        expect(review_item.priority).to eq("critical")
+      end
+
+      it "includes span details in review item" do
+        described_class.evaluate_trace(trace)
+
+        details = trace.review_item.reason_details
+        expect(details["span_id"]).to eq(error_span.observation_id)
+      end
+
+      it "does not enqueue trace without error spans" do
+        normal_trace = create(:observ_trace)
+        create(:observ_span, name: "tool:weather", trace: normal_trace)
+
+        expect {
+          described_class.evaluate_trace(normal_trace)
+        }.not_to change(Observ::ReviewItem, :count)
+      end
+    end
+
     context "with high_cost condition" do
       let(:trace) { create(:observ_trace, total_cost: 0.15) }
 

@@ -66,6 +66,15 @@ module Observ
             details: ->(t) { { error: t.metadata["error"] } }
           },
           {
+            name: :error_span,
+            priority: :critical,
+            condition: ->(t) { t.observations.exists?(type: "Observ::Span", name: "error") },
+            details: ->(t) {
+              error_span = t.observations.find_by(type: "Observ::Span", name: "error")
+              { span_id: error_span&.observation_id, metadata: error_span&.metadata }
+            }
+          },
+          {
             name: :high_cost,
             priority: :high,
             condition: ->(t) { t.total_cost.present? && t.total_cost > thresholds[:trace_cost] },
