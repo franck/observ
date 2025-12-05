@@ -17,6 +17,7 @@ module Observ
     validates :start_time, presence: true
 
     after_save :update_session_metrics, if: :saved_change_to_total_cost_or_total_tokens?
+    after_commit :evaluate_guardrails, if: :just_completed?
 
     def create_generation(name: "llm_generation", model: nil, metadata: {}, **options)
       observations.create!(
@@ -210,6 +211,14 @@ module Observ
 
     def update_session_metrics
       observ_session&.update_aggregated_metrics
+    end
+
+    def just_completed?
+      previous_changes.key?("end_time") && end_time.present?
+    end
+
+    def evaluate_guardrails
+      GuardrailService.evaluate_trace(self)
     end
   end
 end

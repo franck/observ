@@ -153,6 +153,23 @@ RSpec.describe Observ::Trace, type: :model do
       expect(trace.output).to be_a(String)
       expect(JSON.parse(trace.output)).to eq({ 'status' => 'success' })
     end
+
+    it 'evaluates guardrails after completion' do
+      expect(Observ::GuardrailService).to receive(:evaluate_trace).with(trace)
+      trace.finalize(output: 'done')
+    end
+
+    context 'with error span' do
+      let!(:error_span) { create(:observ_span, :error, trace: trace) }
+
+      it 'enqueues trace for review automatically' do
+        expect {
+          trace.finalize(output: 'done')
+        }.to change(Observ::ReviewItem, :count).by(1)
+
+        expect(trace.reload.review_item.reason).to eq('error_span')
+      end
+    end
   end
 
   describe '#finalize_with_response' do

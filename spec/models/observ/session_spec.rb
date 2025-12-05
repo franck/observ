@@ -94,6 +94,23 @@ RSpec.describe Observ::Session, type: :model do
       expect(session).to receive(:update_aggregated_metrics)
       session.finalize
     end
+
+    it 'evaluates guardrails after completion' do
+      expect(Observ::GuardrailService).to receive(:evaluate_session).with(session)
+      session.finalize
+    end
+
+    context 'with high cost' do
+      let(:session) { create(:observ_session, total_cost: 0.60) }
+
+      it 'enqueues session for review automatically' do
+        expect {
+          session.finalize
+        }.to change(Observ::ReviewItem, :count).by(1)
+
+        expect(session.reload.review_item.reason).to eq('high_cost')
+      end
+    end
   end
 
   describe '#duration_s' do

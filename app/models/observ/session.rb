@@ -17,6 +17,7 @@ module Observ
 
     before_validation :set_session_id, on: :create
     before_validation :set_start_time, on: :create
+    after_commit :evaluate_guardrails, if: :just_completed?
 
     def create_trace(name: nil, input: nil, metadata: {}, tags: [])
       traces.create!(
@@ -154,6 +155,14 @@ module Observ
                         .sum do |g|
         ((g.end_time - g.start_time) * 1000).round(2)
       end || 0
+    end
+
+    def just_completed?
+      previous_changes.key?("end_time") && end_time.present?
+    end
+
+    def evaluate_guardrails
+      GuardrailService.evaluate_session(self)
     end
   end
 end
