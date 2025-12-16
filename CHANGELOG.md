@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.7] - 2025-12-16
+
+### Added
+
+- **Guardrails System**: Automatic evaluation of traces and sessions upon completion
+  - `error_span` rule to detect traces with error spans
+  - Auto-evaluation triggers for trace and session lifecycle events
+
+- **Extended RubyLLM Observability**:
+  - Image generation observability for `RubyLLM.paint` calls
+  - Embedding observability for `RubyLLM.embed` calls
+  - Transcription observability for `RubyLLM.transcribe` calls
+  - Moderation observability for `RubyLLM.moderate` calls
+  - Estimated pricing for `gpt-image-1` models
+
+- **Chat UI Improvements**:
+  - Typing indicator while AI is processing
+  - Markdown rendering for chat messages with dedicated CSS styles
+  - Show actual LLM error message instead of generic error
+
+- **Prompt Enhancements**:
+  - Mustache variable interpolation support for `NullPrompt`
+  - Hybrid config editor with structured fields and JSON validation
+
+- **ModerationGuardrailService**: Automatic session moderation support
+
+### Fixed
+
+- **Instrumenter**: Handle edge case where `respond_to?(:where)` lies
+- **Instrumenter**: Use hardcoded pricing for image generation cost calculation
+- **Instrumenter**: Handle both ActiveRecord relations and plain Arrays for messages
+- **Engine**: Make `MarkdownHelper` available to host app for Turbo broadcasts
+- **Chat**: Refactored chat flow to prevent duplicate messages
+- **HTTP Status**: Updated from `unprocessable_entity` to `unprocessable_content` for Rails 7.1+
+
+### Documentation
+
+- Added documentation for moderation guardrail implementation
+- Documented image generation, transcription, and moderation instrumentation in README
+- Marked RubyLLM observability expansion complete
+
 ## [0.6.6] - 2025-11-28
 
 ### Changed
@@ -563,6 +604,7 @@ Chat feature adds (optional):
 
 ---
 
+[0.6.7]: https://github.com/franck/observ/releases/tag/v0.6.7
 [0.6.6]: https://github.com/franck/observ/releases/tag/v0.6.6
 [0.6.5]: https://github.com/franck/observ/releases/tag/v0.6.5
 [0.6.4]: https://github.com/franck/observ/releases/tag/v0.6.4
@@ -576,4 +618,4 @@ Chat feature adds (optional):
 [0.3.0]: https://github.com/franck/observ/releases/tag/v0.3.0
 [0.1.2]: https://github.com/franck/observ/releases/tag/v0.1.2
 [0.1.0]: https://github.com/franck/observ/releases/tag/v0.1.0
-[Unreleased]: https://github.com/franck/observ/compare/v0.6.6...HEAD
+[Unreleased]: https://github.com/franck/observ/compare/v0.6.7...HEAD
