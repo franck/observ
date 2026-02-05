@@ -23,7 +23,7 @@ RSpec.describe Observ::ModerationGuardrailService do
     double(
       "ModerationResult",
       flagged?: true,
-      flagged_categories: [ "hate", "harassment" ],
+      flagged_categories: ["hate", "harassment"],
       category_scores: { "hate" => 0.95, "harassment" => 0.87, "violence" => 0.1 },
       categories: { "hate" => true, "harassment" => true },
       model: "omni-moderation-latest",
@@ -116,7 +116,7 @@ RSpec.describe Observ::ModerationGuardrailService do
 
       it "includes flagged categories in details" do
         result = service.evaluate_trace(trace)
-        expect(result.details[:flagged_categories]).to eq([ "hate", "harassment" ])
+        expect(result.details[:flagged_categories]).to eq(["hate", "harassment"])
       end
 
       it "sets review item reason to content_moderation" do
@@ -142,7 +142,7 @@ RSpec.describe Observ::ModerationGuardrailService do
         double(
           "ModerationResult",
           flagged?: true,
-          flagged_categories: [ "sexual/minors" ],
+          flagged_categories: ["sexual/minors"],
           category_scores: { "sexual/minors" => 0.99 },
           categories: { "sexual/minors" => true },
           model: "omni-moderation-latest",
@@ -282,7 +282,7 @@ RSpec.describe Observ::ModerationGuardrailService do
         double(
           "ModerationResult",
           flagged?: true,
-          flagged_categories: [ "hate" ],
+          flagged_categories: ["hate"],
           category_scores: { "hate" => 0.95 },
           categories: { "hate" => true },
           model: "omni-moderation-latest",

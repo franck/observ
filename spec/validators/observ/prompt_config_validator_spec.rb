@@ -24,7 +24,7 @@ RSpec.describe Observ::PromptConfigValidator do
       end
 
       it 'returns false and adds error for array config' do
-        validator = described_class.new([ 1, 2, 3 ])
+        validator = described_class.new([1, 2, 3])
         expect(validator.valid?).to be false
         expect(validator.errors).to include("Config must be a Hash")
       end
@@ -67,7 +67,7 @@ RSpec.describe Observ::PromptConfigValidator do
       end
 
       it 'validates correct stop_sequences array' do
-        config = { stop_sequences: [ "STOP", "END" ] }
+        config = { stop_sequences: ["STOP", "END"] }
         validator = described_class.new(config)
         expect(validator.valid?).to be true
         expect(validator.errors).to be_empty
@@ -114,7 +114,7 @@ RSpec.describe Observ::PromptConfigValidator do
           temperature: 0.8,
           max_tokens: 2000,
           top_p: 0.95,
-          stop_sequences: [ "END" ]
+          stop_sequences: ["END"]
         }
         validator = described_class.new(config)
         expect(validator.valid?).to be true
@@ -268,14 +268,14 @@ RSpec.describe Observ::PromptConfigValidator do
 
     context 'with invalid array items' do
       it 'rejects non-string items in stop_sequences' do
-        config = { stop_sequences: [ "STOP", 123, "END" ] }
+        config = { stop_sequences: ["STOP", 123, "END"] }
         validator = described_class.new(config)
         expect(validator.valid?).to be false
         expect(validator.errors).to include("stop_sequences[1] must be a string")
       end
 
       it 'rejects multiple invalid items in stop_sequences' do
-        config = { stop_sequences: [ 123, 456 ] }
+        config = { stop_sequences: [123, 456] }
         validator = described_class.new(config)
         expect(validator.valid?).to be false
         expect(validator.errors).to include("stop_sequences[0] must be a string")

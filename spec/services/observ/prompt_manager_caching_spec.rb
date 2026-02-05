@@ -153,9 +153,9 @@ RSpec.describe Observ::PromptManager, '.caching' do
     end
 
     it 'warms cache for specific prompts' do
-      results = described_class.warm_cache([ prompt_name ])
+      results = described_class.warm_cache([prompt_name])
 
-      expect(results[:success]).to eq([ prompt_name ])
+      expect(results[:success]).to eq([prompt_name])
       expect(results[:failed]).to be_empty
     end
 
@@ -163,7 +163,7 @@ RSpec.describe Observ::PromptManager, '.caching' do
       allow(described_class).to receive(:fetch).with(name: prompt_name, state: :production)
         .and_raise(StandardError, "DB error")
 
-      results = described_class.warm_cache([ prompt_name ])
+      results = described_class.warm_cache([prompt_name])
 
       expect(results[:success]).to be_empty
       expect(results[:failed].first[:name]).to eq(prompt_name)

@@ -21,7 +21,7 @@ module Observ
       return "" if collection.total_count.zero?
 
       from = collection.offset_value + 1
-      to = [ collection.offset_value + collection.limit_value, collection.total_count ].min
+      to = [collection.offset_value + collection.limit_value, collection.total_count].min
       total = collection.total_count
 
       content_tag(:div, class: "observ-pagination__info") do

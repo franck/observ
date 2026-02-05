@@ -82,10 +82,10 @@ module Observ
       # @return [Boolean] true if successful
       def invalidate_cache(name:, version: nil)
         keys = if version
-          [ cache_key(name: name, version: version) ]
+          [cache_key(name: name, version: version)]
         else
           # Invalidate all state-based keys for this prompt
-          [ :draft, :production, :archived ].map { |state| cache_key(name: name, state: state) }
+          [:draft, :production, :archived].map { |state| cache_key(name: name, state: state) }
         end
 
         keys.each { |key| Rails.cache.delete(key) }

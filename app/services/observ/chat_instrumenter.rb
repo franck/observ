@@ -578,7 +578,7 @@ module Observ
         elsif value.is_a?(Hash)
           truncate_large_hash(value)
         elsif value.is_a?(Array) && value.size > 100
-          value[0..99] + [ "... #{value.size - 100} more items" ]
+          value[0..99] + ["... #{value.size - 100} more items"]
         else
           value
         end

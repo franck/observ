@@ -53,7 +53,7 @@ RSpec.describe Observ::ReviewItem, type: :model do
       let!(:normal_item) { create(:observ_review_item, :normal_priority) }
 
       it "orders by priority desc, created_at asc" do
-        items = described_class.by_priority.where(id: [ critical_item.id, high_item.id, normal_item.id ])
+        items = described_class.by_priority.where(id: [critical_item.id, high_item.id, normal_item.id])
         expect(items.first).to eq(critical_item)
         expect(items.second).to eq(high_item)
         expect(items.third).to eq(normal_item)

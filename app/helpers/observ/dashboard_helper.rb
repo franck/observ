@@ -118,7 +118,7 @@ module Observ
     def render_json_viewer(data, compact: false)
       return "" if data.nil?
 
-      css_classes = [ "observ-json-viewer" ]
+      css_classes = ["observ-json-viewer"]
       css_classes << "observ-json-viewer--compact" if compact
 
       content_tag(:div,
@@ -146,7 +146,7 @@ module Observ
       end
 
       # Display as plain text
-      css_classes = [ "observ-code-block" ]
+      css_classes = ["observ-code-block"]
       css_classes << "observ-code-block--compact" if compact
       content_tag(:pre, content, class: css_classes.join(" "))
     end

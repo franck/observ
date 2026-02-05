@@ -3,7 +3,7 @@
 module Observ
   class DatasetItemsController < ApplicationController
     before_action :set_dataset
-    before_action :set_item, only: [ :edit, :update, :destroy ]
+    before_action :set_item, only: [:edit, :update, :destroy]
 
     def index
       @items = @dataset.items.order(created_at: :desc)

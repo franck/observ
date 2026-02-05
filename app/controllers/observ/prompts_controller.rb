@@ -1,7 +1,7 @@
 module Observ
   class PromptsController < ApplicationController
-    before_action :set_prompt_name, only: [ :show, :edit, :update, :destroy, :versions, :compare ]
-    before_action :set_prompt, only: [ :edit, :update, :destroy ]
+    before_action :set_prompt_name, only: [:show, :edit, :update, :destroy, :versions, :compare]
+    before_action :set_prompt, only: [:edit, :update, :destroy]
 
     # GET /observ/prompts
     def index
@@ -141,7 +141,7 @@ module Observ
       respond_to do |format|
         format.html # Render the HTML view
         format.json do
-          render json: @versions.as_json(only: [ :version, :state, :commit_message, :created_at ])
+          render json: @versions.as_json(only: [:version, :state, :commit_message, :created_at])
         end
       end
     end

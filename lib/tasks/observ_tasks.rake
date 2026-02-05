@@ -11,7 +11,7 @@ namespace :observ do
     rails observ:sync_assets[app/javascript/stylesheets/observ]
     rails observ:sync_assets[app/assets/stylesheets/observ,app/javascript/controllers/observ]
   "
-  task :sync_assets, [ :styles_dest, :js_dest ] => :environment do |t, args|
+  task :sync_assets, [:styles_dest, :js_dest] => :environment do |t, args|
     require "observ/asset_installer"
 
     # Get the observ gem root (this task is in observ/lib/tasks)
@@ -46,7 +46,7 @@ namespace :observ do
     rails observ:install_assets[app/javascript/stylesheets/observ]
     rails observ:install_assets[app/assets/stylesheets/observ,app/javascript/controllers/observ]
   "
-  task :install_assets, [ :styles_dest, :js_dest ] => :environment do |t, args|
+  task :install_assets, [:styles_dest, :js_dest] => :environment do |t, args|
     require "observ/asset_installer"
 
     # Get the observ gem root

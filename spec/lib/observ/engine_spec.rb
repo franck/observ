@@ -85,7 +85,7 @@ RSpec.describe Observ::Engine do
       it "can warm cache" do
         create(:observ_prompt, :production, name: "warm-test")
 
-        result = Observ::PromptManager.warm_cache([ "warm-test" ])
+        result = Observ::PromptManager.warm_cache(["warm-test"])
         expect(result).to have_key(:success)
         expect(result).to have_key(:failed)
         expect(result[:success]).to include("warm-test")
@@ -97,7 +97,7 @@ RSpec.describe Observ::Engine do
 
         versions = Observ::PromptManager.versions(name: "versions-test")
         expect(versions.count).to eq(2)
-        expect(versions.map(&:version)).to eq([ 2, 1 ])
+        expect(versions.map(&:version)).to eq([2, 1])
       end
 
       it "can promote drafts" do

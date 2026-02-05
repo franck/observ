@@ -11,7 +11,7 @@ class CreateObservDatasetItems < ActiveRecord::Migration[7.0]
       t.references :source_trace, foreign_key: { to_table: :observ_traces }
       t.timestamps
 
-      t.index [ :dataset_id, :status ]
+      t.index [:dataset_id, :status]
     end
   end
 end

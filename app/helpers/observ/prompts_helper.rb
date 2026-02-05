@@ -13,7 +13,7 @@ module Observ
         .map do |provider, models|
           [
             provider.titleize,
-            models.sort_by(&:display_name).map { |m| [ m.display_name, m.id ] }
+            models.sort_by(&:display_name).map { |m| [m.display_name, m.id] }
           ]
         end
     rescue StandardError => e

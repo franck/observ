@@ -12,7 +12,7 @@ module Observ
     validates :reviewable, presence: true
     validates :reviewable_id, uniqueness: { scope: :reviewable_type }
 
-    scope :actionable, -> { where(status: [ :pending, :in_progress ]) }
+    scope :actionable, -> { where(status: [:pending, :in_progress]) }
     scope :by_priority, -> { order(priority: :desc, created_at: :asc) }
     scope :sessions, -> { where(reviewable_type: "Observ::Session") }
     scope :traces, -> { where(reviewable_type: "Observ::Trace") }

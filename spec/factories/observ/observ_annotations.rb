@@ -6,7 +6,7 @@ FactoryBot.define do
     tags { [] }
 
     trait :with_tags do
-      tags { [ "important", "review" ] }
+      tags { ["important", "review"] }
     end
   end
 end

@@ -21,9 +21,9 @@ RSpec.describe Observ::Span, type: :model do
     end
 
     it 'converts hash output to JSON' do
-      span.finalize(output: { status: 'ok', data: [ 1, 2, 3 ] })
+      span.finalize(output: { status: 'ok', data: [1, 2, 3] })
       expect(span.output).to be_a(String)
-      expect(JSON.parse(span.output)).to eq({ 'status' => 'ok', 'data' => [ 1, 2, 3 ] })
+      expect(JSON.parse(span.output)).to eq({ 'status' => 'ok', 'data' => [1, 2, 3] })
     end
   end
 

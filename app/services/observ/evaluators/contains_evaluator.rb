@@ -32,7 +32,7 @@ module Observ
         when Array
           expected
         when String
-          [ expected ]
+          [expected]
         else
           []
         end

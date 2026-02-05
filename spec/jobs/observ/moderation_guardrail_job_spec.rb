@@ -147,7 +147,7 @@ RSpec.describe Observ::ModerationGuardrailJob, type: :job do
 
     it "enqueues sessions matching agent types" do
       expect {
-        described_class.enqueue_for_agent_types([ "chat_support" ])
+        described_class.enqueue_for_agent_types(["chat_support"])
       }.to have_enqueued_job(described_class).exactly(2).times
     end
 
@@ -155,7 +155,7 @@ RSpec.describe Observ::ModerationGuardrailJob, type: :job do
       create(:observ_session, metadata: { "agent_type" => "chat_support" }, created_at: 2.hours.ago)
 
       expect {
-        described_class.enqueue_for_agent_types([ "chat_support" ], since: 1.hour.ago)
+        described_class.enqueue_for_agent_types(["chat_support"], since: 1.hour.ago)
       }.to have_enqueued_job(described_class).exactly(2).times
     end
   end

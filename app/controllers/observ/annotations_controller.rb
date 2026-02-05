@@ -1,6 +1,6 @@
 module Observ
   class AnnotationsController < ApplicationController
-    before_action :set_annotatable, except: [ :sessions_index, :traces_index, :export ]
+    before_action :set_annotatable, except: [:sessions_index, :traces_index, :export]
 
   def index
     @annotations = @annotatable.annotations
@@ -126,7 +126,7 @@ module Observ
 
   def generate_csv(annotations)
     CSV.generate(headers: true) do |csv|
-      csv << [ "ID", "Content", "Annotatable Type", "Annotatable ID", "Created At", "Updated At" ]
+      csv << ["ID", "Content", "Annotatable Type", "Annotatable ID", "Created At", "Updated At"]
 
       annotations.each do |annotation|
         csv << [

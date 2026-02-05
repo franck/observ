@@ -209,7 +209,7 @@ RSpec.describe Observ::ChatInstrumenter do
 
     describe '#format_input' do
       it 'formats text message with attachments' do
-        input = instrumenter.send(:format_input, 'hello', [ 'file.txt' ])
+        input = instrumenter.send(:format_input, 'hello', ['file.txt'])
         expect(input[:text]).to eq('hello')
         expect(input[:attachments]).to be_an(Array)
         expect(input[:attachments].first[:path]).to eq('file.txt')
@@ -240,33 +240,33 @@ RSpec.describe Observ::ChatInstrumenter do
           msg1 = double('Message', role: :user)
           msg2 = double('Message', role: :assistant)
           msg3 = double('Message', role: 'user') # String role
-          messages = [ msg1, msg2, msg3 ]
+          messages = [msg1, msg2, msg3]
 
           result = instrumenter.send(:find_messages_by_role, messages, :user)
-          expect(result).to eq([ msg1, msg3 ])
+          expect(result).to eq([msg1, msg3])
         end
 
         it 'handles symbol role parameter matching string roles' do
           msg1 = double('Message', role: 'assistant')
           msg2 = double('Message', role: :assistant)
-          messages = [ msg1, msg2 ]
+          messages = [msg1, msg2]
 
           result = instrumenter.send(:find_messages_by_role, messages, :assistant)
-          expect(result).to eq([ msg1, msg2 ])
+          expect(result).to eq([msg1, msg2])
         end
 
         it 'handles string role parameter' do
           msg1 = double('Message', role: :user)
           msg2 = double('Message', role: 'user')
-          messages = [ msg1, msg2 ]
+          messages = [msg1, msg2]
 
           result = instrumenter.send(:find_messages_by_role, messages, 'user')
-          expect(result).to eq([ msg1, msg2 ])
+          expect(result).to eq([msg1, msg2])
         end
 
         it 'returns empty array when no messages match' do
           msg1 = double('Message', role: :assistant)
-          messages = [ msg1 ]
+          messages = [msg1]
 
           result = instrumenter.send(:find_messages_by_role, messages, :user)
           expect(result).to eq([])
@@ -279,14 +279,14 @@ RSpec.describe Observ::ChatInstrumenter do
           # but the actual .where call fails (e.g., some proxy or edge case)
           msg1 = double('Message', role: :user)
           msg2 = double('Message', role: :assistant)
-          messages = [ msg1, msg2 ]
+          messages = [msg1, msg2]
 
           # Make the array appear to respond to :where but fail when called
           allow(messages).to receive(:respond_to?).and_call_original
           allow(messages).to receive(:respond_to?).with(:where).and_return(true)
 
           result = instrumenter.send(:find_messages_by_role, messages, :user)
-          expect(result).to eq([ msg1 ])
+          expect(result).to eq([msg1])
         end
 
         it 'handles edge case where where returns non-chainable result' do
@@ -300,10 +300,10 @@ RSpec.describe Observ::ChatInstrumenter do
               return true if method == :where
               super
             end
-          end.new([ msg1, msg2 ])
+          end.new([msg1, msg2])
 
           result = instrumenter.send(:find_messages_by_role, messages, :user)
-          expect(result).to eq([ msg1 ])
+          expect(result).to eq([msg1])
         end
       end
     end
@@ -344,7 +344,7 @@ RSpec.describe Observ::ChatInstrumenter do
           msg1 = message_class.new(role: :user, id: 111)
           msg2 = message_class.new(role: :assistant, id: 456)
           msg3 = message_class.new(role: :assistant, id: 789)
-          messages = [ msg1, msg2, msg3 ]
+          messages = [msg1, msg2, msg3]
 
           chat_instance = double('Chat')
           allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)
@@ -360,7 +360,7 @@ RSpec.describe Observ::ChatInstrumenter do
           # Use a struct without id field
           msg_class_no_id = Struct.new(:role, keyword_init: true)
           msg1 = msg_class_no_id.new(role: :assistant)
-          messages = [ msg1 ]
+          messages = [msg1]
 
           chat_instance = double('Chat')
           allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)
@@ -374,7 +374,7 @@ RSpec.describe Observ::ChatInstrumenter do
 
         it 'does not update trace when message id is nil' do
           msg1 = message_class.new(role: :assistant, id: nil)
-          messages = [ msg1 ]
+          messages = [msg1]
 
           chat_instance = double('Chat')
           allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)
@@ -397,7 +397,7 @@ RSpec.describe Observ::ChatInstrumenter do
               return true if method == :where
               super
             end
-          end.new([ msg1 ])
+          end.new([msg1])
 
           chat_instance = double('Chat')
           allow(chat_instance).to receive(:respond_to?).with(:messages).and_return(true)

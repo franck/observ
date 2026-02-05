@@ -9,7 +9,7 @@ RSpec.describe Observ::TraceTextFormatter do
       input: 'What is the capital of France?',
       output: 'The capital of France is Paris.',
       user_id: 'user123',
-      tags: [ 'production', 'chat' ],
+      tags: ['production', 'chat'],
       metadata: { phase: 'conversation', context: 'geography' }
     )
   end
@@ -87,7 +87,7 @@ RSpec.describe Observ::TraceTextFormatter do
           annotatable: trace,
           content: 'This is a good response',
           annotator: 'reviewer',
-          tags: [ 'approved' ]
+          tags: ['approved']
         )
         create(:observ_annotation,
           annotatable: trace,

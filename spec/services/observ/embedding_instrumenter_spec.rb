@@ -17,7 +17,7 @@ RSpec.describe Observ::EmbeddingInstrumenter do
   let(:mock_batch_embedding_result) do
     double(
       'BatchEmbeddingResult',
-      vectors: [ Array.new(1536) { rand }, Array.new(1536) { rand }, Array.new(1536) { rand } ],
+      vectors: [Array.new(1536) { rand }, Array.new(1536) { rand }, Array.new(1536) { rand }],
       model: 'text-embedding-3-small',
       input_tokens: 30
     )
@@ -160,19 +160,19 @@ RSpec.describe Observ::EmbeddingInstrumenter do
     end
 
     it 'records batch size' do
-      RubyLLM.embed([ "Text 1", "Text 2", "Text 3" ])
+      RubyLLM.embed(["Text 1", "Text 2", "Text 3"])
       embedding = session.traces.last.embeddings.first
       expect(embedding.batch_size).to eq(3)
     end
 
     it 'records vectors count' do
-      RubyLLM.embed([ "Text 1", "Text 2", "Text 3" ])
+      RubyLLM.embed(["Text 1", "Text 2", "Text 3"])
       embedding = session.traces.last.embeddings.first
       expect(embedding.vectors_count).to eq(3)
     end
 
     it 'records correct input tokens for batch' do
-      RubyLLM.embed([ "Text 1", "Text 2", "Text 3" ])
+      RubyLLM.embed(["Text 1", "Text 2", "Text 3"])
       embedding = session.traces.last.embeddings.first
       expect(embedding.input_tokens).to eq(30)
     end

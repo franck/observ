@@ -2,7 +2,7 @@
 
 module Observ
   class ReviewQueueController < ApplicationController
-    before_action :set_review_item, only: [ :show, :complete, :skip ]
+    before_action :set_review_item, only: [:show, :complete, :skip]
 
     def index
       @review_items = Observ::ReviewItem

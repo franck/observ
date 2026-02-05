@@ -101,7 +101,7 @@ module Observ
 
     def self.clear_cache(name:)
       # Clear all cache keys for this prompt
-      [ :draft, :production, :archived ].each do |state|
+      [:draft, :production, :archived].each do |state|
         Rails.cache.delete(cache_key_for(name: name, version: nil, state: state))
       end
     end
@@ -206,7 +206,7 @@ module Observ
 
     # Export
     def to_json_export
-      as_json(except: [ :id, :created_at, :updated_at ])
+      as_json(except: [:id, :created_at, :updated_at])
     end
 
     def to_yaml_export

@@ -15,8 +15,8 @@ class CreateObservDatasetRuns < ActiveRecord::Migration[7.0]
       t.integer :total_tokens, default: 0
       t.timestamps
 
-      t.index [ :dataset_id, :name ], unique: true
-      t.index [ :dataset_id, :status ]
+      t.index [:dataset_id, :name], unique: true
+      t.index [:dataset_id, :status]
     end
   end
 end

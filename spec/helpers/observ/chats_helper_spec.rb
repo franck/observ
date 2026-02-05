@@ -12,11 +12,11 @@ RSpec.describe Observ::ChatsHelper, type: :helper do
     it 'includes default option as first element' do
       options = helper.agent_select_options
 
-      expect(options.first).to eq([ "Default Agent", "" ])
+      expect(options.first).to eq(["Default Agent", ""])
     end
 
     it 'delegates to AgentSelectionService' do
-      mock_options = [ [ "Default Agent", "" ], [ "Test", "TestAgent" ] ]
+      mock_options = [["Default Agent", ""], ["Test", "TestAgent"]]
 
       allow(Observ::AgentSelectionService).to receive(:options).and_return(mock_options)
 

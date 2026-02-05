@@ -13,7 +13,7 @@ module Observ
     validates :name, presence: true
     validates :value, presence: true, numericality: true
     validates :scoreable_id, uniqueness: {
-      scope: [ :scoreable_type, :name, :source ],
+      scope: [:scoreable_type, :name, :source],
       message: "already has a score with this name and source"
     }
 

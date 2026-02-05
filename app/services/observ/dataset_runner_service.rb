@@ -82,7 +82,7 @@ module Observ
           dataset_item_id: run_item.dataset_item_id,
           agent_class: dataset.agent_class
         },
-        tags: [ "dataset_evaluation", dataset.name, dataset_run.name ]
+        tags: ["dataset_evaluation", dataset.name, dataset_run.name]
       )
     end
 

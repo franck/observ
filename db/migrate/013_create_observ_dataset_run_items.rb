@@ -10,7 +10,7 @@ class CreateObservDatasetRunItems < ActiveRecord::Migration[7.0]
       t.text :error
       t.timestamps
 
-      t.index [ :dataset_run_id, :dataset_item_id ], unique: true, name: "idx_run_items_on_run_and_item"
+      t.index [:dataset_run_id, :dataset_item_id], unique: true, name: "idx_run_items_on_run_and_item"
     end
   end
 end
