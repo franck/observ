@@ -135,6 +135,15 @@ module Observ
 
       # Override system_prompt to use prompt management
       def system_prompt
+        config = prompt_config.presence || {}
+        prompt_name = config[:prompt_name] || default_prompt_name
+        current_stamp = Observ::PromptManager.cache_stamp(name: prompt_name)
+
+        if defined?(@_prompt_cache_stamp) && @_prompt_cache_stamp != current_stamp
+          reset_prompt_cache!
+        end
+
+        @_prompt_cache_stamp = current_stamp
         @_system_prompt ||= fetch_prompt(variables: prompt_variables)
       end
 
@@ -159,6 +168,7 @@ module Observ
       def reset_prompt_cache!
         @_system_prompt = nil
         @_prompt_template = nil
+        @_prompt_cache_stamp = nil
       end
 
       # Override model to check prompt metadata first
