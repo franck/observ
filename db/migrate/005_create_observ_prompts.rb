@@ -12,10 +12,10 @@ class CreateObservPrompts < ActiveRecord::Migration[7.0]
       t.timestamps
 
       # Composite unique index for name + version
-      t.index [ :name, :version ], unique: true
+      t.index [:name, :version], unique: true
 
       # Index for state queries (e.g., find all production prompts)
-      t.index [ :name, :state ]
+      t.index [:name, :state]
     end
   end
 end

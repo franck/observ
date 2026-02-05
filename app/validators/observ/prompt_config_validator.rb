@@ -77,7 +77,7 @@ module Observ
           @errors << "#{key} must be a string"
         end
       when :boolean
-        unless [ true, false ].include?(value)
+        unless [true, false].include?(value)
           @errors << "#{key} must be a boolean"
         end
       when :array
@@ -133,7 +133,7 @@ module Observ
     end
 
     def validate_unknown_keys
-      schema_keys = schema.keys.map { |k| [ k.to_s, k.to_sym ] }.flatten
+      schema_keys = schema.keys.map { |k| [k.to_s, k.to_sym] }.flatten
       config_keys = config.keys
 
       unknown_keys = config_keys - schema_keys
@@ -153,11 +153,11 @@ module Observ
 
     def value_with_key(key)
       if config.key?(key.to_s)
-        [ config[key.to_s], key.to_s ]
+        [config[key.to_s], key.to_s]
       elsif config.key?(key.to_sym)
-        [ config[key.to_sym], key.to_sym ]
+        [config[key.to_sym], key.to_sym]
       else
-        [ nil, nil ]
+        [nil, nil]
       end
     end
 

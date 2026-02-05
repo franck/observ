@@ -230,7 +230,7 @@ RSpec.describe Observ::Prompt, type: :model do
       end
 
       it "renders normal section when array has items" do
-        result = prompt.compile(items: [ { count: 3 } ], count: 3)
+        result = prompt.compile(items: [{ count: 3 }], count: 3)
         expect(result).to include("You have 3 items.")
       end
     end
@@ -302,7 +302,7 @@ RSpec.describe Observ::Prompt, type: :model do
 
       it "validates successfully when all variables provided" do
         result = prompt.compile_with_validation(
-          items: [ { name: "Item", price: "10.00" } ],
+          items: [{ name: "Item", price: "10.00" }],
           total: "10.00"
         )
         expect(result).to include("- Item: $10.00")
@@ -561,7 +561,7 @@ RSpec.describe Observ::Prompt, type: :model do
       end
 
       it "accepts valid stop_sequences" do
-        prompt = build(:observ_prompt, config: { stop_sequences: [ "STOP", "END" ] })
+        prompt = build(:observ_prompt, config: { stop_sequences: ["STOP", "END"] })
         expect(prompt).to be_valid
       end
 
@@ -658,7 +658,7 @@ RSpec.describe Observ::Prompt, type: :model do
       end
 
       it "rejects invalid array items in stop_sequences" do
-        prompt = build(:observ_prompt, config: { stop_sequences: [ "STOP", 123 ] })
+        prompt = build(:observ_prompt, config: { stop_sequences: ["STOP", 123] })
         expect(prompt).not_to be_valid
         expect(prompt.errors[:config]).to include("stop_sequences[1] must be a string")
       end

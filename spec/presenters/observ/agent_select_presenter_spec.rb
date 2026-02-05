@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Observ::AgentSelectPresenter do
   describe '#initialize' do
     it 'accepts agents via dependency injection' do
-      mock_agents = [ double(display_name: 'Test', agent_identifier: 'Test') ]
+      mock_agents = [double(display_name: 'Test', agent_identifier: 'Test')]
       presenter = described_class.new(agents: mock_agents)
 
       expect(presenter.agents).to eq(mock_agents)
@@ -22,7 +22,7 @@ RSpec.describe Observ::AgentSelectPresenter do
       mock_agents = []
       presenter = described_class.new(agents: mock_agents)
 
-      expect(presenter.options.first).to eq([ 'Default Agent', '' ])
+      expect(presenter.options.first).to eq(['Default Agent', ''])
     end
 
     it 'formats injected agents correctly' do
@@ -35,9 +35,9 @@ RSpec.describe Observ::AgentSelectPresenter do
       options = presenter.options
 
       expect(options).to eq([
-        [ 'Default Agent', '' ],
-        [ 'Agent One', 'AgentOne' ],
-        [ 'Agent Two', 'AgentTwo' ]
+        ['Default Agent', ''],
+        ['Agent One', 'AgentOne'],
+        ['Agent Two', 'AgentTwo']
       ])
     end
 
@@ -47,7 +47,7 @@ RSpec.describe Observ::AgentSelectPresenter do
 
       options = presenter.options
 
-      expect(options.first).to eq([ 'Default Agent', '' ])
+      expect(options.first).to eq(['Default Agent', ''])
       expect(options.count).to eq(agents.count + 1)
     end
   end
@@ -57,7 +57,7 @@ RSpec.describe Observ::AgentSelectPresenter do
       options = described_class.options
 
       expect(options).to be_an(Array)
-      expect(options.first).to eq([ 'Default Agent', '' ])
+      expect(options.first).to eq(['Default Agent', ''])
     end
 
     it 'accepts optional agents parameter' do
@@ -68,8 +68,8 @@ RSpec.describe Observ::AgentSelectPresenter do
       options = described_class.options(agents: mock_agents)
 
       expect(options).to eq([
-        [ 'Default Agent', '' ],
-        [ 'Mock', 'Mock' ]
+        ['Default Agent', ''],
+        ['Mock', 'Mock']
       ])
     end
   end

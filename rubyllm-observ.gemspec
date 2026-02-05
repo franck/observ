@@ -3,8 +3,8 @@ require_relative "lib/observ/version"
 Gem::Specification.new do |spec|
   spec.name        = "rubyllm-observ"
   spec.version     = Observ::VERSION
-  spec.authors     = [ "Franck D'agostini" ]
-  spec.email       = [ "franck.dagostini@gmail.com" ]
+  spec.authors     = ["Franck D'agostini"]
+  spec.email       = ["franck.dagostini@gmail.com"]
   spec.homepage    = "https://github.com/franck/observ"
   spec.summary     = "Rails observability engine for LLM applications"
   spec.description = "A Rails engine providing comprehensive observability for LLM-powered applications. Features include session tracking, trace analysis, prompt management, cost monitoring, and optional chat/agent testing UI (with RubyLLM integration)."
@@ -34,6 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "shoulda-matchers", "~> 6.0"
   spec.add_development_dependency "faker", "~> 3.0"
   spec.add_development_dependency "capybara", "~> 3.0"
-  spec.add_development_dependency "sqlite3", "~> 1.4"
+  spec.add_development_dependency "sqlite3", "~> 2.7"
   spec.add_development_dependency "turbo-rails", "~> 2.0"
 end

@@ -81,6 +81,19 @@ RSpec.describe Observ::PromptManagement, "version override" do
       system_prompt = TestAgent.system_prompt
       expect(system_prompt).to eq("Production prompt v1")
     end
+
+    it "refreshes memoized prompt when production is promoted" do
+      TestAgent.reset_prompt_cache!
+
+      first_prompt = TestAgent.system_prompt
+      expect(first_prompt).to eq("Production prompt v1")
+
+      prompt_v2 = Observ::Prompt.find_by!(name: "test-prompt", version: 2)
+      prompt_v2.promote!
+
+      refreshed_prompt = TestAgent.system_prompt
+      expect(refreshed_prompt).to eq("Draft prompt v2")
+    end
   end
 
   describe ".model with version override" do

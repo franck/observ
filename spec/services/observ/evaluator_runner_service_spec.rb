@@ -29,7 +29,7 @@ RSpec.describe Observ::EvaluatorRunnerService do
       let(:configs) do
         [
           { "type" => "exact_match" },
-          { "type" => "contains", "keywords" => [ "expected" ] }
+          { "type" => "contains", "keywords" => ["expected"] }
         ]
       end
 
@@ -46,7 +46,7 @@ RSpec.describe Observ::EvaluatorRunnerService do
       let(:json_dataset_item) { create(:observ_dataset_item, dataset: dataset, expected_output: { key: "value" }) }
       let(:json_trace) { create(:observ_trace, output: '{"key": "value", "extra": "data"}') }
       let!(:json_run_item) { create(:observ_dataset_run_item, dataset_run: dataset_run, dataset_item: json_dataset_item, trace: json_trace) }
-      let(:configs) { [ { "type" => "json_structure" } ] }
+      let(:configs) { [{ "type" => "json_structure" }] }
 
       it "runs json_structure evaluator" do
         service = described_class.new(dataset_run, evaluator_configs: configs)
@@ -86,7 +86,7 @@ RSpec.describe Observ::EvaluatorRunnerService do
     end
 
     context "with invalid evaluator type" do
-      let(:configs) { [ { "type" => "non_existent" } ] }
+      let(:configs) { [{ "type" => "non_existent" }] }
 
       it "skips unknown evaluator types without error" do
         service = described_class.new(dataset_run, evaluator_configs: configs)

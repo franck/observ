@@ -7,22 +7,22 @@ Observ::Engine.routes.draw do
 
   # Chat routes - only available if Chat model exists in host app
   if defined?(::Chat) && ::Chat.respond_to?(:acts_as_chat)
-    resources :chats, only: [ :index, :new, :create, :show ] do
-      resources :messages, only: [ :create ]
+    resources :chats, only: [:index, :new, :create, :show] do
+      resources :messages, only: [:create]
     end
   end
 
-  resources :sessions, only: [ :index, :show ] do
+  resources :sessions, only: [:index, :show] do
     member do
       get :metrics
       get :drawer_test
       get :annotations_drawer
     end
-    resources :annotations, only: [ :index, :create, :destroy ]
-    resources :scores, only: [ :create, :destroy ]
+    resources :annotations, only: [:index, :create, :destroy]
+    resources :scores, only: [:create, :destroy]
   end
 
-  resources :traces, only: [ :index, :show ] do
+  resources :traces, only: [:index, :show] do
     collection do
       get :search
     end
@@ -32,11 +32,11 @@ Observ::Engine.routes.draw do
       get :add_to_dataset_drawer
       post :add_to_dataset
     end
-    resources :annotations, only: [ :index, :create, :destroy ]
-    resources :scores, only: [ :create, :destroy ]
+    resources :annotations, only: [:index, :create, :destroy]
+    resources :scores, only: [:create, :destroy]
   end
 
-  resources :observations, only: [ :index, :show ] do
+  resources :observations, only: [:index, :show] do
     collection do
       get :generations
       get :spans
@@ -47,7 +47,7 @@ Observ::Engine.routes.draw do
   get "annotations/traces", to: "annotations#traces_index", as: :traces_annotations
   get "annotations/export", to: "annotations#export", as: :export_annotations
 
-  resources :reviews, only: [ :index, :show ], controller: "review_queue" do
+  resources :reviews, only: [:index, :show], controller: "review_queue" do
     collection do
       get :sessions
       get :traces
@@ -65,7 +65,7 @@ Observ::Engine.routes.draw do
       get :compare               # Compare versions
     end
 
-    resources :versions, only: [ :show ], controller: "prompt_versions" do
+    resources :versions, only: [:show], controller: "prompt_versions" do
       member do
         post :promote    # draft -> production
         post :demote     # production -> archived
@@ -76,8 +76,8 @@ Observ::Engine.routes.draw do
   end
 
   resources :datasets do
-    resources :items, controller: "dataset_items", except: [ :show ]
-    resources :runs, controller: "dataset_runs", only: [ :index, :show, :new, :create, :destroy ] do
+    resources :items, controller: "dataset_items", except: [:show]
+    resources :runs, controller: "dataset_runs", only: [:index, :show, :new, :create, :destroy] do
       member do
         post :run_evaluators
         get :review

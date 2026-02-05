@@ -59,13 +59,13 @@ RSpec.describe Observ::Session, type: :model do
         name: 'chat.ask',
         input: 'Hello world',
         metadata: { phase: 'testing' },
-        tags: [ 'test' ]
+        tags: ['test']
       )
 
       expect(trace.name).to eq('chat.ask')
       expect(trace.input).to eq('Hello world')
       expect(trace.metadata).to eq({ 'phase' => 'testing' })
-      expect(trace.tags).to eq([ 'test' ])
+      expect(trace.tags).to eq(['test'])
       expect(trace.user_id).to eq(session.user_id)
     end
 

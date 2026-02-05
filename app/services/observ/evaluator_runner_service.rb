@@ -42,7 +42,7 @@ module Observ
 
     def default_evaluator_configs
       # Default to exact_match if no config specified
-      [ { "type" => "exact_match" } ]
+      [{ "type" => "exact_match" }]
     end
 
     def build_evaluator(config)

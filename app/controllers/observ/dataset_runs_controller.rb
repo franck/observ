@@ -3,7 +3,7 @@
 module Observ
   class DatasetRunsController < ApplicationController
     before_action :set_dataset
-    before_action :set_run, only: [ :show, :destroy, :run_evaluators, :review ]
+    before_action :set_run, only: [:show, :destroy, :run_evaluators, :review]
 
     def index
       @runs = @dataset.runs.order(created_at: :desc)
@@ -52,7 +52,7 @@ module Observ
     end
 
     def run_evaluators
-      evaluator_configs = @dataset.metadata&.dig("evaluators") || [ { "type" => "exact_match" } ]
+      evaluator_configs = @dataset.metadata&.dig("evaluators") || [{ "type" => "exact_match" }]
       Observ::EvaluatorRunnerService.new(@run, evaluator_configs: evaluator_configs).call
 
       redirect_to dataset_run_path(@dataset, @run),

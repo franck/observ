@@ -18,8 +18,8 @@ class CreateObservScores < ActiveRecord::Migration[7.0]
 
       t.timestamps
 
-      t.index [ :dataset_run_item_id, :name, :source ], unique: true, name: "idx_scores_on_run_item_name_source"
-      t.index [ :trace_id, :name ]
+      t.index [:dataset_run_item_id, :name, :source], unique: true, name: "idx_scores_on_run_item_name_source"
+      t.index [:trace_id, :name]
       t.index :name
     end
   end

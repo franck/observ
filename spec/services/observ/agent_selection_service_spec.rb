@@ -12,7 +12,7 @@ RSpec.describe Observ::AgentSelectionService do
     it 'includes default option as first element' do
       options = described_class.options
 
-      expect(options.first).to eq([ "Default Agent", "" ])
+      expect(options.first).to eq(["Default Agent", ""])
     end
 
     it 'includes agent options after default' do

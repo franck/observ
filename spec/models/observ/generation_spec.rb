@@ -16,9 +16,9 @@ RSpec.describe Observ::Generation, type: :model do
     end
 
     it 'sets messages when provided' do
-      messages = [ { role: 'user', content: 'hello' } ]
+      messages = [{ role: 'user', content: 'hello' }]
       generation.set_input('test', messages: messages)
-      expect(generation.messages).to eq([ { 'role' => 'user', 'content' => 'hello' } ])
+      expect(generation.messages).to eq([{ 'role' => 'user', 'content' => 'hello' }])
     end
   end
 

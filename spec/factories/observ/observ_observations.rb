@@ -89,7 +89,7 @@ FactoryBot.define do
       end
 
       trait :batch do
-        input { [ 'text 1', 'text 2', 'text 3' ].to_json }
+        input { ['text 1', 'text 2', 'text 3'].to_json }
         usage { { input_tokens: 30, total_tokens: 30 } }
         metadata { { batch_size: 3, dimensions: 1536, vectors_count: 3 } }
       end

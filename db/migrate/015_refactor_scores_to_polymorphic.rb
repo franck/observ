@@ -19,8 +19,8 @@ class RefactorScoresToPolymorphic < ActiveRecord::Migration[7.0]
     remove_column :observ_scores, :trace_id, :bigint
 
     # Add new indexes
-    add_index :observ_scores, [ :scoreable_type, :scoreable_id ]
-    add_index :observ_scores, [ :scoreable_type, :scoreable_id, :name, :source ],
+    add_index :observ_scores, [:scoreable_type, :scoreable_id]
+    add_index :observ_scores, [:scoreable_type, :scoreable_id, :name, :source],
               unique: true,
               name: "idx_scores_unique_on_scoreable_name_source"
   end

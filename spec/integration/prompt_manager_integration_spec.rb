@@ -187,7 +187,7 @@ RSpec.describe "PromptManager Integration" do
           config: {
             "model" => "gpt-4",
             "temperature" => "0.7",
-            "stop" => [ "END", "STOP" ]
+            "stop" => ["END", "STOP"]
           }
         )
 
@@ -198,7 +198,7 @@ RSpec.describe "PromptManager Integration" do
         expect(params[:temperature]).to be_a(Float)
 
         # Non-numeric values should be preserved
-        expect(params[:stop]).to eq([ "END", "STOP" ])
+        expect(params[:stop]).to eq(["END", "STOP"])
         expect(params[:stop]).to be_a(Array)
       end
     end

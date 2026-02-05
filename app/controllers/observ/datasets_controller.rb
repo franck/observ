@@ -2,7 +2,7 @@
 
 module Observ
   class DatasetsController < ApplicationController
-    before_action :set_dataset, only: [ :show, :edit, :update, :destroy ]
+    before_action :set_dataset, only: [:show, :edit, :update, :destroy]
 
     def index
       @datasets = Observ::Dataset.order(updated_at: :desc)
@@ -67,7 +67,7 @@ module Observ
 
     def available_agents
       Observ::AgentProvider.all_agents.map do |agent|
-        [ agent.display_name, agent.name ]
+        [agent.display_name, agent.name]
       end
     end
   end

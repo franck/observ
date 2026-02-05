@@ -17,8 +17,8 @@ class CreateObservReviewItems < ActiveRecord::Migration[7.0]
 
       t.timestamps
 
-      t.index [ :reviewable_type, :reviewable_id ], unique: true, name: "idx_review_items_on_reviewable"
-      t.index [ :status, :priority, :created_at ], name: "idx_review_items_on_status_priority_created"
+      t.index [:reviewable_type, :reviewable_id], unique: true, name: "idx_review_items_on_reviewable"
+      t.index [:status, :priority, :created_at], name: "idx_review_items_on_status_priority_created"
       t.index :status
     end
   end

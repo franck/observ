@@ -48,7 +48,7 @@ module Observ
                      .left_joins(:review_item)
                      .where(observ_review_items: { id: nil })
 
-        sample_size = [ (items.count * percentage / 100.0).ceil, 1 ].max
+        sample_size = [(items.count * percentage / 100.0).ceil, 1].max
 
         items.order("RANDOM()").limit(sample_size).find_each do |item|
           item.enqueue_for_review!(reason: "random_sample", priority: :normal)

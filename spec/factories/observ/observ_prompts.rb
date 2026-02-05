@@ -67,7 +67,7 @@ FactoryBot.define do
           top_p: 0.95,
           frequency_penalty: 0.5,
           presence_penalty: 0.3,
-          stop_sequences: [ "STOP", "END" ]
+          stop_sequences: ["STOP", "END"]
         }
       }
     end

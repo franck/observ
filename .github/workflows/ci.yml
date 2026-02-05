@@ -15,9 +15,13 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ruby-3.4.5
-          bundler-cache: true
+          ruby-version: ruby-3.3
+
+      - name: Install gems
+        run: bundle install --jobs 4 --retry 3
 
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+      - name: Run RSpec test suite
+        run: bundle exec rspec

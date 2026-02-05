@@ -10,9 +10,9 @@ RSpec.describe Observ::Embedding, type: :model do
     end
 
     it 'converts array input to JSON' do
-      embedding.set_input([ 'text 1', 'text 2' ])
+      embedding.set_input(['text 1', 'text 2'])
       expect(embedding.input).to be_a(String)
-      expect(JSON.parse(embedding.input)).to eq([ 'text 1', 'text 2' ])
+      expect(JSON.parse(embedding.input)).to eq(['text 1', 'text 2'])
     end
   end
 

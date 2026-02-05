@@ -53,7 +53,11 @@ module Observ
       return Result.new(action: :skipped, reason: "already_has_moderation") if has_existing_flags?(trace)
 
       with_observability do |_session|
-        content = extract_trace_content(trace, moderate_input:, moderate_output:)
+        content = extract_trace_content(
+          trace,
+          moderate_input: moderate_input,
+          moderate_output: moderate_output
+        )
         return Result.new(action: :skipped, reason: "no_content") if content.blank?
 
         perform_moderation(trace, content)

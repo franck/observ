@@ -7,7 +7,7 @@ RSpec.describe Observ::PromptsHelper, type: :helper do
         model1 = double('Model', provider: 'openai', display_name: 'GPT-4o', id: 'gpt-4o')
         model2 = double('Model', provider: 'openai', display_name: 'GPT-4o Mini', id: 'gpt-4o-mini')
         model3 = double('Model', provider: 'anthropic', display_name: 'Claude 3.5 Sonnet', id: 'claude-3-5-sonnet')
-        models_collection = double('ModelsCollection', chat_models: [ model1, model2, model3 ])
+        models_collection = double('ModelsCollection', chat_models: [model1, model2, model3])
 
         stub_const('RubyLLM', double('RubyLLM', models: models_collection))
         allow(RubyLLM).to receive(:respond_to?).with(:models).and_return(true)
@@ -31,7 +31,7 @@ RSpec.describe Observ::PromptsHelper, type: :helper do
         result = helper.chat_model_options_grouped
 
         anthropic_models = result.find { |p, _| p == 'Anthropic' }[1]
-        expect(anthropic_models).to include([ 'Claude 3.5 Sonnet', 'claude-3-5-sonnet' ])
+        expect(anthropic_models).to include(['Claude 3.5 Sonnet', 'claude-3-5-sonnet'])
       end
 
       it 'sorts models by display name within each provider' do

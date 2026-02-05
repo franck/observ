@@ -82,13 +82,14 @@ module Observ
       # @return [Boolean] true if successful
       def invalidate_cache(name:, version: nil)
         keys = if version
-          [ cache_key(name: name, version: version) ]
+          [cache_key(name: name, version: version)]
         else
           # Invalidate all state-based keys for this prompt
-          [ :draft, :production, :archived ].map { |state| cache_key(name: name, state: state) }
+          [:draft, :production, :archived].map { |state| cache_key(name: name, state: state) }
         end
 
         keys.each { |key| Rails.cache.delete(key) }
+        bump_cache_stamp(name: name)
         Rails.logger.info("Cache invalidated for #{name}#{version ? " v#{version}" : ""}")
 
         true
@@ -119,6 +120,18 @@ module Observ
 
         Rails.logger.info("Cache warming completed: #{results[:success].count} success, #{results[:failed].count} failed")
         results
+      end
+
+      def cache_stamp_key(name:)
+        "#{Observ.config.prompt_cache_namespace}:#{name}:stamp"
+      end
+
+      def cache_stamp(name:)
+        Rails.cache.read(cache_stamp_key(name: name))
+      end
+
+      def bump_cache_stamp(name:)
+        Rails.cache.write(cache_stamp_key(name: name), Time.current.to_f)
       end
 
       # Get list of critical prompts (prompts used by agents)

@@ -31,7 +31,7 @@ module Observ
     # Format: [[display_name, identifier], ...]
     # @return [Array<Array<String>>] options array for select dropdown
     def options
-      [ default_option ] + agent_options
+      [default_option] + agent_options
     end
 
     # Convenience class method that injects agents from Observ::AgentProvider
@@ -47,13 +47,13 @@ module Observ
     # Default option for "no agent selected" state
     # @return [Array<String>] the default option
     def default_option
-      [ "Default Agent", "" ]
+      ["Default Agent", ""]
     end
 
     # Maps agents to [display_name, identifier] pairs
     # @return [Array<Array<String>>] agent options
     def agent_options
-      agents.map { |agent| [ agent.display_name, agent.agent_identifier ] }
+      agents.map { |agent| [agent.display_name, agent.agent_identifier] }
     end
   end
 end
