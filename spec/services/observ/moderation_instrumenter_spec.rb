@@ -49,7 +49,7 @@ RSpec.describe Observ::ModerationInstrumenter do
         'self-harm' => 0.001,
         'violence' => 0.002
       },
-      flagged_categories: ['hate', 'harassment'],
+      flagged_categories: [ 'hate', 'harassment' ],
       model: 'omni-moderation-latest',
       id: 'modr-456'
     )
@@ -194,7 +194,7 @@ RSpec.describe Observ::ModerationInstrumenter do
     it 'records flagged_categories' do
       RubyLLM.moderate("Hateful content")
       moderation = session.traces.last.moderations.first
-      expect(moderation.flagged_categories).to eq(['hate', 'harassment'])
+      expect(moderation.flagged_categories).to eq([ 'hate', 'harassment' ])
     end
 
     it 'records high category_scores for flagged categories' do

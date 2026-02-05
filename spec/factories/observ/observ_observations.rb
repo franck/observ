@@ -234,7 +234,7 @@ FactoryBot.define do
               'self-harm' => 0.001,
               'violence' => 0.002
             },
-            flagged_categories: ['hate', 'harassment']
+            flagged_categories: [ 'hate', 'harassment' ]
           }
         end
       end
@@ -259,7 +259,7 @@ FactoryBot.define do
               'violence' => 0.92,
               'violence/graphic' => 0.88
             },
-            flagged_categories: ['violence', 'violence/graphic']
+            flagged_categories: [ 'violence', 'violence/graphic' ]
           }
         end
       end

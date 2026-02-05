@@ -83,7 +83,7 @@ RSpec.describe Observ::Moderation, type: :model do
 
   describe '#flagged_categories' do
     it 'returns flagged_categories from metadata' do
-      flagged = ['hate', 'harassment']
+      flagged = [ 'hate', 'harassment' ]
       moderation = create(:observ_moderation, metadata: { flagged_categories: flagged })
       expect(moderation.flagged_categories).to eq(flagged)
     end
