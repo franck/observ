@@ -20,3 +20,6 @@ jobs:
 
       - name: Lint code for consistent style
         run: bin/rubocop -f github
+
+      - name: Run RSpec test suite
+        run: bundle exec rspec
