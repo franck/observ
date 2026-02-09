@@ -11,6 +11,7 @@ module Observ
     # Make helpers available to host app for Turbo broadcasts
     initializer "observ.helpers" do
       ActiveSupport.on_load(:action_controller_base) do
+        require_dependency "observ/markdown_helper"
         helper Observ::MarkdownHelper
       end
     end
